@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hotel Praia - Tu Paraíso Junto al Mar</title>
+
+    <link rel="stylesheet" href="../style/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <div class="logo-icon" aria-hidden="true">
+            <img src="../images/logoPraia.png" alt="logoPraia" />
+          </div>
+          <span class="logo-text">Hotel Praia</span>
+        </div>
+
+        <div class="nav-links" id="navLinks">
+          <a href="#inicio" class="nav-link">Inicio</a>
+          <a href="#habitaciones" class="nav-link">Habitaciones</a>
+          <a href="#servicios" class="nav-link">Servicios</a>
+          <a href="#galeria" class="nav-link">Galería</a>
+          <a href="#testimonios" class="nav-link">Testimonios</a>
+          <a href="#contacto" class="nav-link">Contacto</a>
+          <a href="#reservas" class="btn-reservar">Reservar</a>
+        </div>
+
+        <button
+          class="mobile-menu-btn"
+          id="mobileMenuBtn"
+          type="button"
+          aria-label="Abrir menú"
+        ></button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero-section">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Hotel Praia</h1>
+        <p class="hero-subtitle">Eperiencia hecho al pelo</p>
+        <p class="hero-description">
+          Experimenta el lujo frente al océano en nuestro exclusivo resort
+          playero
+        </p>
+        <div class="hero-buttons">
+          <a href="#reservas" class="btn btn-primary">Reservar Ahora</a>
+          <a href="#habitaciones" class="btn btn-secondary">Ver Habitaciones</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- seccion de habitaciones -->
+    <section id="habitaciones" class="habitaciones-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Nuestras Habitaciones</h2>
+          <p class="section-description">
+            Elige la habitación perfecta para tu estancia. Cada espacio se
+            ajusta para tu presupuesto
+          </p>
+        </div>
+
+        <div class="habitaciones-grid">
+          <!-- Habitación 1 -->
+          <div class="habitacion-card">
+            <div class="habitacion-image">
+              <img
+                src="https://tse1.mm.bing.net/th/id/OIP.FlPzkf_n-G8gM0Tbswk7AwHaE8?cb=defcache2&defcache=1&rs=1&pid=ImgDetMain&o=7&rm=3"
+                alt="Habitación Estándar"
+              />
+              <div class="habitacion-precio">$1.000.000 / noche</div>
+            </div>
+            <div class="habitacion-content">
+              <h3 class="habitacion-nombre">Habitación Estándar</h3>
+              <p class="habitacion-descripcion">
+                Excelente habitacion para pasar las borracheras, con excelente
+                vista al jardin si prefieres perderte en el horizonte
+              </p>
+
+              <div class="habitacion-servicios">
+                <h4>Servicios incluidos:</h4>
+                <ul>
+                  <li>WiFi gratis</li>
+                  <li>TV</li>
+                  <li>Aire acondicionado</li>
+                  <li>Minibar</li>
+                </ul>
+              </div>
+
+              <button
+                class="btn btn-block btn-ocean"
+                type="button"
+                onclick="mostrarReserva('Habitación Estándar')"
+              >
+                Reservar Esta Habitación
+              </button>
+            </div>
+          </div>
+
+          <!-- Habitación 2 -->
+          <div class="habitacion-card">
+            <div class="habitacion-image">
+              <img
+                src="https://tse3.mm.bing.net/th/id/OIP.fzQFllArLtgDerIN_Q8VhgHaE8?cb=defcache2&defcache=1&rs=1&pid=ImgDetMain&o=7&rm=3"
+                alt="Habitación Vista al Mar"
+              />
+              <div class="habitacion-precio">$2.500.000 / noche</div>
+            </div>
+            <div class="habitacion-content">
+              <h3 class="habitacion-nombre">Habitación con vista al mar</h3>
+              <p class="habitacion-descripcion">
+                Disfruta de impresionantes vistas al océano desde tu cuarto
+                privado.
+              </p>
+
+              <div class="habitacion-servicios">
+                <h4>Servicios incluidos:</h4>
+                <ul>
+                  <li>WiFi gratis</li>
+                  <li>TV</li>
+                  <li>Balcón privado</li>
+                  <li>Vista al mar</li>
+                  <li>Minibar</li>
+                </ul>
+              </div>
+
+              <button
+                class="btn btn-block btn-ocean"
+                type="button"
+                onclick="mostrarReserva('Habitación Vista al Mar')"
+              >
+                Reservar Esta Habitación
+              </button>
+            </div>
+          </div>
+
+          <!-- Habitación 3 -->
+          <div class="habitacion-card">
+            <div class="habitacion-image">
+              <img
+                src="https://dreffui1gbt6t.cloudfront.net/images/esp-es/esp-stayhero-suites-1-1024x576.jpg"
+                alt="Suite de Lujo"
+              />
+              <div class="habitacion-precio">$6.000.000 / noche</div>
+            </div>
+            <div class="habitacion-content">
+              <h3 class="habitacion-nombre">Suite de Lujo</h3>
+              <p class="habitacion-descripcion">
+                Espacio amplio y elegante con sala de estar separada y vistas
+                panorámicas al océano.
+              </p>
+
+              <div class="habitacion-servicios">
+                <h4>Servicios incluidos:</h4>
+                <ul>
+                  <li>WiFi gratis</li>
+                  <li>PLAY 5</li>
+                  <li>Sala de estar</li>
+                  <li>Jacuzzi 🫦</li>
+                  <li>Vista panorámica</li>
+                  <li>Minibar premium</li>
+                </ul>
+              </div>
+
+              <button
+                class="btn btn-block btn-ocean"
+                type="button"
+                onclick="mostrarReserva('Suite de Lujo')"
+              >
+                Reservar Esta Habitación
+              </button>
+            </div>
+          </div>
+
+          <!-- Habitación 4 -->
+          <div class="habitacion-card">
+            <div class="habitacion-image">
+              <img
+                src="https://www.manila-hotel.com.ph/wp-content/uploads/2020/06/Pres-Suite-1-DSC_1906-scaled.jpg "
+                alt="Suite Presidencial"
+              />
+              <div class="habitacion-precio">$9.000.000 / noche</div>
+            </div>
+            <div class="habitacion-content">
+              <h3 class="habitacion-nombre">Suite Presidencial</h3>
+              <p class="habitacion-descripcion">
+                La creme de la creme en cuanto habitaciones de nuestro hotel,
+                por si quieres vivir un proyecto x propio.
+              </p>
+
+              <div class="habitacion-servicios">
+                <h4>Servicios incluidos:</h4>
+                <ul>
+                  <li>WiFi gratis</li>
+                  <li>TV</li>
+                  <li>2 Habitaciones</li>
+                  <li>Cocina completa</li>
+                  <li>Terraza privada</li>
+                  <li>Servicio 24h</li>
+                  <li>Lady Gaga</li>
+                </ul>
+              </div>
+
+              <button
+                class="btn btn-block btn-ocean"
+                type="button"
+                onclick="mostrarReserva('Suite Presidencial')"
+              >
+                Reservar Esta Habitación
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Servicios Section -->
+    <section id="servicios" class="servicios-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title text-white">Servicios Premium</h2>
+          <p class="section-description text-light">
+            Disfruta de instalaciones de primera clase y servicios diseñados
+            para hacer de tu estancia una experiencia única.
+          </p>
+        </div>
+
+        <div class="servicios-grid">
+          <div class="servicio-card">
+            <div class="servicio-icon">
+              <img src="../images/gym.png" alt="gym" />
+            </div>
+            <h3>Gimnasio</h3>
+            <p>
+              Equipado con máquinas de última generación y vista al mar para que
+              entrenes sin perder el paraíso de vista.
+            </p>
+          </div>
+
+          <div class="servicio-card">
+            <div class="servicio-icon">
+              <img src="../images/spa.png" alt="spa" />
+            </div>
+            <h3>Spa & Bienestar</h3>
+            <p>
+              Masajes, jacuzzi, sauna y tratamientos relajantes diseñados para
+              renovar cuerpo y mente.
+            </p>
+          </div>
+
+          <div class="servicio-card">
+            <div class="servicio-icon">
+              <img src="../images/gastronomia.png" alt="gastro" />
+            </div>
+            <h3>Gastronomia</h3>
+            <p>Área de comidas con la mejor gastronomia del pais.</p>
+          </div>
+
+          <!-- Playa Privada -->
+          <div class="servicio-card">
+            <div class="servicio-icon">
+              <img src="../images/playa.png" alt="playa" />
+            </div>
+            <h3>Playa Privada</h3>
+            <p>
+              Acceso exclusivo a nuestra playa privada con camastros, servicio
+              premium y vistas inolvidables.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galería Section -->
+    <section id="galeria" class="galeria-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Galería</h2>
+          <p class="section-description">
+            Explora nuestras instalaciones y descubre el paraíso que te espera.
+          </p>
+        </div>
+
+        <div class="galeria-grid">
+          <div class="galeria-item">
+            <img
+              src="https://images.unsplash.com/photo-1645990097585-947bbb879c12?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwyfHxiZWFjaGZyb250JTIwaG90ZWx8ZW58MHx8fHwxNzcxMjUyMzQ3fDA&ixlib=rb-4.1.0&q=85"
+              alt="Vista Aérea del Resort"
+            />
+          </div>
+          <div class="galeria-item">
+            <img
+              src="https://images.unsplash.com/photo-1586611292717-f828b167408c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHw0fHxob3RlbCUyMHBvb2x8ZW58MHx8fHwxNzcxMjUyMzU2fDA&ixlib=rb-4.1.0&q=85"
+              alt="Piscina Infinity"
+            />
+          </div>
+          <div class="galeria-item">
+            <img
+              src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwxfHxvY2VhbiUyMGJlYWNofGVufDB8fHx8MTc3MTI1MjM2MXww&ixlib=rb-4.1.0&q=85"
+              alt="Playa Privada"
+            />
+          </div>
+          <div class="galeria-item">
+            <img
+              src="https://images.unsplash.com/photo-1604348825621-22800b6ed16d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHwyfHxob3RlbCUyMHBvb2x8ZW58MHx8fHwxNzcxMjUyMzU2fDA&ixlib=rb-4.1.0&q=85"
+              alt="Área de Descanso"
+            />
+          </div>
+          <div class="galeria-item">
+            <img
+              src="https://images.unsplash.com/photo-1551418988-c21e451467b7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwyfHxvY2VhbiUyMGJlYWNofGVufDB8fHx8MTc3MTI1MjM2MXww&ixlib=rb-4.1.0&q=85"
+              alt="Atardecer en la Playa"
+            />
+          </div>
+          <div class="galeria-item">
+            <img
+              src="https://images.unsplash.com/photo-1563493653502-9e270be23596?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHwzfHxob3RlbCUyMHBvb2x8ZW58MHx8fHwxNzcxMjUyMzU2fDA&ixlib=rb-4.1.0&q=85"
+              alt="Zona de Piscina"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seccion de testimonios -->
+    <section id="testimonios" class="testimonios-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Lo Que Dicen Nuestros Huéspedes</h2>
+          <p class="section-description">
+            Experiencias reales de viajeros que eligieron Hotel Praia para sus
+            vacaciones.
+          </p>
+        </div>
+
+        <div class="testimonios-grid">
+          <div class="testimonio-card">
+            <div class="quote-icon">"</div>
+            <div class="estrellas">★★★★★</div>
+            <p class="testimonio-texto">
+              "Una experiencia inolvidable. El servicio es excepcional y las
+              vistas son simplemente mágicas. Volveremos sin duda."
+            </p>
+            <div class="testimonio-autor">
+              <strong>María García</strong>
+              <span>Hace 1 semana</span>
+            </div>
+          </div>
+
+          <div class="testimonio-card">
+            <div class="quote-icon">"</div>
+            <div class="estrellas">★★★★★</div>
+            <p class="testimonio-texto">
+              "El mejor hotel en el que nos hemos alojado. La ubicación frente
+              al mar es perfecta y las instalaciones son de primera clase."
+            </p>
+            <div class="testimonio-autor">
+              <strong>Carlos Rodríguez</strong>
+              <span>Hace 2 semanas</span>
+            </div>
+          </div>
+
+          <div class="testimonio-card">
+            <div class="quote-icon">"</div>
+            <div class="estrellas">★★★★★</div>
+            <p class="testimonio-texto">
+              "Perfecto para una escapada romántica. La suite con vista al mar
+              es espectacular y el spa es increíble."
+            </p>
+            <div class="testimonio-autor">
+              <strong>Ana Martínez</strong>
+              <span>Hace 3 semanas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Seccion de mapa-->
+    <section id="mapa" class="mapa">
+      <div class="mapa__container">
+        <header class="mapa__header">
+          <h2 class="mapa__title">Ubicación Privilegiada</h2>
+          <p class="mapa__subtitle">
+            Encuéntranos en Crr68c#23-31
+          </p>
+        </header>
+
+        <div class="mapa__frame">
+          <iframe
+            class="mapa__bg"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d18187.195527228687!2d-48.63955505621707!3d-26.998405533219703!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d8b70045bf5445%3A0x3b63cb5f3e3db4ef!2sPraia%20Central%20de%20Balne%C3%A1rio%20Cambori%C3%BA!5e0!3m2!1ses-419!2sco!4v1771521448976!5m2!1ses-419!2sco"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          >
+          </iframe>         
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seccion de reservas  -->
+    <section id="reservas" class="reservas-section">
+      <div class="container-small">
+        <div class="section-header">
+          <h2 class="section-title">Reserva Tu Estancia</h2>
+          <p class="section-description">
+            Completa el formulario y nos pondremos en contacto contigo para
+            confirmar tu reserva.
+          </p>
+        </div>
+
+        <div class="reserva-card">
+          <div class="reserva-header">
+            <h3>Información de Reserva</h3>
+          </div>
+
+          <form id="reservaForm" class="reserva-form">
+            <div class="form-group">
+              <label for="nombre">Nombre Completo *</label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                required
+                placeholder="Tu nombre"
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  placeholder="tu@email.com"
+                />
+              </div>
+              <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input
+                  type="tel"
+                  id="telefono"
+                  name="telefono"
+                  placeholder="+57"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fechaEntrada">Fecha de Entrada *</label>
+                <input
+                  type="date"
+                  id="fechaEntrada"
+                  name="fechaEntrada"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="fechaSalida">Fecha de Salida *</label>
+                <input
+                  type="date"
+                  id="fechaSalida"
+                  name="fechaSalida"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="personas">Número de Personas</label>
+                <select id="personas" name="personas">
+                  <option value="1">1 Persona</option>
+                  <option value="2" selected>2 Personas</option>
+                  <option value="3">3 Personas</option>
+                  <option value="4">4 Personas</option>
+                  <option value="5">5 Personas</option>
+                  <option value="6">6+ Personas</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="habitacion">Tipo de Habitación</label>
+                <select id="habitacion" name="habitacion">
+                  <option value="estandar">Habitación Estándar</option>
+                  <option value="vista-mar">Habitación Vista al Mar</option>
+                  <option value="suite">Suite de Lujo</option>
+                  <option value="presidencial">Suite Presidencial</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-block btn-ocean">
+              Solicitar Reserva
+            </button>
+            <p class="form-note">
+              * Campos obligatorios. Nos pondremos en contacto contigo en menos
+              de 24 horas.
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto" class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="footer-logo">
+              <span>Hotel Praia</span>
+              <img src="../images/logoPraia.png" alt="" />
+            </div>
+            <p>
+              Experimenta el lujo frente al océano en nuestro exclusivo resort
+              playero
+            </p>
+            <div class="social-links">
+  
+  <!-- Instagram -->
+  <a href="#" class="social-link" aria-label="Instagram">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  </a>
+
+  <!-- Facebook -->
+  <a href="#" class="social-link" aria-label="Facebook">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+    </svg>
+  </a>
+
+  <!-- X (Twitter) -->
+  <a href="#" class="social-link" aria-label="X">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2">
+      <path d="M4 4l16 16M20 4L4 20"/>
+    </svg>
+  </a>
+
+</div>
+
+          </div>
+
+          <div class="footer-col">
+            <h4>Enlaces Rápidos</h4>
+            <ul class="footer-links">
+              <li><a href="#inicio">Inicio</a></li>
+              <li><a href="#habitaciones">Habitaciones</a></li>
+              <li><a href="#servicios">Servicios</a></li>
+              <li><a href="#galeria">Galería</a></li>
+              <li><a href="#testimonios">Testimonios</a></li>
+              <li><a href="#reservas">Reservas</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Contacto</h4>
+            <ul class="footer-contact">
+              <li><span> CUIDAD GOTICA</span></li>
+              <li><span>+57 301 57946556</span></li>
+              <li><span>samueldaza820@hotwelpraia.com</span></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Horario de Atención</h4>
+            <ul class="footer-hours">
+              <li>Recepción: 24 horas</li>
+              <li>Check-in: 15:00</li>
+              <li>Check-out: 12:00</li>
+              <li class="hours-reservas">
+                <strong>Reservas:</strong><br />
+                Lunes - Domingo<br />
+                9:00 - 21:00
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <div class="footer-bottom-content">
+            <p>@ Hotel Praia. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="../js/app.js"></script>
+  </body>
+</html>
