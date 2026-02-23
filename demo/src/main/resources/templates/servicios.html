@@ -68,6 +68,7 @@
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Precio</th>
+                <th>Imagen</th>
               </tr>
             </thead>
             <tbody>
@@ -76,6 +77,7 @@
                 <td th:text="${s.nombre}"></td>
                 <td th:text="${s.descripcion}"></td>
                 <td th:text="${s.precio}" style="text-align:center;"></td>
+                <td><img th:src="${s.imagenUrl}" alt="Imagen del servicio" width="100" height="100"/></td>
               </tr>
             </tbody>
           </table>
