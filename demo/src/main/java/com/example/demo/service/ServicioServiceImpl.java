@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.entities.Servicio;
 import com.example.demo.repository.ServicioRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,7 +11,8 @@ import java.util.List;
 @Service
 public class ServicioServiceImpl implements ServicioService {
 
-    private final ServicioRepository repository;
+    @Autowired
+    private  ServicioRepository repository;
 
     public ServicioServiceImpl(ServicioRepository repository) {
         this.repository = repository;
