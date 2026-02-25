@@ -9,12 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class ServicioControllerAd {
+public class ServiciosControllerAd {
 
     @Autowired
     private ServicioService service;
 
-    public ServicioControllerAd(ServicioService service) {
+    public ServiciosControllerAd(ServicioService service) {
         this.service = service;
     }
 
@@ -22,6 +22,6 @@ public class ServicioControllerAd {
     @GetMapping("/serviciosadmin")
     public String verServicios(Model model) {
         model.addAttribute("servicios", service.listarServicios());
-        return "servicio-admin";
+        return "servicios-admin";
     }
 }
