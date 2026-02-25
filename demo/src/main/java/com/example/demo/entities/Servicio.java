@@ -14,5 +14,10 @@ public class Servicio {
     private String descripcion;
     private float precio;
     private String imagenUrl;
+
+    // Nuevos campos
+    private int capacidad; // cuántas personas puede atender
+    private String precioTipo; // "por persona" o "por grupo"
+    private String horario; // horario o disponibilidad
 }
 

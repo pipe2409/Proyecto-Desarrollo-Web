@@ -93,9 +93,15 @@
               $<span th:text="${s.precio}">0</span>
             </div>
 
-            <button class="btn btn-ocean" type="button">
-              Reservar
-            </button>
+            <div class="services-page__actions">
+              <button class="btn btn-ocean" type="button">
+                Reservar
+              </button>
+
+              <button class="btn btn-outline" type="button" th:attr="data-servicio-id=${s.id}">
+                Ver más
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -107,6 +113,22 @@
 <!-- =========================
      FOOTER (igual a index)
 ========================= -->
+
+<!-- Modal detalles servicio -->
+<div id="servicioModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:9999;">
+  <div class="modal-content" style="background:#fff; max-width:700px; width:90%; margin:0 auto; padding:20px; position:relative; border-radius:6px;">
+    <button id="modalClose" style="position:absolute; right:12px; top:8px; background:none; border:none; font-size:22px;">×</button>
+    <img id="modalImg" src="" alt="" style="width:100%; height:300px; object-fit:cover; border-radius:4px;" />
+    <h3 id="modalName" style="margin-top:12px;">Nombre</h3>
+    <p id="modalDesc">Descripción</p>
+    <p><strong>Precio: </strong>$<span id="modalPrice"></span> <span id="modalPriceType" style="font-weight:600;"></span></p>
+    <p><strong>Capacidad: </strong><span id="modalCapacity"></span> personas</p>
+    <p><strong>Horario: </strong><span id="modalHorario"></span></p>
+    <div style="text-align:right; margin-top:12px;">
+      <button id="modalReservar" class="btn btn-ocean">Reservar</button>
+    </div>
+  </div>
+</div>
 <footer id="contacto" class="footer">
   <div class="container">
     <div class="footer-grid">
@@ -200,6 +222,7 @@
 
 <!-- JS navbar -->
 <script th:src="@{/js/index.js}"></script>
+<script th:src="@{/js/servicios.js}"></script>
 
 </body>
 </html>
