@@ -1,334 +1,205 @@
-<!-- servicios.html -->
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"></html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hotel Praia - Servicios Adicionales</title>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Servicios Adicionales - Hotel Praia</title>
 
-    <!-- CSS de esta página -->
-    <link rel="stylesheet" href="/css/servicios-op.css" />
-    <link rel="stylesheet" href="/css/nav.css">
-    <link rel="stylesheet" href="/css/footer.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
+  <!-- CSS principal (navbar + footer originales) -->
+  <link rel="stylesheet" th:href="@{/css/index.css}" />
+  <!-- CSS exclusivo de esta página -->
+  <link rel="stylesheet" th:href="@{/css/serviciosOp.css}" />
 
-  <body>
-   
-    <nav class="navbar" id="navbar">
-      <div class="nav-container">
-        <div class="nav-logo">
-          <div class="logo-icon" aria-hidden="true">
-            <img src="../static/images/logoPraia.png" alt="logoPraia" />
-          </div>
-          <span class="logo-text">Hotel Praia</span>
-        </div>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
 
-        <div class="nav-links" id="navLinks">
-          <a href="/#inicio" class="nav-link">Inicio</a>
-          <a href="/#habitaciones" class="nav-link">Habitaciones</a>
-          <a href="/servicios" class="nav-link">Servicios</a>
-          <a href="/#galeria" class="nav-link">Galería</a>
-          <a href="/#testimonios" class="nav-link">Testimonios</a>
-          <a href="/#contacto" class="nav-link">Contacto</a>
-          <a href="/#reservas" class="btn-reservar">Reservar</a>
-        </div>
+<body>
 
-        <button
-          class="mobile-menu-btn"
-          id="mobileMenuBtn"
-          type="button"
-          aria-label="Abrir menú"
-        >
-          <span></span><span></span><span></span>
-        </button>
+<!-- =========================
+     NAVBAR (igual a index)
+========================= -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <div class="logo-icon">
+        <img th:src="@{/images/logoPraia.png}" alt="Hotel Praia Logo" />
       </div>
-    </nav>
+      <span class="logo-text">Hotel Praia</span>
+    </div>
 
-    <!-- HERO SERVICIOS (como en la foto) -->
-    <section class="services-hero">
-      <div class="services-hero__inner">
-        <div class="services-hero__icon" aria-hidden="true">
-          <!-- icono sparkle -->
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2l1.5 5.2L19 9l-5.5 1.8L12 16l-1.5-5.2L5 9l5.5-1.8L12 2z" />
-            <path d="M20 2l.8 2.6L23 5.4l-2.2.8L20 9l-.8-2.8L17 5.4l2.2-.8L20 2z" />
-          </svg>
-        </div>
+    <div class="nav-links" id="navLinks">
+      <a href="/#inicio" class="nav-link">Inicio</a>
+      <a href="/#habitaciones" class="nav-link">Habitaciones</a>
+      <a href="/#servicios" class="nav-link">Servicios</a>
+      <a href="/#galeria" class="nav-link">Galería</a>
+      <a href="/#testimonios" class="nav-link">Testimonios</a>
+      <a href="/#contacto" class="nav-link">Contacto</a>
+      <a href="/#reservas" class="btn-reservar">Reservar</a>
+    </div>
 
-        <h1 class="services-hero__title">Servicios Adicionales</h1>
-        <p class="services-hero__subtitle">
-          Mejora tu experiencia con nuestros servicios premium diseñados para tu<br />
-          comodidad
-        </p>
-      </div>
-    </section>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
 
-    <!-- GRID DE SERVICIOS (como en la foto) -->
-    <main class="services-page">
-      <section class="services-grid">
-        <!-- Card 1 -->
-        <article class="service-card">
-          <div class="service-card__media">
-            <!-- Cambia por tu imagen si quieres (colócala en /static/images/...) -->
-            <img
-              src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1600&q=80"
-              alt="Gastronomía Premium"
-            />
-            <span class="price-pill">$500</span>
-            <span class="icon-pill" aria-hidden="true" title="Gastronomía">
-              <!-- cubiertos -->
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M6 3v8" />
-                <path d="M4 3v8" />
-                <path d="M8 3v8" />
-                <path d="M6 11v10" />
-                <path d="M14 3v7c0 2 2 2 2 0V3" />
-                <path d="M16 10v11" />
-              </svg>
-            </span>
-          </div>
+<!-- =========================
+     HERO SIMPLE
+========================= -->
+<section class="hero-simple">
+  <div class="hero-simple__overlay"></div>
+  <div class="hero-simple__content">
+    <h1 class="hero-simple__title">Servicios Adicionales</h1>
+    <p class="hero-simple__subtitle">
+      Mejora tu experiencia con nuestros servicios premium diseñados para tu comodidad
+    </p>
+  </div>
+</section>
 
-          <div class="service-card__body">
-            <h3 class="service-card__title">Gastronomía Premium</h3>
-            <p class="service-card__text">
-              Experimenta una experiencia culinaria única con nuestros chefs especializados.
-              Menú gourmet con ingredientes frescos y de...
-            </p>
-
-            <div class="service-meta">
-              <span class="service-meta__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v6l4 2" />
-                </svg>
-              </span>
-              <span class="service-meta__text">2-3 horas</span>
-            </div>
-
-            <button class="service-btn" type="button">Reservar Ahora</button>
-          </div>
-        </article>
-
-        <!-- Card 2 -->
-        <article class="service-card">
-          <div class="service-card__media">
-            <img
-              src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1600&q=80"
-              alt="Spa & Wellness"
-            />
-            <span class="price-pill">$800</span>
-            <span class="icon-pill" aria-hidden="true" title="Spa">
-              <!-- sparkle -->
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2l1.5 5.2L19 9l-5.5 1.8L12 16l-1.5-5.2L5 9l5.5-1.8L12 2z" />
-              </svg>
-            </span>
-          </div>
-
-          <div class="service-card__body">
-            <h3 class="service-card__title">Spa &amp; Wellness</h3>
-            <p class="service-card__text">
-              Relájate con nuestros tratamientos de spa de clase mundial. Masajes terapéuticos,
-              faciales y tratamientos corporales personalizados.
-            </p>
-
-            <div class="service-meta">
-              <span class="service-meta__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v6l4 2" />
-                </svg>
-              </span>
-              <span class="service-meta__text">1-2 horas</span>
-            </div>
-
-            <button class="service-btn" type="button">Reservar Ahora</button>
-          </div>
-        </article>
-
-        <!-- Card 3 -->
-        <article class="service-card">
-          <div class="service-card__media">
-            <img
-              src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80"
-              alt="Gimnasio 24/7"
-            />
-            <span class="price-pill">$300</span>
-            <span class="icon-pill" aria-hidden="true" title="Fitness">
-              <!-- mancuerna -->
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 10v4" />
-                <path d="M7 9v6" />
-                <path d="M17 9v6" />
-                <path d="M21 10v4" />
-                <path d="M7 12h10" />
-              </svg>
-            </span>
-          </div>
-
-          <div class="service-card__body">
-            <h3 class="service-card__title">Gimnasio 24/7</h3>
-            <p class="service-card__text">
-              Acceso completo a nuestras instalaciones de fitness con equipamiento de última generación.
-              Incluye clases grupales y entrenador personal.
-            </p>
-
-            <div class="service-meta">
-              <span class="service-meta__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v6l4 2" />
-                </svg>
-              </span>
-              <span class="service-meta__text">Día completo</span>
-            </div>
-
-            <button class="service-btn" type="button">Reservar Ahora</button>
-          </div>
-        </article>
-
-        <!-- Card 4 -->
-        <article class="service-card">
-          <div class="service-card__media">
-            <img
-              src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1600&q=80"
-              alt="Tour Guiado"
-            />
-            <span class="price-pill">$600</span>
-            <span class="icon-pill" aria-hidden="true" title="Tour">
-              <!-- mapa -->
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3-6-3z" />
-                <path d="M9 3v15" />
-                <path d="M15 6v15" />
-              </svg>
-            </span>
-          </div>
-
-          <div class="service-card__body">
-            <h3 class="service-card__title">Tour Guiado</h3>
-            <p class="service-card__text">
-              Descubre los mejores lugares de la costa con nuestros tours personalizados.
-              Incluye transporte, guía profesional y refrigerios.
-            </p>
-
-            <div class="service-meta">
-              <span class="service-meta__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v6l4 2" />
-                </svg>
-              </span>
-              <span class="service-meta__text">4-6 horas</span>
-            </div>
-
-            <button class="service-btn" type="button">Reservar Ahora</button>
-          </div>
-        </article>
-      </section>
-    </main>
- <footer id="contacto" class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-col">
-            <div class="footer-logo">
-              <span>Hotel Praia</span>
-              <img src="../images/logoPraia.png" alt="" />
-            </div>
-            <p>
-              Experimenta el lujo frente al océano en nuestro exclusivo resort
-              playero
-            </p>
-            <div class="social-links">
-  
-  <!-- Instagram -->
-  <a href="#" class="social-link" aria-label="Instagram">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
-      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-    </svg>
-  </a>
-
-  <!-- Facebook -->
-  <a href="#" class="social-link" aria-label="Facebook">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
-      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-    </svg>
-  </a>
-
-  <!-- X (Twitter) -->
-  <a href="#" class="social-link" aria-label="X">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
-      <path d="M4 4l16 16M20 4L4 20"/>
-    </svg>
-  </a>
-
+<!-- =========================
+     ESTADO VACÍO
+========================= -->
+<div class="container" th:if="${servicios == null or #lists.isEmpty(servicios)}">
+  <p class="empty-state">No hay servicios disponibles.</p>
 </div>
 
-          </div>
+<!-- =========================
+     SERVICIOS DINÁMICOS
+========================= -->
+<section class="services-page"
+         th:if="${servicios != null and !#lists.isEmpty(servicios)}">
 
-          <div class="footer-col">
-            <h4>Enlaces Rápidos</h4>
-            <ul class="footer-links">
-              <li><a href="#inicio">Inicio</a></li>
-              <li><a href="#habitaciones">Habitaciones</a></li>
-              <li><a href="#servicios">Servicios</a></li>
-              <li><a href="#galeria">Galería</a></li>
-              <li><a href="#testimonios">Testimonios</a></li>
-              <li><a href="#reservas">Reservas</a></li>
-            </ul>
-          </div>
+  <div class="container">
+    <div class="services-page__grid">
 
-          <div class="footer-col">
-            <h4>Contacto</h4>
-            <ul class="footer-contact">
-              <li><span> CUIDAD GOTICA</span></li>
-              <li><span>+57 301 57946556</span></li>
-              <li><span>samueldaza820@hotwelpraia.com</span></li>
-            </ul>
-          </div>
+      <article class="services-page__card" th:each="s : ${servicios}">
+        <img class="services-page__img"
+             th:src="${s.imagenUrl}"
+             th:alt="${s.nombre}" />
 
-          <div class="footer-col">
-            <h4>Horario de Atención</h4>
-            <ul class="footer-hours">
-              <li>Recepción: 24 horas</li>
-              <li>Check-in: 15:00</li>
-              <li>Check-out: 12:00</li>
-              <li class="hours-reservas">
-                <strong>Reservas:</strong><br />
-                Lunes - Domingo<br />
-                9:00 - 21:00
-              </li>
-            </ul>
+        <div class="services-page__content">
+          <h3 class="services-page__name"
+              th:text="${s.nombre}">Servicio</h3>
+
+          <p class="services-page__desc"
+             th:text="${s.descripcion}">Descripción</p>
+
+          <div class="services-page__footer">
+            <div class="services-page__price">
+              $<span th:text="${s.precio}">0</span>
+            </div>
+
+            <button class="btn btn-ocean" type="button">
+              Reservar
+            </button>
           </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================
+     FOOTER (igual a index)
+========================= -->
+<footer id="contacto" class="footer">
+  <div class="container">
+    <div class="footer-grid">
+
+      <div class="footer-col">
+        <div class="footer-logo">
+          <span>Hotel Praia</span>
+          <img th:src="@{/images/logoPraia.png}" alt="Hotel Praia Logo" />
+        </div>
+
+        <p>
+          Experimenta el lujo frente al océano en nuestro exclusivo resort
+          playero
+        </p>
+
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+              viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+            </svg>
+          </a>
+
+          <a href="#" class="social-link" aria-label="Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+              viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </a>
+
+          <a href="#" class="social-link" aria-label="X">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+              viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M4 4l16 16M20 4L4 20"/>
+            </svg>
+          </a>
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <div class="container">
-          <div class="footer-bottom-content">
-            <p>@ Hotel Praia. Todos los derechos reservados.</p>
-          </div>
-        </div>
+      <div class="footer-col">
+        <h4>Enlaces Rápidos</h4>
+        <ul class="footer-links">
+          <li><a href="/#inicio">Inicio</a></li>
+          <li><a href="/#habitaciones">Habitaciones</a></li>
+          <li><a href="/#servicios">Servicios</a></li>
+          <li><a href="/#galeria">Galería</a></li>
+          <li><a href="/#testimonios">Testimonios</a></li>
+          <li><a href="/#reservas">Reservas</a></li>
+        </ul>
       </div>
-    </footer>
 
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <ul class="footer-contact">
+          <li><span>CUIDAD GOTICA</span></li>
+          <li><span>+57 301 57946556</span></li>
+          <li><span>samueldaza820@hotwelpraia.com</span></li>
+        </ul>
+      </div>
 
-    <!-- Tu script de navbar (ya lo tienes) -->
-    <script src="../static/js/index.js"></script>
-  </body>
+      <div class="footer-col">
+        <h4>Horario de Atención</h4>
+        <ul class="footer-hours">
+          <li>Recepción: 24 horas</li>
+          <li>Check-in: 15:00</li>
+          <li>Check-out: 12:00</li>
+          <li class="hours-reservas">
+            <strong>Reservas:</strong><br/>
+            Lunes - Domingo<br/>
+            9:00 - 21:00
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-bottom-content">
+        <p>@ Hotel Praia. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- JS navbar -->
+<script th:src="@{/js/index.js}"></script>
+
+</body>
 </html>
