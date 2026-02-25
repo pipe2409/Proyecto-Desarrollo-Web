@@ -55,16 +55,20 @@
         </div>
 
         <!-- Mensaje si no hay servicios -->
-        <p th:if="${#lists.isEmpty(servicios)}" style="text-align:center; color: #666; margin-top: 2rem;">
-          No hay servicios registrados.
-        </p>
+        <div th:if="${#lists.isEmpty(servicios)}" class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="#BAE6FD" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 1rem;">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+          </svg>
+          <p>No hay servicios registrados.</p>
+        </div>
 
         <!-- Tabla de servicios -->
-        <div th:unless="${#lists.isEmpty(servicios)}" style="overflow-x: auto; margin-top: 2rem;">
-          <table border="1" cellpadding="12" cellspacing="0" style="width:100%; border-collapse: collapse; font-family: inherit;">
-            <thead style="background-color: #1a1a2e; color: white;">
+        <div th:unless="${#lists.isEmpty(servicios)}" class="servicios-table-wrapper">
+          <table class="servicios-table">
+            <thead>
               <tr>
-                <th>ID</th>
+                <th>#</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Precio</th>
@@ -72,12 +76,21 @@
               </tr>
             </thead>
             <tbody>
-              <tr th:each="s : ${servicios}" style="border-bottom: 1px solid #ddd;">
-                <td th:text="${s.id}" style="text-align:center;"></td>
-                <td th:text="${s.nombre}"></td>
-                <td th:text="${s.descripcion}"></td>
-                <td th:text="${s.precio}" style="text-align:center;"></td>
-                <td><img th:src="${s.imagenUrl}" alt="Imagen del servicio" width="100" height="100"/></td>
+              <tr th:each="s : ${servicios}">
+                <td class="td-id">
+                  <span class="id-badge" th:text="${s.id}"></span>
+                </td>
+                <td class="td-nombre" th:text="${s.nombre}"></td>
+                <td class="td-desc" th:text="${s.descripcion}"></td>
+                <td>
+                  <span th:if="${s.precio > 0}" class="precio-pill precio-paid">
+                    $<span th:text="${s.precio}"></span>
+                  </span>
+                  <span th:if="${s.precio == 0}" class="precio-pill precio-free">Gratis</span>
+                </td>
+                <td>
+                  <img th:src="${s.imagenUrl}" alt="Imagen del servicio" class="img-thumb"/>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -150,7 +163,7 @@
             <ul class="footer-contact">
               <li><span>CIUDAD GOTICA</span></li>
               <li><span>+57 301 57946556</span></li>
-              <li><span>info@hotelpraia.com</span></li>
+              <li><span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5f363139301f37302b3a332f2d3e363e713c3032">[email&#160;protected]</a></span></li>
             </ul>
           </div>
 
@@ -178,9 +191,10 @@
         </div>
       </div>
     </footer>
-      <script src="../js/servicios.js"></script>
-        <script>
+    <script>
         document.querySelector(".navbar").classList.add("scrolled");
         </script>
+     <script src="../js/servicios.js"></script>
+        
   </body>
 </html>

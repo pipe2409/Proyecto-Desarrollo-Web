@@ -1122,3 +1122,166 @@ section {
         text-align: center;
     }
 }
+
+/* ========================================
+   TABLA DE SERVICIOS — Hotel Praia
+   ======================================== */
+
+/* Contenedor con bordes redondeados y sombra */
+.servicios-table-wrapper {
+  margin-top: 2.5rem;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(10, 25, 41, 0.14);
+  border: 1px solid rgba(46, 124, 184, 0.15);
+}
+
+.servicios-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: inherit;
+  background: #ffffff;
+}
+
+/* ── Cabecera ── */
+.servicios-table thead tr {
+  background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-blue) 100%);
+}
+
+.servicios-table thead th {
+  padding: 1.1rem 1.4rem;
+  color: var(--sky-200);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: left;
+  border: none;
+  white-space: nowrap;
+}
+
+/* ── Filas del cuerpo ── */
+.servicios-table tbody tr {
+  border-bottom: 1px solid #EFF6FF;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.servicios-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.servicios-table tbody tr:hover {
+  background: #F0F9FF;
+  transform: scale(1.002);
+}
+
+.servicios-table tbody tr:nth-child(even) {
+  background: #FAFCFF;
+}
+
+.servicios-table tbody tr:nth-child(even):hover {
+  background: #EFF6FF;
+}
+
+.servicios-table td {
+  padding: 1rem 1.4rem;
+  vertical-align: middle;
+  color: var(--slate-700);
+  font-size: 0.95rem;
+  border: none;
+}
+
+/* ── Columna ID ── */
+.td-id {
+  text-align: center;
+  font-weight: 700;
+  color: var(--ocean-blue);
+  font-size: 0.875rem;
+}
+
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(46, 124, 184, 0.1);
+  border: 1px solid rgba(46, 124, 184, 0.25);
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--ocean-blue);
+  font-size: 0.8rem;
+}
+
+/* ── Columna Nombre ── */
+.td-nombre {
+  font-weight: 600;
+  color: var(--navy-blue);
+  font-size: 0.975rem;
+}
+
+/* ── Columna Descripción ── */
+.td-desc {
+  color: var(--slate-600);
+  font-size: 0.88rem;
+  max-width: 240px;
+}
+
+/* ── Columna Precio ── */
+.precio-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.precio-paid {
+  background: rgba(46, 124, 184, 0.1);
+  color: var(--navy-blue);
+  border: 1px solid rgba(46, 124, 184, 0.2);
+}
+
+.precio-free {
+  background: rgba(16, 185, 129, 0.1);
+  color: #065F46;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+/* ── Columna Imagen ── */
+.img-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid rgba(46, 124, 184, 0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: block;
+}
+
+.img-thumb:hover {
+  transform: scale(1.15) rotate(1.5deg);
+  box-shadow: 0 8px 20px rgba(10, 25, 41, 0.2);
+}
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--slate-600);
+  font-size: 1.1rem;
+}
+
+/* ── Decoración del título de sección ── */
+.section-header .section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ocean-blue), var(--sky-200));
+  border-radius: 999px;
+  margin: 0.6rem auto 0;
+}
