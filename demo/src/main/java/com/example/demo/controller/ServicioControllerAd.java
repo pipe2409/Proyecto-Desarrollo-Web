@@ -9,19 +9,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class ServicioController {
+public class ServicioControllerAd {
 
     @Autowired
     private ServicioService service;
 
-    public ServicioController(ServicioService service) {
+    public ServicioControllerAd(ServicioService service) {
         this.service = service;
     }
 
 
-    @GetMapping("/servicios")
+    @GetMapping("/serviciosadmin")
     public String verServicios(Model model) {
         model.addAttribute("servicios", service.listarServicios());
-        return "servicios";
+        return "servicio-admin";
     }
 }

@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Controller
-public class ServiciosController {
+public class ServiciosControllerOp {
 
-  @GetMapping("/servicios")
+  @GetMapping("/serviciosop")
   public String servicios(Model model) {
 
     // Datos (por ahora) desde el backend (NO en el HTML)
@@ -21,7 +21,7 @@ public class ServiciosController {
     );
 
     model.addAttribute("servicios", servicios);
-    return "servicios"; // servicios.html en templates
+    return "servicios-op"; // servicios.html en templates
   }
 
   // DTO simple para pasar datos a Thymeleaf
