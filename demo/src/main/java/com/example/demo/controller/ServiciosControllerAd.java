@@ -19,7 +19,7 @@ public class ServiciosControllerAd {
     }
 
 
-    @GetMapping("/serviciosadmin")
+    @GetMapping("/servicios-admin")
     public String verServicios(Model model) {
         model.addAttribute("servicios", service.listarServicios());
         return "servicios-admin";

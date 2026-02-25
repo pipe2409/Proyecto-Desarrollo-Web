@@ -9,7 +9,7 @@ import java.util.List;
 @Controller
 public class ServiciosControllerOp {
 
-  @GetMapping("/serviciosop")
+  @GetMapping("/servicios-op")
   public String servicios(Model model) {
 
     // Datos (por ahora) desde el backend (NO en el HTML)
