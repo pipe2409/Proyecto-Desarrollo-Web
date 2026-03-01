@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Huéspedes - Hotel Praia</title>
+
+    <link rel="stylesheet" href="/css/servicios-admin.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <div class="logo-icon" aria-hidden="true">
+            <img src="../images/logoPraia.png" alt="logoPraia" />
+          </div>
+          <span class="logo-text">Hotel Praia</span>
+        </div>
+
+        <div class="nav-links" id="navLinks">
+          <a href="#inicio" class="nav-link">Inicio</a>
+          <a href="#habitaciones" class="nav-link">Habitaciones</a>
+          <a href="/servicios/op" class="nav-link">Servicios</a>
+          <a href="#galeria" class="nav-link">Galería</a>
+          <a href="#testimonios" class="nav-link">Testimonios</a>
+          <a href="#contacto" class="nav-link">Contacto</a>
+          <a href="#reservas" class="btn-reservar">Reservar</a>
+        </div>
+
+        <button
+          class="mobile-menu-btn"
+          id="mobileMenuBtn"
+          type="button"
+          aria-label="Abrir menú"
+        ></button>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main style="padding-top: 80px; min-height: 70vh;">
+      <div class="container" style="padding: 3rem 1rem;">
+
+        <div class="section-header">
+          <h2 class="section-title">Lista de Huéspedes</h2>
+          <p class="section-description">Todos los huéspedes registrados en Hotel Praia</p>
+        </div>
+
+        <!-- Mensaje si no hay huéspedes -->
+        <div th:if="${#lists.isEmpty(huespedes)}" class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="#BAE6FD" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 1rem;">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <p>No hay huéspedes registrados.</p>
+        </div>
+
+        <!-- Tabla de huéspedes -->
+        <div th:unless="${#lists.isEmpty(huespedes)}" class="servicios-table-wrapper">
+          <table class="servicios-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Correo</th>
+                <th>Cédula</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
+                <th>País</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="h : ${huespedes}">
+                <td class="td-id">
+                  <span class="id-badge" th:text="${h.id}"></span>
+                </td>
+                <td class="td-nombre" th:text="${h.nombre}"></td>
+                <td class="td-nombre" th:text="${h.apellido}"></td>
+                <td class="td-desc" th:text="${h.correo}"></td>
+                <td th:text="${h.cedula}"></td>
+                <td th:text="${h.telefono}"></td>
+                <td class="td-desc" th:text="${h.direccion}"></td>
+                <td>
+                  <span class="precio-pill precio-paid" th:text="${h.pais}"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contacto" class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="footer-logo">
+              <span>Hotel Praia</span>
+              <img src="../images/logoPraia.png" alt="" />
+            </div>
+            <p>
+              Experimenta el lujo frente al océano en nuestro exclusivo resort
+              playero
+            </p>
+            <div class="social-links">
+
+              <!-- Instagram -->
+              <a href="#" class="social-link" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+              </a>
+
+              <!-- Facebook -->
+              <a href="#" class="social-link" aria-label="Facebook">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+              </a>
+
+              <!-- X (Twitter) -->
+              <a href="#" class="social-link" aria-label="X">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M4 4l16 16M20 4L4 20"/>
+                </svg>
+              </a>
+
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Enlaces Rápidos</h4>
+            <ul class="footer-links">
+              <li><a th:href="@{/}">Inicio</a></li>
+              <li><a href="#">Habitaciones</a></li>
+              <li><a href="#">Servicios</a></li>
+              <li><a href="#">Galería</a></li>
+              <li><a href="#">Testimonios</a></li>
+              <li><a href="#">Reservas</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Contacto</h4>
+            <ul class="footer-contact">
+              <li><span>CIUDAD GOTICA</span></li>
+              <li><span>+57 301 57946556</span></li>
+              <li><span>info@hotelpraia.com</span></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Horario de Atención</h4>
+            <ul class="footer-hours">
+              <li>Recepción: 24 horas</li>
+              <li>Check-in: 15:00</li>
+              <li>Check-out: 12:00</li>
+              <li class="hours-reservas">
+                <strong>Reservas:</strong><br />
+                Lunes - Domingo<br />
+                9:00 - 21:00
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <div class="footer-bottom-content">
+            <p>© Hotel Praia. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.querySelector(".navbar").classList.add("scrolled");
+    </script>
+
+  </body>
+</html>
