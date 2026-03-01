@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const id = target.getAttribute('data-servicio-id');
       if (!id) return;
       try {
-        const resp = await fetch(`/api/servicio/${id}`);
+        const resp = await fetch(`/servicios/api/servicio/${id}`);
         if (!resp.ok) {
           console.error('Error fetching servicio', resp.status);
           return;

@@ -6,19 +6,27 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@RequestMapping("/servicios")
 @Controller
-public class ServiciosControllerOp {
+public class ServiciosController {
 
     @Autowired
     private ServicioRepository repo;
 
-    public ServiciosControllerOp(ServicioRepository repo) {
+    public ServiciosController(ServicioRepository repo) {
         this.repo = repo;
     }
 
-    @GetMapping("/servicios-op")
+    @GetMapping("/admin")
+    public String serviciosAdmin(Model model) {
+        model.addAttribute("servicios", repo.findAll());
+        return "servicios-admin"; // -> servicios-admin.html
+    }
+
+    @GetMapping("/op")
     public String serviciosOp(Model model) {
         model.addAttribute("servicios", repo.findAll());
         return "servicios-op"; // -> servicios-op.html
