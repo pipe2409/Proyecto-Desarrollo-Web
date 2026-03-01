@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!--Nuevo-->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel Praia — Iniciar Sesión</title>
+  <link rel="stylesheet" th:href="@{/css/index.css}" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    h1, h2, h3, .display { font-family: 'Cormorant Garamond', serif; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateX(24px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .form-panel {
+      animation: fadeSlideIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .wave-divider {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+    }
+
+    .grain::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    input:focus { outline: none; }
+
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(3,105,161,0.35); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%);
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<!--
+  CAMBIO CLAVE:
+  - body pasa de "flex" a "flex flex-col" para apilar en columna
+  - El navbar ocupa su altura natural (fila 1)
+  - El div split-layout tiene "flex flex-1" para ocupar todo el espacio restante (fila 2)
+-->
+<body class="min-h-screen flex flex-col bg-white">
+
+  <!-- ── Navbar — estilos intactos desde index.css ── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <div class="logo-icon" aria-hidden="true">
+          <img src="/images/logoPraia.png" alt="logoPraia" />
+        </div>
+        <span class="logo-text">Hotel Praia</span>
+      </div>
+
+      <div class="nav-links" id="navLinks">
+        <a href="#inicio" class="nav-link">Inicio</a>
+        <a href="#habitaciones" class="nav-link">Habitaciones</a>
+        <a href="/servicios/op" class="nav-link">Servicios</a>
+        <a href="#galeria" class="nav-link">Galería</a>
+        <a href="#testimonios" class="nav-link">Testimonios</a>
+        <a href="#contacto" class="nav-link">Contacto</a>
+        <a href="#reservas" class="btn-reservar">Reservar</a>
+      </div>
+
+      <button
+        class="mobile-menu-btn"
+        id="mobileMenuBtn"
+        type="button"
+        aria-label="Abrir menú"
+      ></button>
+    </div>
+  </nav>
+
+  <!-- ── Split layout (imagen + formulario) — debajo de la navbar ── -->
+  <div class="flex flex-1">
+
+    <!-- Panel izquierdo: imagen -->
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden grain">
+      <div class="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-slate-900/40 to-transparent z-10"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent z-10"></div>
+
+      <img
+        src="https://images.unsplash.com/photo-1758193783649-13371d7fb8dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMHJlY2VwdGlvbiUyMGxvYmJ5JTIwbW9kZXJufGVufDF8fHx8MTc3MTY4Nzg4NHww&ixlib=rb-4.1.0&q=80&w=1080"
+        alt="Hotel Praia Lobby"
+        class="w-full h-full object-cover scale-105"
+        style="animation: subtleZoom 18s ease-in-out infinite alternate;"
+      />
+
+      <style>
+        @keyframes subtleZoom {
+          from { transform: scale(1.05); }
+          to   { transform: scale(1.12); }
+        }
+      </style>
+
+      <div class="absolute bottom-14 left-14 z-20 text-white max-w-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="wave-divider p-2 rounded-xl shadow-lg shadow-sky-900/40">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 17c3.333-4 6.667-4 10 0s6.667 4 10 0"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 11c3.333-4 6.667-4 10 0s6.667 4 10 0"/>
+            </svg>
+          </div>
+          <span class="display text-2xl font-semibold tracking-wide">Hotel Praia</span>
+        </div>
+
+        <p class="display text-3xl font-light leading-snug text-slate-100 mb-6">
+          "Donde el lujo se <em>encuentra</em> con el océano."
+        </p>
+
+        <div class="w-12 h-px bg-sky-400/60"></div>
+        <p class="mt-4 text-sm font-light text-slate-300 tracking-wide">Tu escapada perfecta comienza aquí.</p>
+      </div>
+
+      <div class="absolute top-10 left-10 z-20">
+        <span class="text-xs font-medium tracking-[0.2em] uppercase text-white/50">Acceso de clientes</span>
+      </div>
+    </div>
+
+    <!-- Panel derecho: formulario -->
+    <div class="w-full lg:w-1/2 flex flex-col bg-white relative">
+
+      <!-- Back link -->
+      <div class="px-8 pt-8">
+        <a href="/" class="inline-flex items-center gap-2 text-slate-400 hover:text-sky-600 transition-colors text-sm font-medium group">
+          <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Volver al inicio
+        </a>
+      </div>
+
+      <!-- Centered form -->
+      <div class="flex-1 flex items-center justify-center px-8 py-12">
+        <div class="form-panel w-full max-w-md">
+
+          <!-- Mobile logo -->
+          <div class="flex items-center gap-2 mb-10 lg:hidden">
+            <div class="wave-divider p-2 rounded-xl">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 17c3.333-4 6.667-4 10 0s6.667 4 10 0"/>
+              </svg>
+            </div>
+            <span class="display text-xl font-semibold text-slate-900">Hotel Praia</span>
+          </div>
+
+          <!-- Heading -->
+          <div class="mb-10">
+            <h2 class="display text-4xl font-semibold text-slate-900 mb-2">Iniciar Sesión</h2>
+            <p class="text-slate-500 font-light text-sm">Accede a tu cuenta para gestionar tus reservas.</p>
+          </div>
+
+          <!-- Form -->
+          <form id="loginForm" onsubmit="handleSubmit(event)" class="space-y-5">
+
+            <!-- Email -->
+            <div>
+              <label class="block text-xs font-medium text-slate-600 uppercase tracking-wider mb-2">Email</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="nombre@ejemplo.com"
+                  class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-500/20 transition-all"
+                />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="block text-xs font-medium text-slate-600 uppercase tracking-wider">Contraseña</label>
+                <a href="#" class="text-xs text-sky-600 hover:text-sky-500 font-medium transition-colors">¿Olvidaste tu contraseña?</a>
+              </div>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                </div>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  class="w-full pl-11 pr-11 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-500/20 transition-all"
+                />
+                <button
+                  type="button"
+                  onclick="togglePassword()"
+                  class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <svg id="eyeOpen" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  <svg id="eyeOff" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              id="submitBtn"
+              class="btn-primary w-full py-3.5 px-4 rounded-xl text-sm font-medium text-white wave-divider shadow-md shadow-sky-700/25 mt-2"
+            >
+              <span id="btnText">Iniciar Sesión</span>
+              <svg id="btnSpinner" class="hidden w-5 h-5 mx-auto animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"/>
+                <path class="opacity-75" fill="white" d="M4 12a8 8 0 018-8v8H4z"/>
+              </svg>
+            </button>
+          </form>
+
+          <!-- Divider -->
+          <div class="relative my-8">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-slate-100"></div>
+            </div>
+            <div class="relative flex justify-center">
+              <span class="bg-white px-4 text-xs text-slate-400 uppercase tracking-widest">o</span>
+            </div>
+          </div>
+
+          <!-- Register link -->
+          <p class="text-center text-sm text-slate-500">
+            ¿No tienes una cuenta?
+            <a href="/register" class="font-medium text-sky-600 hover:text-sky-500 transition-colors ml-1">Regístrate gratis</a>
+          </p>
+
+        </div>
+      </div>
+
+      <!-- Footer note -->
+      <p class="text-center text-xs text-slate-300 pb-8 px-8">
+        © 2025 Hotel Praia · Todos los derechos reservados
+      </p>
+    </div>
+
+  </div><!-- fin split layout -->
+
+   <!-- Footer -->
+    <footer id="contacto" class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="footer-logo">
+              <span>Hotel Praia</span>
+              <img src="../images/logoPraia.png" alt="" />
+            </div>
+            <p>
+              Experimenta el lujo frente al océano en nuestro exclusivo resort
+              playero
+            </p>
+            <div class="social-links">
+  
+  <!-- Instagram -->
+  <a href="#" class="social-link" aria-label="Instagram">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  </a>
+
+  <!-- Facebook -->
+  <a href="#" class="social-link" aria-label="Facebook">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+    </svg>
+  </a>
+
+  <!-- X (Twitter) -->
+  <a href="#" class="social-link" aria-label="X">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2">
+      <path d="M4 4l16 16M20 4L4 20"/>
+    </svg>
+  </a>
+
+</div>
+
+          </div>
+
+          <div class="footer-col">
+            <h4>Enlaces Rápidos</h4>
+            <ul class="footer-links">
+              <li><a href="#inicio">Inicio</a></li>
+              <li><a href="#habitaciones">Habitaciones</a></li>
+              <li><a href="#servicios">Servicios</a></li>
+              <li><a href="#galeria">Galería</a></li>
+              <li><a href="#testimonios">Testimonios</a></li>
+              <li><a href="#reservas">Reservas</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Contacto</h4>
+            <ul class="footer-contact">
+              <li><span> CUIDAD GOTICA</span></li>
+              <li><span>+57 301 57946556</span></li>
+              <li><span>samueldaza820@hotwelpraia.com</span></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Horario de Atención</h4>
+            <ul class="footer-hours">
+              <li>Recepción: 24 horas</li>
+              <li>Check-in: 15:00</li>
+              <li>Check-out: 12:00</li>
+              <li class="hours-reservas">
+                <strong>Reservas:</strong><br />
+                Lunes - Domingo<br />
+                9:00 - 21:00
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <div class="footer-bottom-content">
+            <p>@ Hotel Praia. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+  <script>
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const open  = document.getElementById('eyeOpen');
+      const off   = document.getElementById('eyeOff');
+      if (input.type === 'password') {
+        input.type = 'text';
+        open.classList.add('hidden');
+        off.classList.remove('hidden');
+      } else {
+        input.type = 'password';
+        open.classList.remove('hidden');
+        off.classList.add('hidden');
+      }
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn     = document.getElementById('submitBtn');
+      const text    = document.getElementById('btnText');
+      const spinner = document.getElementById('btnSpinner');
+      btn.disabled = true;
+      text.classList.add('hidden');
+      spinner.classList.remove('hidden');
+      setTimeout(() => {
+        btn.disabled = false;
+        text.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        alert('¡Inicio de sesión exitoso!');
+      }, 1800);
+    }
+  </script>
+</body>
+</html>
