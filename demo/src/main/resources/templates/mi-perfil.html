@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil</title>
+
+  <link rel="stylesheet" th:href="@{/css/index.css}" />
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    body { font-family: Inter, sans-serif; }
+    main { padding-top: 90px; } /* separa del navbar fixed */
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .card { background: #fff; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.08); padding: 24px; }
+    .profileTop { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; align-items: center; }
+    .avatarBig {
+      width: 140px; height: 140px; border-radius: 999px;
+      background: linear-gradient(135deg, #2f5cff, #2ab3ff);
+      display: grid; place-items: center; color: #fff; font-size: 56px;
+      margin: 0 auto;
+    }
+    .muted { color: #6b7280; }
+    .actions { display:flex; gap:18px; margin-top: 18px; }
+    .actionBtn { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background:#fff; cursor:pointer; text-decoration:none; color:#111827; }
+    .actionDanger { border-color:#fecaca; color:#dc2626; }
+    .sectionTitle { font-size: 28px; font-weight: 800; margin: 28px 0 14px; }
+    .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .field label { display:block; font-weight: 700; margin-bottom: 8px; }
+    .inputWrap { display:flex; align-items:center; gap:10px; border:1px solid #d1d5db; border-radius: 14px; padding: 12px 14px; }
+    .inputWrap input { border:none; outline:none; width:100%; font-size: 16px; }
+    .saveRow { display:flex; justify-content:flex-end; margin-top: 18px; }
+    .btnSave { background:#1f4fbf; color:#fff; border:none; padding: 12px 18px; border-radius: 12px; cursor:pointer; font-weight: 700; }
+    .alertOk { background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:10px 12px; border-radius:12px; margin-bottom: 14px; }
+    @media (max-width: 900px) {
+      .profileTop { grid-template-columns: 1fr; }
+      .grid2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <div class="logo-icon">
+        <img th:src="@{/images/logoPraia.png}" alt="Hotel Praia Logo" />
+      </div>
+      <span class="logo-text">Hotel Praia</span>
+    </div>
+
+    <div class="nav-links" id="navLinks">
+      <a href="/#inicio" class="nav-link">Inicio</a>
+      <a href="/#habitaciones" class="nav-link">Habitaciones</a>
+      <a href="/#servicios" class="nav-link">Servicios</a>
+      <a href="/#galeria" class="nav-link">Galería</a>
+      <a href="/#testimonios" class="nav-link">Testimonios</a>
+      <a href="/#contacto" class="nav-link">Contacto</a>
+      <a href="/#reservas" class="btn-reservar">Reservar</a>
+    </div>
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div th:if="${param.ok}" class="alertOk">Cambios guardados.</div>
+
+    <div class="card">
+      <div class="profileTop">
+        <div style="text-align:center;">
+          <div class="avatarBig">👤</div>
+        </div>
+
+        <div>
+          <h2 style="font-size:34px; font-weight:900; margin:0;" th:text="${nombreCompleto}">Juan Pérez</h2>
+          <p class="muted" style="margin:6px 0 0;" th:text="${huesped.correo}">juan.perez@email.com</p>
+
+          <div class="actions">
+            <a class="actionBtn" href="#" title="Luego lo implementamos">🔒 Cambiar Contraseña</a>
+            <a class="actionBtn actionDanger" href="#" title="Luego lo implementamos">🗑 Eliminar Cuenta</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 22px;">
+      <div class="sectionTitle">Información Personal</div>
+
+      <form th:action="@{/huespedes/mi-perfil}" method="post">
+        <div class="grid2">
+          <div class="field">
+            <label>Nombre</label>
+            <div class="inputWrap">
+              <span>👤</span>
+              <input name="nombre" th:value="${huesped.nombre}" placeholder="Nombre"/>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Apellido</label>
+            <div class="inputWrap">
+              <span>👤</span>
+              <input name="apellido" th:value="${huesped.apellido}" placeholder="Apellido"/>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Email</label>
+            <div class="inputWrap">
+              <span>✉️</span>
+              <input name="correo" th:value="${huesped.correo}" placeholder="correo@dominio.com"/>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Teléfono</label>
+            <div class="inputWrap">
+              <span>📞</span>
+              <input name="telefono" th:value="${huesped.telefono}" placeholder="+57 ..."/>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>País</label>
+            <div class="inputWrap">
+              <span>🌍</span>
+              <input name="pais" th:value="${huesped.pais}" placeholder="Colombia"/>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Dirección</label>
+            <div class="inputWrap">
+              <span>🏠</span>
+              <input name="direccion" th:value="${huesped.direccion}" placeholder="Calle ..."/>
+            </div>
+          </div>
+        </div>
+
+        <div class="saveRow">
+          <button class="btnSave" type="submit">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<script th:src="@{/js/index.js}"></script>
+</body>
+</html>
