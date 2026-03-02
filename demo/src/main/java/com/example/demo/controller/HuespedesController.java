@@ -79,4 +79,66 @@ public class HuespedesController {
         repo.save(h); // sobrescribe en el Map
         return "redirect:/huespedes/mi-perfil?ok";
     }
+
+    @PostMapping("/eliminar-cuenta")
+public String eliminarCuenta(HttpSession session) {
+    Integer id = (Integer) session.getAttribute("huespedId");
+    if (id == null) return "redirect:/iniciar-sesion";
+
+    repo.deleteById(id);   // 👈 elimina del Map
+    session.invalidate();  // 👈 cierra sesión
+
+    return "redirect:/?cuentaEliminada";
+}
+// ==========================
+// CAMBIAR CONTRASEÑA (GET)
+// ==========================
+@GetMapping("/cambiar-contrasena")
+public String verCambiarContrasena(HttpSession session) {
+    Integer id = (Integer) session.getAttribute("huespedId");
+    if (id == null) return "redirect:/iniciar-sesion";
+    return "cambiar-contrasena";
+}
+
+// ==========================
+// CAMBIAR CONTRASEÑA (POST)
+// ==========================
+@PostMapping("/cambiar-contrasena")
+public String cambiarContrasena(
+        HttpSession session,
+        @RequestParam String actual,
+        @RequestParam String nueva,
+        @RequestParam String confirmar,
+        Model model
+) {
+    Integer id = (Integer) session.getAttribute("huespedId");
+    if (id == null) return "redirect:/iniciar-sesion";
+
+    Huesped h = repo.findById(id);
+    if (h == null) return "redirect:/iniciar-sesion";
+
+    // 1) validar actual
+    if (h.getContrasena() == null || !h.getContrasena().equals(actual)) {
+        model.addAttribute("error", "La contraseña actual no es correcta.");
+        return "cambiar-contrasena";
+    }
+
+    // 2) validar nueva = confirmar
+    if (!nueva.equals(confirmar)) {
+        model.addAttribute("error", "La nueva contraseña y la confirmación no coinciden.");
+        return "cambiar-contrasena";
+    }
+
+    // 3) validar mínima (opcional)
+    if (nueva.length() < 6) {
+        model.addAttribute("error", "La nueva contraseña debe tener al menos 6 caracteres.");
+        return "cambiar-contrasena";
+    }
+
+    // 4) guardar
+    h.setContrasena(nueva);
+    repo.save(h);
+
+    return "redirect:/huespedes/cambiar-contrasena?okPass";
+}
 }
