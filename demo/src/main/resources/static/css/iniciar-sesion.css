@@ -85,7 +85,7 @@ ul {
     padding: 0 1rem;
     display: flex;
     justify-content: space-between;
-    align-items: right;
+    align-items: center;
     height: 80px;
     
 }
@@ -111,6 +111,7 @@ ul {
     font-size: 1.5rem;
     font-weight: 700;
     color: white;
+    
 }
 
 .nav-links {
@@ -1124,5 +1125,4 @@ section {
         text-align: center;
     }
 }
-
 

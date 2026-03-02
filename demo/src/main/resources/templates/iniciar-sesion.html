@@ -5,11 +5,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hotel Praia — Iniciar Sesión</title>
-  <link rel="stylesheet" th:href="@{/css/index.css}" />
+  <link rel="stylesheet" th:href="@{/css/iniciar-sesion.css}" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+   <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
   <style>
-    body { font-family: 'DM Sans', sans-serif; }
+    body { font-family: 'Inter', sans-serif; }
     h1, h2, h3, .display { font-family: 'Cormorant Garamond', serif; }
 
     @keyframes fadeSlideIn {
@@ -52,12 +57,6 @@
   </style>
 </head>
 
-<!--
-  CAMBIO CLAVE:
-  - body pasa de "flex" a "flex flex-col" para apilar en columna
-  - El navbar ocupa su altura natural (fila 1)
-  - El div split-layout tiene "flex flex-1" para ocupar todo el espacio restante (fila 2)
--->
 <body class="min-h-screen flex flex-col bg-white">
 
   <!-- ── Navbar — estilos intactos desde index.css ── -->
@@ -71,13 +70,13 @@
       </div>
 
       <div class="nav-links" id="navLinks">
-        <a href="#inicio" class="nav-link">Inicio</a>
+        <a href="/" class="nav-link">Inicio</a>
         <a href="#habitaciones" class="nav-link">Habitaciones</a>
         <a href="/servicios/op" class="nav-link">Servicios</a>
         <a href="#galeria" class="nav-link">Galería</a>
         <a href="#testimonios" class="nav-link">Testimonios</a>
         <a href="#contacto" class="nav-link">Contacto</a>
-        <a href="#reservas" class="btn-reservar">Reservar</a>
+        <a href="/iniciar-sesion" class="btn-reservar">Reservar</a>
       </div>
 
       <button
@@ -89,8 +88,8 @@
     </div>
   </nav>
 
-  <!-- ── Split layout (imagen + formulario) — debajo de la navbar ── -->
-  <div class="flex flex-1">
+  <!-- ── Split layout — padding-top: 80px compensa el navbar fixed ── -->
+  <div class="flex flex-1" style="padding-top: 80px;">
 
     <!-- Panel izquierdo: imagen -->
     <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden grain">
@@ -113,11 +112,8 @@
 
       <div class="absolute bottom-14 left-14 z-20 text-white max-w-sm">
         <div class="flex items-center gap-3 mb-6">
-          <div class="wave-divider p-2 rounded-xl shadow-lg shadow-sky-900/40">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 17c3.333-4 6.667-4 10 0s6.667 4 10 0"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 11c3.333-4 6.667-4 10 0s6.667 4 10 0"/>
-            </svg>
+          <div>
+            <img src="/images/logoPraia.png" alt="Mi Logo" class="w-12 h-12 object-contain">
           </div>
           <span class="display text-2xl font-semibold tracking-wide">Hotel Praia</span>
         </div>
@@ -130,9 +126,7 @@
         <p class="mt-4 text-sm font-light text-slate-300 tracking-wide">Tu escapada perfecta comienza aquí.</p>
       </div>
 
-      <div class="absolute top-10 left-10 z-20">
-        <span class="text-xs font-medium tracking-[0.2em] uppercase text-white/50">Acceso de clientes</span>
-      </div>
+      
     </div>
 
     <!-- Panel derecho: formulario -->
@@ -280,38 +274,37 @@
               playero
             </p>
             <div class="social-links">
-  
-  <!-- Instagram -->
-  <a href="#" class="social-link" aria-label="Instagram">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
-      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-    </svg>
-  </a>
 
-  <!-- Facebook -->
-  <a href="#" class="social-link" aria-label="Facebook">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
-      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-    </svg>
-  </a>
+              <!-- Instagram -->
+              <a href="#" class="social-link" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+              </a>
 
-  <!-- X (Twitter) -->
-  <a href="#" class="social-link" aria-label="X">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
-      <path d="M4 4l16 16M20 4L4 20"/>
-    </svg>
-  </a>
+              <!-- Facebook -->
+              <a href="#" class="social-link" aria-label="Facebook">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+              </a>
 
-</div>
+              <!-- X (Twitter) -->
+              <a href="#" class="social-link" aria-label="X">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                  viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M4 4l16 16M20 4L4 20"/>
+                </svg>
+              </a>
 
+            </div>
           </div>
 
           <div class="footer-col">
@@ -359,7 +352,7 @@
         </div>
       </div>
     </footer>
-    
+
   <script>
     function togglePassword() {
       const input = document.getElementById('password');
@@ -392,5 +385,8 @@
       }, 1800);
     }
   </script>
+<script>
+        document.querySelector(".navbar").classList.add("scrolled");
+        </script>
 </body>
 </html>
