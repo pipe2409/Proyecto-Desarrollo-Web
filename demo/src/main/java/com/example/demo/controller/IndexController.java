@@ -15,9 +15,6 @@ public class IndexController {
         return "index";
     }
 
-    @GetMapping("/iniciar-sesion")
-    public String iniciarSesion() {
-        return "iniciar-sesion";
-    }
+
 
 }

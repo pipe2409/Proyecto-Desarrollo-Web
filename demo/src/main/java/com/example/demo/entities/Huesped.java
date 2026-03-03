@@ -14,7 +14,7 @@ public class Huesped {
     private String nombre;
     private String apellido;
     private String correo;
-    private String contraseña;
+    private String contrasena;
     private String cedula;
     private String telefono;
     private String direccion;
