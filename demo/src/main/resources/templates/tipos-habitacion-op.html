@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operador · Tipos de Habitación</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+  <header class="border-b bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-5 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold tracking-tight">Tipos de Habitación (Operador)</h1>
+        <p class="text-sm text-slate-500">Vista pública/operativa (solo lectura)</p>
+      </div>
+      <a href="/tipos-habitacion/admin"
+         class="rounded-lg border px-3 py-2 text-sm hover:bg-slate-50">
+        Ir a Admin
+      </a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-8">
+    <section class="grid gap-4 md:grid-cols-2">
+      <div class="rounded-2xl border bg-white p-6">
+        <div class="text-sm text-slate-500">Total tipos</div>
+        <div class="mt-1 text-3xl font-semibold" th:text="${#lists.size(tiposHabitacion)}">0</div>
+        <div class="mt-3 text-sm text-slate-500">
+          Endpoint: <span class="font-mono">GET /tipos-habitacion/op</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border bg-white p-6">
+        <div class="text-sm text-slate-500">Consulta rápida por API</div>
+        <div class="mt-2 flex gap-2">
+          <input id="tipoId" type="number" min="1" value="1"
+                 class="w-28 rounded-lg border px-3 py-2 text-sm"
+                 placeholder="ID">
+          <button onclick="fetchTipo()"
+                  class="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800">
+            Consultar
+          </button>
+        </div>
+        <pre id="tipoJson"
+             class="mt-4 max-h-44 overflow-auto rounded-xl bg-slate-950 p-4 text-xs text-slate-100">Haz click en Consultar…</pre>
+      </div>
+    </section>
+
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold">Listado</h2>
+
+      <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <article th:each="t : ${tiposHabitacion}"
+                 class="rounded-2xl border bg-white overflow-hidden hover:shadow-sm transition">
+          <div class="aspect-[16/10] bg-slate-100 overflow-hidden">
+            <img th:src="${t.imagenUrl}"
+                 alt="Imagen tipo habitación"
+                 class="h-full w-full object-cover"
+                 onerror="this.src='https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?cs=srgb&dl=pexels-pixabay-271624.jpg&fm=jpg'">
+          </div>
+
+          <div class="p-5">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="text-xs text-slate-500">ID <span th:text="${t.id}">1</span></div>
+                <h3 class="mt-1 text-base font-semibold" th:text="${t.nombre}">Habitación</h3>
+              </div>
+              <span class="rounded-full bg-slate-900 px-3 py-1 text-xs text-white">
+                <span th:text="${t.capacidad}">2</span> pax
+              </span>
+            </div>
+
+            <p class="mt-3 text-sm text-slate-600 line-clamp-3" th:text="${t.descripcion}"></p>
+
+            <div class="mt-4 flex flex-wrap gap-2 text-xs">
+              <span class="rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1"
+                    th:text="'$ ' + ${t.precio} + ' / noche'"></span>
+              <span class="rounded-full border bg-slate-50 px-3 py-1 text-slate-700" th:text="${t.camas}"></span>
+            </div>
+
+            <div class="mt-4 text-xs text-slate-500" th:text="${t.amenities}"></div>
+
+            <div class="mt-5">
+              <span th:if="${t.disponible}"
+                    class="inline-flex items-center gap-2 text-xs text-emerald-700">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span> Disponible
+              </span>
+              <span th:if="${!t.disponible}"
+                    class="inline-flex items-center gap-2 text-xs text-rose-700">
+                <span class="h-2 w-2 rounded-full bg-rose-500"></span> No disponible
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <div th:if="${#lists.isEmpty(tiposHabitacion)}"
+             class="rounded-2xl border border-dashed bg-white p-8 text-center text-slate-600 sm:col-span-2 lg:col-span-3">
+          No hay tipos de habitación para mostrar.
+        </div>
+      </div>
+    </section>
+
+    <footer class="mt-10 text-center text-xs text-slate-500">
+      Hotel Demo · Tipos de Habitación · Operador
+    </footer>
+  </main>
+
+  <script>
+    async function fetchTipo() {
+      const id = document.getElementById('tipoId').value || 1;
+      const out = document.getElementById('tipoJson');
+      out.textContent = 'Cargando...';
+      try {
+        const res = await fetch(`/tipos-habitacion/api/tipo/${id}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        out.textContent = 'Error: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>
