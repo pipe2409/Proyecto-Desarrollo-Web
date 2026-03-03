@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Habitaciones</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-950 text-slate-100">
+<header class="border-b border-slate-800 bg-slate-950/70 backdrop-blur">
+  <div class="mx-auto max-w-6xl px-4 py-5 flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-semibold tracking-tight">Habitaciones (Admin)</h1>
+      <p class="text-sm text-slate-400">CRUD de habitaciones reales (con tipo asociado)</p>
+    </div>
+
+    <a th:href="${tipoId != null} ? @{/habitaciones/admin/nuevo(tipoId=${tipoId})} : @{/habitaciones/admin/nuevo}"
+       class="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium hover:bg-sky-500">
+      + Crear habitación
+    </a>
+  </div>
+</header>
+
+<main class="mx-auto max-w-6xl px-4 py-8">
+  <!-- Alerts -->
+  <div th:if="${ok}" class="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200"
+       th:text="${ok}"></div>
+  <div th:if="${err}" class="mb-4 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200"
+       th:text="${err}"></div>
+
+  <!-- Filtro por tipo -->
+  <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+    <form method="get" action="/habitaciones/admin" class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Filtrar por tipo</label>
+        <select name="tipoId"
+                class="w-full sm:w-80 rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500">
+          <option value="" th:selected="${tipoId == null}">Todas</option>
+          <option th:each="t : ${tiposHabitacion}"
+                  th:value="${t.id}"
+                  th:selected="${tipoId != null and tipoId == t.id}"
+                  th:text="${t.nombre}">
+          </option>
+        </select>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit"
+                class="rounded-xl bg-slate-100 px-5 py-2 text-sm font-medium text-slate-900 hover:bg-white">
+          Aplicar
+        </button>
+        <a href="/habitaciones/admin"
+           class="rounded-xl border border-slate-800 px-5 py-2 text-sm hover:bg-slate-900">
+          Limpiar
+        </a>
+      </div>
+    </form>
+  </section>
+
+  <!-- Tabla -->
+  <section class="mt-6 rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden">
+    <div class="px-5 py-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Listado</h2>
+      <div class="text-sm text-slate-400" th:text="'Total: ' + ${#lists.size(habitaciones)}"></div>
+    </div>
+
+    <div class="overflow-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-950/60 text-slate-300">
+        <tr>
+          <th class="text-left px-5 py-3">Código</th>
+          <th class="text-left px-5 py-3">Piso</th>
+          <th class="text-left px-5 py-3">Estado</th>
+          <th class="text-left px-5 py-3">Tipo</th>
+          <th class="text-right px-5 py-3">Acciones</th>
+        </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800">
+        <tr th:each="h : ${habitaciones}">
+          <td class="px-5 py-3 font-medium" th:text="${h.codigo}">101</td>
+          <td class="px-5 py-3" th:text="${h.piso}">1</td>
+          <td class="px-5 py-3">
+            <span class="rounded-full border border-slate-700 bg-slate-950 px-3 py-1 text-xs"
+                  th:text="${h.estado}">DISPONIBLE</span>
+          </td>
+          <td class="px-5 py-3"
+              th:text="${nombresTipo[h.tipoHabitacionId]}">Tipo</td>
+          <td class="px-5 py-3">
+            <div class="flex justify-end gap-2">
+              <a th:href="@{/habitaciones/admin/editar/{id}(id=${h.id})}"
+                 class="rounded-lg border border-slate-800 px-3 py-2 text-xs hover:bg-slate-900">
+                Editar
+              </a>
+              <form th:action="@{/habitaciones/admin/eliminar/{id}(id=${h.id})}" method="post"
+                    onsubmit="return confirm('¿Eliminar esta habitación?');">
+                <button type="submit"
+                        class="rounded-lg border border-slate-800 px-3 py-2 text-xs hover:bg-slate-900">
+                  Eliminar
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(habitaciones)}">
+          <td class="px-5 py-8 text-center text-slate-400" colspan="5">
+            No hay habitaciones para mostrar.
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>

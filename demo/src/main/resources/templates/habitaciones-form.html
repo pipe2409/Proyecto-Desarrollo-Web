@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${modo=='crear' ? 'Crear Habitación' : 'Editar Habitación'}"></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-950 text-slate-100">
+<header class="border-b border-slate-800 bg-slate-950/70 backdrop-blur">
+  <div class="mx-auto max-w-3xl px-4 py-5 flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-semibold"
+          th:text="${modo=='crear' ? 'Crear habitación' : 'Editar habitación'}"></h1>
+      <p class="text-sm text-slate-400">Selecciona un tipo y guarda.</p>
+    </div>
+    <a href="/habitaciones/admin"
+       class="rounded-lg border border-slate-800 px-4 py-2 text-sm hover:bg-slate-900">
+      Volver
+    </a>
+  </div>
+</header>
+
+<main class="mx-auto max-w-3xl px-4 py-8">
+  <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <form th:object="${habitacion}"
+          method="post"
+          th:action="${modo=='crear'} ? @{/habitaciones/admin/guardar}
+                                 : @{/habitaciones/admin/actualizar/{id}(id=${habitacion.id})}"
+          class="space-y-4">
+
+      <div th:if="${modo=='editar'}" class="text-xs text-slate-400">
+        ID: <span class="font-mono" th:text="*{id}"></span>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Código / Número</label>
+          <input th:field="*{codigo}" required
+                 class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                 placeholder="101 / PH-01">
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Piso</label>
+          <input th:field="*{piso}" type="number" min="0" required
+                 class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                 placeholder="1">
+        </div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Estado</label>
+          <select th:field="*{estado}"
+                  class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500">
+            <option value="DISPONIBLE">DISPONIBLE</option>
+            <option value="OCUPADA">OCUPADA</option>
+            <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Tipo de habitación</label>
+          <!-- ✅ SIN option null -->
+          <select th:field="*{tipoHabitacionId}" required
+                  class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500">
+            <option th:each="t : ${tiposHabitacion}"
+                    th:value="${t.id}"
+                    th:text="${t.nombre}">
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Notas</label>
+        <textarea th:field="*{notas}" rows="3"
+                  class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                  placeholder="Opcional..."></textarea>
+      </div>
+
+      <div class="pt-2 flex gap-2">
+        <button type="submit"
+                class="rounded-xl bg-sky-600 px-5 py-2 text-sm font-medium hover:bg-sky-500">
+          Guardar
+        </button>
+        <a href="/habitaciones/admin"
+           class="rounded-xl border border-slate-800 px-5 py-2 text-sm hover:bg-slate-900">
+          Cancelar
+        </a>
+      </div>
+
+    </form>
+  </div>
+</main>
+</body>
+</html>
