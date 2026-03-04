@@ -8,11 +8,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public class LoginController {
 
-    private final HuespedesRepository repo;
+    @Autowired
+    private HuespedesRepository repo;
 
     public LoginController(HuespedesRepository repo) {
         this.repo = repo;
