@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hotel Praia — Iniciar Sesión</title>
+  <title>Hotel Praia — Crear Cuenta</title>
 
   <link rel="stylesheet" th:href="@{/css/iniciar-sesion.css}" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -56,12 +56,24 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%);
       pointer-events: none;
     }
+
+    /* Grid de dos columnas para contraseñas */
+    .password-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 640px) {
+      .password-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body class="min-h-screen flex flex-col bg-white">
 
-  <!-- ── Navbar — estilos intactos desde index.css ── -->
+  <!-- ── Navbar ── -->
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <div class="nav-logo">
@@ -90,17 +102,17 @@
     </div>
   </nav>
 
-  <!-- ── Split layout — padding-top: 80px compensa el navbar fixed ── -->
+  <!-- ── Split layout ── -->
   <div class="flex flex-1" style="padding-top: 80px;">
 
     <!-- Panel izquierdo: imagen -->
-    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden grain">
-      <div class="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-slate-900/40 to-transparent z-10"></div>
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden grain" style="order: 2;">
+      <div class="absolute inset-0 bg-gradient-to-l from-slate-900/90 to-transparent z-10"></div>
       <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent z-10"></div>
 
       <img
-        src="https://images.unsplash.com/photo-1758193783649-13371d7fb8dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMHJlY2VwdGlvbiUyMGxvYmJ5JTIwbW9kZXJufGVufDF8fHx8MTc3MTY4Nzg4NHww&ixlib=rb-4.1.0&q=80&w=1080"
-        alt="Hotel Praia Lobby"
+        src="https://images.unsplash.com/photo-1709187516056-d4929b67e89f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGJlZHJvb20lMjBvY2VhbiUyMHZpZXclMjBtb2Rlcm58ZW58MXx8fHwxNzcxNjg4MTMyfDA&ixlib=rb-4.1.0&q=80&w=1080"
+        alt="Hotel Praia Bedroom View"
         class="w-full h-full object-cover scale-105"
         style="animation: subtleZoom 18s ease-in-out infinite alternate;"
       />
@@ -112,25 +124,25 @@
         }
       </style>
 
-      <div class="absolute bottom-14 left-14 z-20 text-white max-w-sm">
-        <div class="flex items-center gap-3 mb-6">
+      <div class="absolute bottom-14 right-14 z-20 text-white max-w-sm text-right">
+        <div class="flex items-center justify-end gap-3 mb-6">
+          <span class="display text-2xl font-semibold tracking-wide">Hotel Praia</span>
           <div>
             <img th:src="@{/images/logoPraia.png}" alt="Mi Logo" class="w-12 h-12 object-contain">
           </div>
-          <span class="display text-2xl font-semibold tracking-wide">Hotel Praia</span>
         </div>
 
         <p class="display text-3xl font-light leading-snug text-slate-100 mb-6">
-          "Donde el lujo se <em>encuentra</em> con el océano."
+          "Únete a nuestro club exclusivo y disfruta de beneficios <em>únicos</em>."
         </p>
 
-        <div class="w-12 h-px bg-sky-400/60"></div>
+        <div class="w-12 h-px bg-sky-400/60 ml-auto"></div>
         <p class="mt-4 text-sm font-light text-slate-300 tracking-wide">Tu escapada perfecta comienza aquí.</p>
       </div>
     </div>
 
     <!-- Panel derecho: formulario -->
-    <div class="w-full lg:w-1/2 flex flex-col bg-white relative">
+    <div class="w-full lg:w-1/2 flex flex-col bg-white relative" style="order: 1;">
 
       <!-- Back link -->
       <div class="px-8 pt-8">
@@ -158,17 +170,37 @@
 
           <!-- Heading -->
           <div class="mb-10">
-            <h2 class="display text-4xl font-semibold text-slate-900 mb-2">Iniciar Sesión</h2>
-            <p class="text-slate-500 font-light text-sm">Accede a tu cuenta para gestionar tus reservas.</p>
+            <h2 class="display text-4xl font-semibold text-slate-900 mb-2">Crear Cuenta</h2>
+            <p class="text-slate-500 font-light text-sm">Regístrate para reservar tus vacaciones soñadas.</p>
           </div>
 
-          <!-- ✅ MENSAJE DE ERROR -->
+          <!-- Mensaje de error -->
           <div th:if="${error}" class="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-sm border border-red-100">
-            <span th:text="${error}">Correo o contraseña incorrectos</span>
+            <span th:text="${error}">Por favor completa todos los campos correctamente.</span>
           </div>
 
-          <!-- ✅ Form: POST al backend -->
-          <form id="loginForm" th:action="@{/iniciar-sesion}" method="post" class="space-y-5">
+          <!-- Form: POST al backend -->
+          <form id="registerForm" th:action="@{/registrarse}" method="post" class="space-y-5">
+
+            <!-- Nombre Completo -->
+            <div>
+              <label class="block text-xs font-medium text-slate-600 uppercase tracking-wider mb-2">Nombre Completo</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  placeholder="Tu nombre completo"
+                  required
+                  class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-500/20 transition-all"
+                />
+              </div>
+            </div>
 
             <!-- Email -->
             <div>
@@ -190,40 +222,79 @@
               </div>
             </div>
 
-            <!-- Password -->
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <label class="block text-xs font-medium text-slate-600 uppercase tracking-wider">Contraseña</label>
-                <a href="#" class="text-xs text-sky-600 hover:text-sky-500 font-medium transition-colors">¿Olvidaste tu contraseña?</a>
-              </div>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                  </svg>
+            <!-- Contraseña + Confirmar (dos columnas) -->
+            <div class="password-grid">
+
+              <!-- Contraseña -->
+              <div>
+                <label class="block text-xs font-medium text-slate-600 uppercase tracking-wider mb-2">Contraseña</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                  </div>
+                  <input
+                    type="password"
+                    id="contrasena"
+                    name="contrasena"
+                    placeholder="••••••••"
+                    required
+                    class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-500/20 transition-all"
+                  />
                 </div>
-                <input
-                  type="password"
-                  id="contrasena"
-                  name="contrasena"
-                  placeholder="••••••••"
-                  required
-                  class="w-full pl-11 pr-11 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-500/20 transition-all"
-                />
-                <button
-                  type="button"
-                  onclick="togglePassword()"
-                  class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                  <svg id="eyeOpen" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                  </svg>
-                  <svg id="eyeOff" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                  </svg>
-                </button>
               </div>
+
+              <!-- Confirmar contraseña -->
+              <div>
+                <label class="block text-xs font-medium text-slate-600 uppercase tracking-wider mb-2">Confirmar</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                  </div>
+                  <input
+                    type="password"
+                    id="confirmarContrasena"
+                    name="confirmarContrasena"
+                    placeholder="••••••••"
+                    required
+                    class="w-full pl-11 pr-11 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-500/20 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onclick="togglePassword()"
+                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    <svg id="eyeOpen" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <svg id="eyeOff" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Términos y condiciones -->
+            <div class="flex items-start gap-3">
+              <input
+                id="terminos"
+                name="terminos"
+                type="checkbox"
+                required
+                class="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 focus:ring-2 cursor-pointer"
+              />
+              <label for="terminos" class="text-xs text-slate-500 leading-relaxed cursor-pointer">
+                Acepto los
+                <a href="#" class="text-sky-600 hover:text-sky-500 font-medium transition-colors">Términos y Condiciones</a>
+                y la
+                <a href="#" class="text-sky-600 hover:text-sky-500 font-medium transition-colors">Política de Privacidad</a>
+              </label>
             </div>
 
             <!-- Submit -->
@@ -232,7 +303,7 @@
               id="submitBtn"
               class="btn-primary w-full py-3.5 px-4 rounded-xl text-sm font-medium text-white wave-divider shadow-md shadow-sky-700/25 mt-2"
             >
-              <span id="btnText">Iniciar Sesión</span>
+              <span id="btnText">Registrarse</span>
               <svg id="btnSpinner" class="hidden w-5 h-5 mx-auto animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"/>
                 <path class="opacity-75" fill="white" d="M4 12a8 8 0 018-8v8H4z"/>
@@ -250,10 +321,10 @@
             </div>
           </div>
 
-          <!-- Register link -->
+          <!-- Login link -->
           <p class="text-center text-sm text-slate-500">
-            ¿No tienes una cuenta?
-            <a href="/registrarse" class="font-medium text-sky-600 hover:text-sky-500 transition-colors ml-1">Regístrate gratis</a>
+            ¿Ya tienes una cuenta?
+            <a th:href="@{/iniciar-sesion}" class="font-medium text-sky-600 hover:text-sky-500 transition-colors ml-1">Inicia sesión</a>
           </p>
 
         </div>
@@ -324,9 +395,9 @@
         <div class="footer-col">
           <h4>Contacto</h4>
           <ul class="footer-contact">
-            <li><span> CUIDAD GOTICA</span></li>
+            <li><span>CUIDAD GOTICA</span></li>
             <li><span>+57 301 57946556</span></li>
-            <li><span>samueldaza820@hotwelpraia.com</span></li>
+            <li><span>info@hotelpraia.com</span></li>
           </ul>
         </div>
 
@@ -356,25 +427,35 @@
   </footer>
 
   <script>
+    /* Toggle mostrar/ocultar contraseñas */
     function togglePassword() {
-      const input = document.getElementById('contrasena');
-      const open  = document.getElementById('eyeOpen');
-      const off   = document.getElementById('eyeOff');
-      if (input.type === 'password') {
-        input.type = 'text';
-        open.classList.add('hidden');
-        off.classList.remove('hidden');
-      } else {
-        input.type = 'password';
-        open.classList.remove('hidden');
-        off.classList.add('hidden');
-      }
+      const pass    = document.getElementById('contrasena');
+      const confirm = document.getElementById('confirmarContrasena');
+      const open    = document.getElementById('eyeOpen');
+      const off     = document.getElementById('eyeOff');
+      const isHidden = pass.type === 'password';
+
+      pass.type    = isHidden ? 'text' : 'password';
+      confirm.type = isHidden ? 'text' : 'password';
+      open.classList.toggle('hidden', isHidden);
+      off.classList.toggle('hidden', !isHidden);
     }
   </script>
 
-  <!-- ✅ Spinner SIN bloquear el submit -->
+  <!-- Spinner SIN bloquear el submit -->
   <script>
-    document.getElementById("loginForm").addEventListener("submit", () => {
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+      const pass    = document.getElementById('contrasena').value;
+      const confirm = document.getElementById('confirmarContrasena').value;
+
+      if (pass !== confirm) {
+        e.preventDefault();
+        // Mostrar error en el div de error si existe, si no con alert
+        const errorDiv = document.querySelector('[th\\:if]');
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+
       const btn     = document.getElementById('submitBtn');
       const text    = document.getElementById('btnText');
       const spinner = document.getElementById('btnSpinner');
@@ -384,6 +465,8 @@
       spinner.classList.remove('hidden');
     });
   </script>
+
+  <!-- Navbar scroll effect -->
 
   <script>
     document.querySelector(".navbar").classList.add("scrolled");
