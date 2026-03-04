@@ -67,165 +67,51 @@
         <div class="section-header">
           <h2 class="section-title">Nuestras Habitaciones</h2>
           <p class="section-description">
-            Elige la habitación perfecta para tu estancia. Cada espacio se
-            ajusta para tu presupuesto
+            Descubre el confort y la elegancia de nuestras habitaciones diseñadas
+            para ofrecerte una estancia inolvidable.
           </p>
         </div>
+     <div class="habitaciones-grid">
+  <article class="habitacion-card"
+           th:each="tipo : ${tiposHabitacion}"
+           th:if="${tipo.disponible}">
 
-        <div class="habitaciones-grid">
-          <!-- Habitación 1 -->
-          <div class="habitacion-card">
-            <div class="habitacion-image">
-              <img
-                src="https://tse1.mm.bing.net/th/id/OIP.FlPzkf_n-G8gM0Tbswk7AwHaE8?cb=defcache2&defcache=1&rs=1&pid=ImgDetMain&o=7&rm=3"
-                alt="Habitación Estándar"
-              />
-              <div class="habitacion-precio">$1.000.000 / noche</div>
-            </div>
-            <div class="habitacion-content">
-              <h3 class="habitacion-nombre">Habitación Estándar</h3>
-              <p class="habitacion-descripcion">
-                Excelente habitacion para pasar las borracheras, con excelente
-                vista al jardin si prefieres perderte en el horizonte
-              </p>
+    <div class="habitacion-image">
+      <img th:src="${tipo.imagenUrl}" th:alt="${tipo.nombre}" loading="lazy"/>
 
-              <div class="habitacion-servicios">
-                <h4>Servicios incluidos:</h4>
-                <ul>
-                  <li>WiFi gratis</li>
-                  <li>TV</li>
-                  <li>Aire acondicionado</li>
-                  <li>Minibar</li>
-                </ul>
-              </div>
-
-              <button
-                class="btn btn-block btn-ocean"
-                type="button"
-                onclick="mostrarReserva('Habitación Estándar')"
-              >
-                Reservar Esta Habitación
-              </button>
-            </div>
-          </div>
-
-          <!-- Habitación 2 -->
-          <div class="habitacion-card">
-            <div class="habitacion-image">
-              <img
-                src="https://tse3.mm.bing.net/th/id/OIP.fzQFllArLtgDerIN_Q8VhgHaE8?cb=defcache2&defcache=1&rs=1&pid=ImgDetMain&o=7&rm=3"
-                alt="Habitación Vista al Mar"
-              />
-              <div class="habitacion-precio">$2.500.000 / noche</div>
-            </div>
-            <div class="habitacion-content">
-              <h3 class="habitacion-nombre">Habitación con vista al mar</h3>
-              <p class="habitacion-descripcion">
-                Disfruta de impresionantes vistas al océano desde tu cuarto
-                privado.
-              </p>
-
-              <div class="habitacion-servicios">
-                <h4>Servicios incluidos:</h4>
-                <ul>
-                  <li>WiFi gratis</li>
-                  <li>TV</li>
-                  <li>Balcón privado</li>
-                  <li>Vista al mar</li>
-                  <li>Minibar</li>
-                </ul>
-              </div>
-
-              <button
-                class="btn btn-block btn-ocean"
-                type="button"
-                onclick="mostrarReserva('Habitación Vista al Mar')"
-              >
-                Reservar Esta Habitación
-              </button>
-            </div>
-          </div>
-
-          <!-- Habitación 3 -->
-          <div class="habitacion-card">
-            <div class="habitacion-image">
-              <img
-                src="https://dreffui1gbt6t.cloudfront.net/images/esp-es/esp-stayhero-suites-1-1024x576.jpg"
-                alt="Suite de Lujo"
-              />
-              <div class="habitacion-precio">$6.000.000 / noche</div>
-            </div>
-            <div class="habitacion-content">
-              <h3 class="habitacion-nombre">Suite de Lujo</h3>
-              <p class="habitacion-descripcion">
-                Espacio amplio y elegante con sala de estar separada y vistas
-                panorámicas al océano.
-              </p>
-
-              <div class="habitacion-servicios">
-                <h4>Servicios incluidos:</h4>
-                <ul>
-                  <li>WiFi gratis</li>
-                  <li>PLAY 5</li>
-                  <li>Sala de estar</li>
-                  <li>Jacuzzi 🫦</li>
-                  <li>Vista panorámica</li>
-                  <li>Minibar premium</li>
-                </ul>
-              </div>
-
-              <button
-                class="btn btn-block btn-ocean"
-                type="button"
-                onclick="mostrarReserva('Suite de Lujo')"
-              >
-                Reservar Esta Habitación
-              </button>
-            </div>
-          </div>
-
-          <!-- Habitación 4 -->
-          <div class="habitacion-card">
-            <div class="habitacion-image">
-              <img
-                src="https://www.manila-hotel.com.ph/wp-content/uploads/2020/06/Pres-Suite-1-DSC_1906-scaled.jpg "
-                alt="Suite Presidencial"
-              />
-              <div class="habitacion-precio">$9.000.000 / noche</div>
-            </div>
-            <div class="habitacion-content">
-              <h3 class="habitacion-nombre">Suite Presidencial</h3>
-              <p class="habitacion-descripcion">
-                La creme de la creme en cuanto habitaciones de nuestro hotel,
-                por si quieres vivir un proyecto x propio.
-              </p>
-
-              <div class="habitacion-servicios">
-                <h4>Servicios incluidos:</h4>
-                <ul>
-                  <li>WiFi gratis</li>
-                  <li>TV</li>
-                  <li>2 Habitaciones</li>
-                  <li>Cocina completa</li>
-                  <li>Terraza privada</li>
-                  <li>Servicio 24h</li>
-                  <li>Lady Gaga</li>
-                </ul>
-              </div>
-
-              <button
-                class="btn btn-block btn-ocean"
-                type="button"
-                onclick="mostrarReserva('Suite Presidencial')"
-              >
-                Reservar Esta Habitación
-              </button>
-            </div>
-          </div>
-        </div>
+      <div class="habitacion-precio">
+        <span th:text="${'$ ' + #numbers.formatInteger(tipo.precio, 3, 'POINT')}"></span>
+        <span>/noche</span>
       </div>
-    </section>
+    </div>
 
+    <div class="habitacion-content">
+      <h3 class="habitacion-nombre" th:text="${tipo.nombre}"></h3>
+
+      <!-- clamp visual: mantiene todas parejas -->
+      <p class="habitacion-descripcion clamp-2" th:text="${tipo.descripcion}"></p>
+
+      <div class="habitacion-capacidad">
+        <span th:text="${'Capacidad: ' + tipo.capacidad + ' • ' + tipo.camas}"></span>
+      </div>
+
+      <div class="habitacion-servicios">
+        <h4>Incluye</h4>
+        <ul>
+          <!-- Máximo 4 items para que no se desordene -->
+          <li th:each="a, st : ${#strings.arraySplit(tipo.amenities, ' • ')}"
+              th:if="${st.index < 4}"
+              th:text="${a}"></li>
+        </ul>
+      </div>
+
+      <div class="habitacion-actions">
+        <a class="btn btn-ocean btn-block" href="#reservas">Reservar</a>
+      </div>
+    </div>
+
+  </article>
+</div>
     <!-- Servicios Section -->
     <section id="servicios" class="servicios-section">
       <div class="container">
