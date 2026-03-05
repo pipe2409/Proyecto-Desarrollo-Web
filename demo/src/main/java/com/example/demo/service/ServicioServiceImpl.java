@@ -12,7 +12,7 @@ import java.util.List;
 public class ServicioServiceImpl implements ServicioService {
 
     @Autowired
-    private  ServicioRepository repository;
+    private ServicioRepository repository;
 
     public ServicioServiceImpl(ServicioRepository repository) {
         this.repository = repository;
@@ -28,9 +28,13 @@ public class ServicioServiceImpl implements ServicioService {
         repository.save(servicio);
     }
 
-
     @Override
     public void eliminarServicio(int id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public Servicio buscarPorId(int id) {
+        return repository.findById(id);
     }
 }

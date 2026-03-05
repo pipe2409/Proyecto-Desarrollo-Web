@@ -10,4 +10,6 @@ public interface ServicioService {
     void guardarServicio(Servicio servicio);
 
     void eliminarServicio(int id);
+
+    Servicio buscarPorId(int id); 
 }
