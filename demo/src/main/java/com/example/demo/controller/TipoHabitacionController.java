@@ -15,10 +15,6 @@ public class TipoHabitacionController {
     @Autowired
     private TipoHabitacionRepository repo;
  
-    public TipoHabitacionController(TipoHabitacionRepository repo) {
-        this.repo = repo;
-    }
-
     @GetMapping
     public String home() {
         return "redirect:/tipos-habitacion/admin";
@@ -40,7 +36,6 @@ public class TipoHabitacionController {
     @PostMapping("/admin/guardar")
     public String guardar(@ModelAttribute("tipo") TipoHabitacion tipo, RedirectAttributes ra) {
         repo.save(tipo);
-        ra.addFlashAttribute("ok", "Tipo de habitación creado.");
         return "redirect:/tipos-habitacion/admin";
     }
 

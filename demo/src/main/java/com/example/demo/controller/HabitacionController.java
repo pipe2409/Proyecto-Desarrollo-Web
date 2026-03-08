@@ -78,12 +78,6 @@ public class HabitacionController {
     @PostMapping("/admin/guardar")
     public String guardar(@ModelAttribute("habitacion") Habitacion habitacion, RedirectAttributes ra) {
 
-        // Validación mínima: tipo debe existir
-        if (tipoRepo.findById(habitacion.getTipoHabitacionId()) == null) {
-            ra.addFlashAttribute("err", "Selecciona un tipo de habitación válido.");
-            return "redirect:/habitaciones/admin";
-        }
-
         habitacionRepo.save(habitacion);
         ra.addFlashAttribute("ok", "Habitación creada.");
         return "redirect:/habitaciones/admin";
@@ -110,17 +104,6 @@ public class HabitacionController {
     public String actualizar(@PathVariable int id,
                              @ModelAttribute("habitacion") Habitacion habitacion,
                              RedirectAttributes ra) {
-
-        if (habitacionRepo.findById(id) == null) {
-            ra.addFlashAttribute("err", "No existe la habitación con id=" + id);
-            return "redirect:/habitaciones/admin";
-        }
-
-        if (tipoRepo.findById(habitacion.getTipoHabitacionId()) == null) {
-            ra.addFlashAttribute("err", "Selecciona un tipo de habitación válido.");
-            return "redirect:/habitaciones/admin/editar/" + id;
-        }
-
         habitacion.setId(id);
         habitacionRepo.save(habitacion);
         ra.addFlashAttribute("ok", "Habitación actualizada.");
