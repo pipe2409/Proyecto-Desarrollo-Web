@@ -13,10 +13,7 @@ public class ServiciosController {
     @Autowired
     private ServicioService servicioService;
 
-    public ServiciosController(ServicioService servicioService) {
-        this.servicioService = servicioService;
-    }
-
+   
     @GetMapping("/admin")
     public String serviciosAdmin(Model model) {
         model.addAttribute("servicios", servicioService.listarServicios());
