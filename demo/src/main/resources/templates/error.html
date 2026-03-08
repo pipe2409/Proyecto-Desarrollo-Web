@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error - Hotel Praia</title>
+
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .error-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 120px 2rem 6rem;
+        background: linear-gradient(180deg, #0a1628 0%, #0d2137 100%);
+      }
+
+      .error-container {
+        text-align: center;
+        max-width: 560px;
+        width: 100%;
+      }
+
+      .error-code {
+        font-size: clamp(7rem, 20vw, 11rem);
+        font-weight: 900;
+        line-height: 1;
+        color: #fff;
+        opacity: .08;
+        letter-spacing: -.04em;
+        margin-bottom: -2rem;
+        user-select: none;
+      }
+
+      .error-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .error-title {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: .75rem;
+      }
+
+      .error-divider {
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #00b4d8, #2980b9);
+        border-radius: 2px;
+        margin: 1rem auto 1.25rem;
+      }
+
+      .error-message {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.7;
+        margin-bottom: .75rem;
+      }
+
+      .error-path {
+        display: inline-block;
+        font-size: .8rem;
+        color: #00b4d8;
+        background: rgba(0, 180, 216, .08);
+        border: 1px solid rgba(0, 180, 216, .2);
+        border-radius: 20px;
+        padding: .3rem 1rem;
+        margin-bottom: 2.5rem;
+        font-family: monospace;
+      }
+
+      .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn-error-primary {
+        display: inline-block;
+        padding: .75rem 2rem;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #00b4d8, #2980b9);
+        color: #fff;
+        font-weight: 600;
+        font-size: .95rem;
+        text-decoration: none;
+        transition: transform .2s, box-shadow .2s;
+        box-shadow: 0 4px 18px rgba(0,180,216,.3);
+      }
+      .btn-error-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,180,216,.45);
+      }
+
+      .btn-error-secondary {
+        display: inline-block;
+        padding: .75rem 2rem;
+        border-radius: 50px;
+        background: transparent;
+        color: #fff;
+        font-weight: 600;
+        font-size: .95rem;
+        text-decoration: none;
+        border: 1.5px solid rgba(255,255,255,.25);
+        transition: border-color .2s, color .2s, transform .2s;
+      }
+      .btn-error-secondary:hover {
+        border-color: #00b4d8;
+        color: #00b4d8;
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <div class="logo-icon" aria-hidden="true">
+            <img src="/images/logoPraia.png" alt="logoPraia" />
+          </div>
+          <span class="logo-text">Hotel Praia</span>
+        </div>
+
+        <div class="nav-links" id="navLinks">
+          <a href="/#inicio"        class="nav-link">Inicio</a>
+          <a href="/#habitaciones"  class="nav-link">Habitaciones</a>
+          <a href="/servicios/op"   class="nav-link">Servicios</a>
+          <a href="/#galeria"       class="nav-link">Galería</a>
+          <a href="/#testimonios"   class="nav-link">Testimonios</a>
+          <a href="/#contacto"      class="nav-link">Contacto</a>
+          <a href="/iniciar-sesion" class="btn-reservar">Reservar</a>
+        </div>
+
+        <button
+          class="mobile-menu-btn"
+          id="mobileMenuBtn"
+          type="button"
+          aria-label="Abrir menú"
+        ></button>
+      </div>
+    </nav>
+
+    <!-- Sección de error -->
+    <section class="error-section">
+      <div class="error-container">
+
+        <div class="error-code" th:text="${status}" aria-hidden="true">404</div>
+
+        <span class="error-icon">🌊</span>
+
+        <h1 class="error-title" th:text="${error}">Página no encontrada</h1>
+
+        <div class="error-divider"></div>
+
+        <p class="error-message" th:text="${message}">
+          Lo sentimos, no pudimos encontrar lo que estabas buscando.
+        </p>
+
+        <span class="error-path" th:if="${path}" th:text="${path}"></span>
+
+        <div class="error-actions">
+          <a href="/"                          class="btn-error-primary">← Volver al inicio</a>
+          <a href="javascript:history.back()"  class="btn-error-secondary">Página anterior</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto" class="footer">
+      <div class="container">
+        <div class="footer-grid">
+
+          <div class="footer-col">
+            <div class="footer-logo">
+              <span>Hotel Praia</span>
+              <img src="/images/logoPraia.png" alt="" />
+            </div>
+            <p>Experimenta el lujo frente al océano en nuestro exclusivo resort playero</p>
+            <div class="social-links">
+              <a href="#" class="social-link" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+              </a>
+              <a href="#" class="social-link" aria-label="Facebook">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+              </a>
+              <a href="#" class="social-link" aria-label="X">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4l16 16M20 4L4 20"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Enlaces Rápidos</h4>
+            <ul class="footer-links">
+              <li><a href="/#inicio">Inicio</a></li>
+              <li><a href="/#habitaciones">Habitaciones</a></li>
+              <li><a href="/#servicios">Servicios</a></li>
+              <li><a href="/#galeria">Galería</a></li>
+              <li><a href="/#testimonios">Testimonios</a></li>
+              <li><a href="/#reservas">Reservas</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Contacto</h4>
+            <ul class="footer-contact">
+              <li><span>CUIDAD GOTICA</span></li>
+              <li><span>+57 301 57946556</span></li>
+              <li><span>samueldaza820@hotwelpraia.com</span></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Horario de Atención</h4>
+            <ul class="footer-hours">
+              <li>Recepción: 24 horas</li>
+              <li>Check-in: 15:00</li>
+              <li>Check-out: 12:00</li>
+              <li class="hours-reservas">
+                <strong>Reservas:</strong><br />
+                Lunes - Domingo<br />
+                9:00 - 21:00
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <div class="footer-bottom-content">
+            <p>@ Hotel Praia. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/js/index.js"></script>
+  </body>
+</html>
