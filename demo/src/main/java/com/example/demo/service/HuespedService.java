@@ -1,15 +1,22 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Huesped;
+
 import java.util.List;
 
 public interface HuespedService {
 
-    List<Huesped> listarHuespedes();
+    List<Huesped> findAll();
 
-    Huesped buscarPorId(int id);
+    Huesped findById(Integer id);
 
-    void guardarHuesped(Huesped huesped);
+    Huesped findByCorreo(String correo);
 
-    void eliminarHuesped(int id);
+    Huesped login(String correo, String contrasena);
+
+    Huesped save(Huesped huesped);
+
+    Huesped update(Integer id, Huesped huesped);
+
+    void deleteById(Integer id);
 }

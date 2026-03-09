@@ -1,83 +1,62 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Habitacion;
-import com.example.demo.entities.TipoHabitacion;
 import com.example.demo.repository.HabitacionRepository;
-import com.example.demo.repository.TipoHabitacionRepository;
-import com.example.demo.service.HabitacionService;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@Transactional
 public class HabitacionServiceImpl implements HabitacionService {
 
-    @Autowired
-    private HabitacionRepository habitacionRepository;
+    private final HabitacionRepository habitacionRepository;
 
-    @Autowired
-    private TipoHabitacionRepository tipoHabitacionRepository;
+    public HabitacionServiceImpl(HabitacionRepository habitacionRepository) {
+        this.habitacionRepository = habitacionRepository;
+    }
 
     @Override
-    public List<Habitacion> listar(Integer tipoId) {
-        if (tipoId != null) {
-            return habitacionRepository.findByTipoId(tipoId);
-        }
+    public List<Habitacion> findAll() {
         return habitacionRepository.findAll();
     }
 
     @Override
-    public Habitacion obtenerPorId(int id) {
-        Habitacion habitacion = habitacionRepository.findById(id);
-        if (habitacion == null) {
-            throw new RuntimeException("Habitación no encontrada con ID: " + id);
+    public List<Habitacion> findByTipoId(Integer tipoId) {
+        if (tipoId == null) {
+            return habitacionRepository.findAll();
         }
-        return habitacion;
+        return habitacionRepository.findByTipoHabitacion_Id(tipoId);
     }
 
     @Override
-public Habitacion construirNueva(Integer tipoId) {
-    Habitacion habitacion = new Habitacion();
-    if (tipoId != null) {
-        habitacion.setTipoHabitacionId(tipoId);
-    }
-    return habitacion;
-}
-
-    @Override
-    public void crear(Habitacion habitacion) {
-        habitacionRepository.save(habitacion);
+    public Habitacion findById(Integer id) {
+        return habitacionRepository.findById(id).orElse(null);
     }
 
     @Override
-public void actualizar(int id, Habitacion habitacion) {
-    Habitacion existente = obtenerPorId(id);
-    existente.setCodigo(habitacion.getCodigo());
-    existente.setPiso(habitacion.getPiso());
-    existente.setEstado(habitacion.getEstado());
-    existente.setTipoHabitacionId(habitacion.getTipoHabitacionId());
-    existente.setNotas(habitacion.getNotas());
-    habitacionRepository.save(existente);
-}
+    public Habitacion save(Habitacion habitacion) {
+        return habitacionRepository.save(habitacion);
+    }
+
     @Override
-    public void eliminar(int id) {
-        obtenerPorId(id); // valida que exista antes de eliminar
+    public Habitacion update(Integer id, Habitacion habitacion) {
+        Habitacion existente = habitacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existe la habitación con id=" + id));
+
+        existente.setCodigo(habitacion.getCodigo());
+        existente.setPiso(habitacion.getPiso());
+        existente.setEstado(habitacion.getEstado());
+        existente.setTipoHabitacion(habitacion.getTipoHabitacion());
+        existente.setNotas(habitacion.getNotas());
+
+        return habitacionRepository.save(existente);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
         habitacionRepository.deleteById(id);
-    }
-
-    @Override
-    public Map<Integer, String> nombresTipoHabitacion() {
-        return tipoHabitacionRepository.findAll()
-                .stream()
-                .collect(Collectors.toMap(
-                        TipoHabitacion::getId,
-                        TipoHabitacion::getNombre
-                ));
     }
 }

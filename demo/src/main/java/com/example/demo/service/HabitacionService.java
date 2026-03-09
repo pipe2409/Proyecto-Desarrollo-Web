@@ -3,21 +3,18 @@ package com.example.demo.service;
 import com.example.demo.entities.Habitacion;
 
 import java.util.List;
-import java.util.Map;
 
 public interface HabitacionService {
 
-    List<Habitacion> listar(Integer tipoId);
+    List<Habitacion> findAll();
 
-    Habitacion obtenerPorId(int id);
+    List<Habitacion> findByTipoId(Integer tipoId);
 
-    Habitacion construirNueva(Integer tipoId);
+    Habitacion findById(Integer id);
 
-    void crear(Habitacion habitacion);
+    Habitacion save(Habitacion habitacion);
 
-    void actualizar(int id, Habitacion habitacion);
+    Habitacion update(Integer id, Habitacion habitacion);
 
-    void eliminar(int id);
-
-    Map<Integer, String> nombresTipoHabitacion();
+    void deleteById(Integer id);
 }

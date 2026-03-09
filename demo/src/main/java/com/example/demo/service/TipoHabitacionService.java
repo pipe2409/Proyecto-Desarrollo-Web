@@ -1,18 +1,21 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.TipoHabitacion;
-
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+@Service
 
 public interface TipoHabitacionService {
 
     List<TipoHabitacion> findAll();
 
-    TipoHabitacion findById(int id);
+    TipoHabitacion findById(Integer id);
 
-    void save(TipoHabitacion tipoHabitacion);
+    TipoHabitacion save(TipoHabitacion tipoHabitacion);
 
-    void update(int id, TipoHabitacion tipoHabitacion);
+    TipoHabitacion update(Integer id, TipoHabitacion tipoHabitacion);
 
-    void deleteById(int id);
+    void deleteById(Integer id);
 }

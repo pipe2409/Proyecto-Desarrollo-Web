@@ -2,36 +2,55 @@ package com.example.demo.service;
 
 import com.example.demo.entities.Servicio;
 import com.example.demo.repository.ServicioRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class ServicioServiceImpl implements ServicioService {
 
-    @Autowired
-    private ServicioRepository repository;
+    private final ServicioRepository servicioRepository;
 
-
-    @Override
-    public List<Servicio> listarServicios() {
-        return repository.findAll();
+    public ServicioServiceImpl(ServicioRepository servicioRepository) {
+        this.servicioRepository = servicioRepository;
     }
 
     @Override
-    public void guardarServicio(Servicio servicio) {
-        repository.save(servicio);
+    public List<Servicio> findAll() {
+        return servicioRepository.findAll();
     }
 
     @Override
-    public void eliminarServicio(int id) {
-        repository.deleteById(id);
+    public Servicio findById(Integer id) {
+        return servicioRepository.findById(id).orElse(null);
     }
 
     @Override
-    public Servicio buscarPorId(int id) {
-        return repository.findById(id);
+    public Servicio save(Servicio servicio) {
+        return servicioRepository.save(servicio);
+    }
+
+    @Override
+    public Servicio update(Integer id, Servicio servicio) {
+        Servicio existente = servicioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existe el servicio con id=" + id));
+
+        existente.setNombre(servicio.getNombre());
+        existente.setDescripcion(servicio.getDescripcion());
+        existente.setPrecio(servicio.getPrecio());
+        existente.setImagenUrl(servicio.getImagenUrl());
+        existente.setCapacidad(servicio.getCapacidad());
+        existente.setPrecioTipo(servicio.getPrecioTipo());
+        existente.setHorario(servicio.getHorario());
+
+        return servicioRepository.save(existente);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        servicioRepository.deleteById(id);
     }
 }

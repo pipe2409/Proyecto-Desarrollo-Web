@@ -1,15 +1,18 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Servicio;
+
 import java.util.List;
 
 public interface ServicioService {
 
-    List<Servicio> listarServicios();
+    List<Servicio> findAll();
 
-    void guardarServicio(Servicio servicio);
+    Servicio findById(Integer id);
 
-    void eliminarServicio(int id);
+    Servicio save(Servicio servicio);
 
-    Servicio buscarPorId(int id); 
+    Servicio update(Integer id, Servicio servicio);
+
+    void deleteById(Integer id);
 }

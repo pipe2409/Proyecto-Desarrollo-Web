@@ -1,23 +1,21 @@
 package com.example.demo.controller;
 
 import com.example.demo.entities.Huesped;
-import com.example.demo.repository.HuespedesRepository;
+import com.example.demo.service.HuespedService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public class LoginController {
 
-    @Autowired
-    private HuespedesRepository repo;
+    private final HuespedService huespedService;
 
-    public LoginController(HuespedesRepository repo) {
-        this.repo = repo;
+    public LoginController(HuespedService huespedService) {
+        this.huespedService = huespedService;
     }
 
     // ==========================
@@ -38,7 +36,7 @@ public class LoginController {
             HttpSession session,
             Model model
     ) {
-        Huesped h = repo.findByCorreoAndContrasena(correo, contrasena);
+        Huesped h = huespedService.login(correo, contrasena);
 
         if (h == null) {
             model.addAttribute("error", "Correo o contraseña incorrectos");
@@ -47,6 +45,7 @@ public class LoginController {
 
         // Guardamos el id en sesión
         session.setAttribute("huespedId", h.getId());
+        session.setAttribute("huespedNombre", h.getNombre());
 
         return "redirect:/huespedes/mi-cuenta";
     }

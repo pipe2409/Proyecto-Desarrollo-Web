@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.entities.Huesped;
 import com.example.demo.service.HuespedService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +10,16 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class HuespedesController {
 
-    @Autowired
-    private HuespedService huespedService;
+    private final HuespedService huespedService;
+
+    public HuespedesController(HuespedService huespedService) {
+        this.huespedService = huespedService;
+    }
 
     // Listar todos los huéspedes
     @GetMapping("/admin")
     public String huespedesAdmin(Model model) {
-        model.addAttribute("huespedes", huespedService.listarHuespedes());
+        model.addAttribute("huespedes", huespedService.findAll());
         return "huespedes-admin";
     }
 
@@ -31,14 +33,14 @@ public class HuespedesController {
     // Guardar huésped (crear o editar)
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Huesped huesped) {
-        huespedService.guardarHuesped(huesped);
+        huespedService.save(huesped);
         return "redirect:/huespedes/admin";
     }
 
     // Eliminar huésped
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Integer id) {
-        huespedService.eliminarHuesped(id);
+        huespedService.deleteById(id);
         return "redirect:/huespedes/admin";
     }
 }
