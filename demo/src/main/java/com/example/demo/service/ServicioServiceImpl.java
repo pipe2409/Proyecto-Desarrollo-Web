@@ -14,9 +14,6 @@ public class ServicioServiceImpl implements ServicioService {
     @Autowired
     private ServicioRepository repository;
 
-    public ServicioServiceImpl(ServicioRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<Servicio> listarServicios() {

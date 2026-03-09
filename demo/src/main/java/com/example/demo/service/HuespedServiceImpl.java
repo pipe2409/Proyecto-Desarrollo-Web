@@ -14,9 +14,6 @@ public class HuespedServiceImpl implements HuespedService {
     @Autowired
     private HuespedesRepository repository;
 
-    public HuespedServiceImpl(HuespedesRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<Huesped> listarHuespedes() {
