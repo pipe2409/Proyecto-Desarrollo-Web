@@ -14,7 +14,7 @@ public class TipoHabitacion {
     
     private String descripcion;
     private int precio;
-    @Column(name = "imagen_url")
+    @Column(name = "imagen_url", columnDefinition = "TEXT")
     private String imagenUrl;
     private int capacidad;
     private String camas;
@@ -26,7 +26,7 @@ public class TipoHabitacion {
     public TipoHabitacion() {
     }
 
-    public TipoHabitacion(int id, String nombre, String descripcion, int precio,
+    public TipoHabitacion(Integer id, String nombre, String descripcion, int precio,
                           String imagenUrl, int capacidad, String camas,
                           String amenities, boolean disponible) {
         this.id = id;
@@ -40,11 +40,11 @@ public class TipoHabitacion {
         this.disponible = disponible;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
