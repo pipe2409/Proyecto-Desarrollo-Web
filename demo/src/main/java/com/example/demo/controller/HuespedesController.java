@@ -6,16 +6,15 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RequestMapping("/huespedes")
 @Controller
 public class HuespedesController {
 
-    private final HuespedService huespedService;
+    @Autowired
+    private HuespedService huespedService;
 
-    public HuespedesController(HuespedService huespedService) {
-        this.huespedService = huespedService;
-    }
 
     @GetMapping("/admin")
     public String huespedesAdmin(Model model) {

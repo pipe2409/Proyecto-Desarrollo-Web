@@ -5,16 +5,15 @@ import com.example.demo.service.HuespedService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RequestMapping("/registrarse")
 @Controller
 public class RegistrarseController {
 
-    private final HuespedService huespedService;
+    @Autowired
+    private HuespedService huespedService;
 
-    public RegistrarseController(HuespedService huespedService) {
-        this.huespedService = huespedService;
-    }
 
     @GetMapping("")
     public String registrarse(Model model) {

@@ -6,16 +6,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RequestMapping("/tipos-habitacion")
 @Controller
 public class TipoHabitacionController {
 
-    private final TipoHabitacionService tipoHabitacionService;
+    @Autowired
+    private TipoHabitacionService tipoHabitacionService;
 
-    public TipoHabitacionController(TipoHabitacionService tipoHabitacionService) {
-        this.tipoHabitacionService = tipoHabitacionService;
-    }
+    
 
     @GetMapping
     public String home() {
