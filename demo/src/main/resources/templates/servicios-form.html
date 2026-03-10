@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${modo == 'crear' ? 'Crear Servicio' : 'Editar Servicio'}"></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-950/70 backdrop-blur">
+    <div class="mx-auto max-w-3xl px-4 py-5 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold"
+            th:text="${modo == 'crear' ? 'Crear servicio' : 'Editar servicio'}"></h1>
+        <p class="text-sm text-slate-400">Completa los campos y guarda.</p>
+      </div>
+
+      <a href="/servicios/admin"
+         class="rounded-lg border border-slate-800 px-4 py-2 text-sm hover:bg-slate-900">
+        Volver
+      </a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-3xl px-4 py-8">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+
+      <form th:object="${servicio}"
+            method="post"
+            th:action="${modo == 'crear'} ? @{/servicios/admin/guardar} : @{/servicios/admin/actualizar/{id}(id=${servicio.id})}"
+            class="space-y-4">
+
+        <div th:if="${modo == 'editar'}" class="text-xs text-slate-400">
+          ID: <span class="font-mono" th:text="*{id}"></span>
+          <input type="hidden" th:field="*{id}" />
+        </div>
+
+        <!-- Nombre -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Nombre</label>
+          <input th:field="*{nombre}"
+                 required
+                 class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                 placeholder="Spa, Restaurante, Piscina..." />
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Descripción</label>
+          <textarea th:field="*{descripcion}"
+                    rows="3"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                    placeholder="Opcional..."></textarea>
+        </div>
+
+        <!-- Precio y Tipo de precio -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Precio</label>
+            <input th:field="*{precio}"
+                   type="number"
+                   min="0"
+                   required
+                   class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                   placeholder="50000" />
+          </div>
+
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Tipo de precio</label>
+            <select th:field="*{precioTipo}"
+                    required
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500">
+              <option value="" disabled>Selecciona un tipo</option>
+              <option value="POR_PERSONA">POR PERSONA</option>
+              <option value="POR_HORA">POR HORA</option>
+              <option value="POR_DIA">POR DÍA</option>
+              <option value="FIJO">FIJO</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Capacidad y Horario -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Capacidad</label>
+            <input th:field="*{capacidad}"
+                   type="number"
+                   min="1"
+                   required
+                   class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                   placeholder="10" />
+          </div>
+
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Horario</label>
+            <input th:field="*{horario}"
+                   required
+                   class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                   placeholder="8:00 - 20:00" />
+          </div>
+        </div>
+
+        <!-- URL de imagen -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">URL de imagen</label>
+          <input th:field="*{imagenUrl}"
+                 type="url"
+                 class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                 placeholder="https://ejemplo.com/imagen.jpg" />
+        </div>
+
+        <!-- Botones -->
+        <div class="pt-2 flex gap-2">
+          <button type="submit"
+                  class="rounded-xl bg-sky-600 px-5 py-2 text-sm font-medium hover:bg-sky-500">
+            Guardar
+          </button>
+
+          <a href="/servicios/admin"
+             class="rounded-xl border border-slate-800 px-5 py-2 text-sm hover:bg-slate-900">
+            Cancelar
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </main>
+</body>
+</html>
