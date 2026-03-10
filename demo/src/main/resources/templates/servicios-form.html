@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${modo == 'crear'} ? 'Nuevo Servicio | Hotel Praia' : 'Editar Servicio | Hotel Praia'">Formulario Servicio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(180deg, #f0f9ff 0%, #ecfeff 100%);
+      color: #0f172a;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      width: 100%;
+      background: rgba(8, 47, 73, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+
+    .nav-logo img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: white;
+      padding: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #e0f2fe;
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: 0.25s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .page-wrap {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 34px 20px 60px;
+    }
+
+    .header-card {
+      background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+      color: white;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 16px 40px rgba(2, 132, 199, 0.2);
+      margin-bottom: 24px;
+    }
+
+    .header-card h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .header-card p {
+      opacity: 0.95;
+      line-height: 1.5;
+      max-width: 760px;
+    }
+
+    .form-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+    }
+
+    .form-card,
+    .preview-card {
+      background: white;
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 14px 32px rgba(2, 132, 199, 0.08);
+      border: 1px solid #dbeafe;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 14px 15px;
+      font-size: 0.97rem;
+      outline: none;
+      transition: 0.2s ease;
+      background: #f8fafc;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #0ea5e9;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+    }
+
+    .hint {
+      margin-top: 6px;
+      color: #64748b;
+      font-size: 0.88rem;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn-save,
+    .btn-cancel {
+      border: none;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 13px 18px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      transition: 0.2s ease;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      color: white;
+      box-shadow: 0 10px 24px rgba(14, 165, 233, 0.24);
+    }
+
+    .btn-save:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-cancel {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .btn-cancel:hover {
+      background: #cbd5e1;
+    }
+
+    .preview-box {
+      background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+      border: 2px dashed #bfdbfe;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .preview-box img {
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      border-radius: 18px;
+      background: #e2e8f0;
+      margin-bottom: 14px;
+    }
+
+    .preview-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .preview-desc {
+      color: #475569;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .preview-price {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .footer {
+      margin-top: 40px;
+      background: #082f49;
+      color: #e0f2fe;
+      text-align: center;
+      padding: 22px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .form-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="/images/logoPraia.png" alt="Logo Hotel Praia">
+        <span>Hotel Praia · Admin</span>
+      </div>
+
+      <div class="nav-links">
+        <a th:href="@{/huespedes/admin}">Panel de Huéspedes</a>
+        <a th:href="@{/tipos-habitacion/admin}">Tipos de Habitación</a>
+        <a th:href="@{/habitaciones/admin}">Habitaciones</a>
+        <a th:href="@{/servicios/admin}" class="active">Servicios</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrap">
+
+    <section class="header-card">
+      <h1 th:text="${modo == 'crear'} ? 'Crear nuevo servicio' : 'Editar servicio'"></h1>
+      <p>
+        Completa la información del servicio para que esté disponible dentro del panel del hotel.
+        Puedes registrar nombre, descripción, precio e imagen representativa.
+      </p>
+    </section>
+
+    <div class="form-layout">
+
+      <section class="form-card">
+        <h2 class="section-title">Información del servicio</h2>
+            <form th:object="${servicio}"
+      th:action="${modo == 'crear'} ? @{/servicios/admin/guardar} : @{/servicios/admin/actualizar/{id}(id=${servicio.id})}"
+      method="post">
+
+  <div class="form-group">
+    <label for="nombre">Nombre del servicio</label>
+    <input id="nombre" type="text" th:field="*{nombre}" placeholder="Ej: Spa premium" required>
+    <p class="hint">Usa un nombre claro y corto para identificar el servicio.</p>
+  </div>
+
+  <div class="form-group">
+    <label for="descripcion">Descripción</label>
+    <textarea id="descripcion" th:field="*{descripcion}" rows="5"
+              placeholder="Describe brevemente lo que incluye este servicio"></textarea>
+    <p class="hint">Incluye beneficios o detalles importantes para el huésped.</p>
+  </div>
+
+  <div class="form-group">
+    <label for="precio">Precio</label>
+    <input id="precio" type="number" th:field="*{precio}" min="0" placeholder="Ej: 85000" required>
+    <p class="hint">Ingresa el valor numérico del servicio.</p>
+  </div>
+
+  <div class="form-group">
+    <label for="capacidad">Capacidad</label>
+    <input id="capacidad" type="number" th:field="*{capacidad}" min="1" placeholder="Ej: 10" required>
+    <p class="hint">Número máximo de personas que pueden usar este servicio.</p>
+  </div>
+
+  <div class="form-group">
+    <label for="precioTipo">Tipo de precio</label>
+    <input id="precioTipo" type="text" th:field="*{precioTipo}" placeholder="Ej: Por persona / Por grupo / Por hora" required>
+    <p class="hint">Describe cómo se cobra este servicio.</p>
+  </div>
+
+  <div class="form-group">
+    <label for="horario">Horario</label>
+    <input id="horario" type="text" th:field="*{horario}" placeholder="Ej: 8:00 AM - 6:00 PM" required>
+    <p class="hint">Horario en el que el servicio está disponible.</p>
+  </div>
+
+  <div class="form-group">
+    <label for="imagenUrl">URL de la imagen</label>
+    <input id="imagenUrl" type="text" th:field="*{imagenUrl}" placeholder="https://...">
+    <p class="hint">Pega una URL válida para mostrar una vista previa del servicio.</p>
+  </div>
+
+  <div class="button-row">
+    <button type="submit" class="btn-save">
+      <span th:text="${modo == 'crear'} ? 'Guardar servicio' : 'Actualizar servicio'"></span>
+    </button>
+
+    <a th:href="@{/servicios/admin}" class="btn-cancel">
+      Cancelar
+    </a>
+  </div>
+</form>
+        
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© Hotel Praia. Formulario administrativo de servicios.</p>
+  </footer>
+
+  <script>
+  const nombreInput = document.getElementById('nombre');
+  const descripcionInput = document.getElementById('descripcion');
+  const precioInput = document.getElementById('precio');
+  const imagenInput = document.getElementById('imagenUrl');
+  const capacidadInput = document.getElementById('capacidad');
+  const precioTipoInput = document.getElementById('precioTipo');
+  const horarioInput = document.getElementById('horario');
+
+  const previewNombre = document.getElementById('previewNombre');
+  const previewDescripcion = document.getElementById('previewDescripcion');
+  const previewPrecio = document.getElementById('previewPrecio');
+  const previewImg = document.getElementById('previewImg');
+  const previewCapacidad = document.getElementById('previewCapacidad');
+  const previewPrecioTipo = document.getElementById('previewPrecioTipo');
+  const previewHorario = document.getElementById('previewHorario');
+
+  if (nombreInput) {
+    nombreInput.addEventListener('input', () => {
+      previewNombre.textContent = nombreInput.value.trim() || 'Nombre del servicio';
+    });
+  }
+
+  if (descripcionInput) {
+    descripcionInput.addEventListener('input', () => {
+      previewDescripcion.textContent = descripcionInput.value.trim() || 'Aquí aparecerá la descripción del servicio.';
+    });
+  }
+
+  if (precioInput) {
+    precioInput.addEventListener('input', () => {
+      previewPrecio.textContent = precioInput.value || '0';
+    });
+  }
+
+  if (capacidadInput) {
+    capacidadInput.addEventListener('input', () => {
+      previewCapacidad.textContent = capacidadInput.value || '0';
+    });
+  }
+
+  if (precioTipoInput) {
+    precioTipoInput.addEventListener('input', () => {
+      previewPrecioTipo.textContent = precioTipoInput.value.trim() || 'No definido';
+    });
+  }
+
+  if (horarioInput) {
+    horarioInput.addEventListener('input', () => {
+      previewHorario.textContent = horarioInput.value.trim() || 'No definido';
+    });
+  }
+
+  if (imagenInput) {
+    imagenInput.addEventListener('input', () => {
+      const url = imagenInput.value.trim();
+      previewImg.src = url || 'https://via.placeholder.com/400x260?text=Servicio+Hotel+Praia';
+    });
+
+    previewImg.addEventListener('error', () => {
+      previewImg.src = 'https://via.placeholder.com/400x260?text=Imagen+no+disponible';
+    });
+  }
+</script>
+
+</body>
+</html>
