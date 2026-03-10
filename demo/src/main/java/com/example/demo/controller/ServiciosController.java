@@ -79,4 +79,11 @@ public class ServiciosController {
 
         return "redirect:/servicios/admin";
     }
+
+     @GetMapping("/op")
+    public String serviciosOp(Model model) {
+        model.addAttribute("servicios", serviciosService.findAll());
+        return "servicios-op";
+
+    }
 }
