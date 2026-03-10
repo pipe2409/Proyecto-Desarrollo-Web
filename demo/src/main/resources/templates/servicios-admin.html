@@ -1,200 +1,422 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Servicios - Hotel Praia</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Servicios - Panel Administrador | Hotel Praia</title>
 
-    <link rel="stylesheet" href="/css/servicios-admin.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
 
-  <body>
-   
-    <!-- Navbar -->
-    <nav class="navbar" id="navbar">
-      <div class="nav-container">
-        <div class="nav-logo">
-          <div class="logo-icon" aria-hidden="true">
-            <img src="../images/logoPraia.png" alt="logoPraia" />
-          </div>
-          <span class="logo-text">Hotel Praia</span>
-        </div>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
 
-         <div class="nav-links" id="navLinks">
-          <a href="#inicio" class="nav-link">Inicio</a>
-          <a href="#habitaciones" class="nav-link">Habitaciones</a>
-          <a href="/servicios/op" class="nav-link">Servicios</a>
-          <a href="#galeria" class="nav-link">Galería</a>
-          <a href="#testimonios" class="nav-link">Testimonios</a>
-          <a href="#contacto" class="nav-link">Contacto</a>
-          <a href="#reservas" class="btn-reservar">Reservar</a>
-        </div>
+    body {
+      background: linear-gradient(180deg, #f3fbff 0%, #e8f7ff 100%);
+      color: #0f172a;
+    }
 
-        <button
-          class="mobile-menu-btn"
-          id="mobileMenuBtn"
-          type="button"
-          aria-label="Abrir menú"
-        ></button>
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      width: 100%;
+      background: rgba(8, 47, 73, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+
+    .nav-logo img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: white;
+      padding: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #e0f2fe;
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: 0.25s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+      color: white;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 16px 40px rgba(14, 165, 233, 0.22);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .hero-card h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .hero-card p {
+      opacity: 0.95;
+      max-width: 700px;
+      line-height: 1.5;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: white;
+      color: #0369a1;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 8px 22px rgba(255, 255, 255, 0.22);
+      transition: transform 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .flash {
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .flash.ok {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .flash.err {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .table-card {
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 14px 32px rgba(2, 132, 199, 0.08);
+      border: 1px solid #dbeafe;
+    }
+
+    .table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .table-head h2 {
+      font-size: 1.35rem;
+      color: #0f172a;
+    }
+
+    .table-head p {
+      color: #475569;
+      font-size: 0.95rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 18px;
+      color: #475569;
+    }
+
+    .servicios-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .servicios-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 950px;
+    }
+
+    .servicios-table th {
+      background: #e0f2fe;
+      color: #0c4a6e;
+      text-align: left;
+      padding: 14px 12px;
+      font-size: 0.93rem;
+    }
+
+    .servicios-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+
+    .servicios-table tr:hover {
+      background: #f8fbff;
+    }
+
+    .id-badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 999px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .precio-pill {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .precio-paid {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .precio-free {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .img-thumb {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: 0.2s ease;
+    }
+
+    .btn-edit {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .btn-edit:hover {
+      background: #fde68a;
+    }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .btn-delete:hover {
+      background: #fecaca;
+    }
+
+    .footer {
+      margin-top: 40px;
+      background: #082f49;
+      color: #e0f2fe;
+      text-align: center;
+      padding: 22px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero-card h1 {
+        font-size: 1.6rem;
+      }
+
+      .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="/images/logoPraia.png" alt="Logo Hotel Praia">
+        <span>Hotel Praia · Admin</span>
       </div>
-    </nav>
 
-    <!-- Contenido principal -->
-    <main style="padding-top: 80px; min-height: 70vh;">
-      <div class="container" style="padding: 3rem 1rem;">
-
-        <div class="section-header">
-          <h2 class="section-title">Lista de Servicios</h2>
-          <p class="section-description">Todos los servicios disponibles en Hotel Praia</p>
-        </div>
-
-        <!-- Mensaje si no hay servicios -->
-        <div th:if="${#lists.isEmpty(servicios)}" class="empty-state">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="#BAE6FD" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 1rem;">
-            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-            <rect x="9" y="3" width="6" height="4" rx="1"/>
-          </svg>
-          <p>No hay servicios registrados.</p>
-        </div>
-
-        <!-- Tabla de servicios -->
-        <div th:unless="${#lists.isEmpty(servicios)}" class="servicios-table-wrapper">
-          <table class="servicios-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Imagen</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="s : ${servicios}">
-                <td class="td-id">
-                  <span class="id-badge" th:text="${s.id}"></span>
-                </td>
-                <td class="td-nombre" th:text="${s.nombre}"></td>
-                <td class="td-desc" th:text="${s.descripcion}"></td>
-                <td>
-                  <span th:if="${s.precio > 0}" class="precio-pill precio-paid">
-                    $<span th:text="${s.precio}"></span>
-                  </span>
-                  <span th:if="${s.precio == 0}" class="precio-pill precio-free">Gratis</span>
-                </td>
-                <td>
-                  <img th:src="${s.imagenUrl}" alt="Imagen del servicio" class="img-thumb"/>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
+      <div class="nav-links">
+        <a th:href="@{/huespedes/admin}">Panel de Huéspedes</a>
+        <a th:href="@{/tipos-habitacion/admin}">Tipos de Habitación</a>
+        <a th:href="@{/habitaciones/admin}">Habitaciones</a>
+        <a th:href="@{/servicios/admin}" class="active">Servicios</a>
       </div>
-    </main>
+    </div>
+  </nav>
 
-    <!-- Footer -->
-    <footer id="contacto" class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-col">
-            <div class="footer-logo">
-              <span>Hotel Praia</span>
-              <img src="../images/logoPraia.png" alt="" />
-            </div>
-            <p>
-              Experimenta el lujo frente al océano en nuestro exclusivo resort
-              playero
-            </p>
-            <div class="social-links">
+  <main class="page-wrap">
 
-              <!-- Instagram -->
-              <a href="#" class="social-link" aria-label="Instagram">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                  viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                </svg>
-              </a>
+    <section class="hero-card">
+      <div>
+        <h1>Gestión de Servicios</h1>
+        <p>
+          Administra los servicios ofrecidos por el hotel: crea nuevos registros,
+          actualiza información existente y elimina servicios que ya no estén disponibles.
+        </p>
+      </div>
 
-              <!-- Facebook -->
-              <a href="#" class="social-link" aria-label="Facebook">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                  viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                </svg>
-              </a>
+      <a th:href="@{/servicios/admin/nuevo}" class="btn-primary">
+        + Nuevo servicio
+      </a>
+    </section>
 
-              <!-- X (Twitter) -->
-              <a href="#" class="social-link" aria-label="X">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                  viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
-                  <path d="M4 4l16 16M20 4L4 20"/>
-                </svg>
-              </a>
+    <div th:if="${ok}" class="flash ok" th:text="${ok}"></div>
+    <div th:if="${err}" class="flash err" th:text="${err}"></div>
 
-            </div>
-          </div>
-
-          <div class="footer-col">
-            <h4>Enlaces Rápidos</h4>
-            <ul class="footer-links">
-              <li><a th:href="@{/}">Inicio</a></li>
-              <li><a href="#">Habitaciones</a></li>
-              <li><a href="#">Servicios</a></li>
-              <li><a href="#">Galería</a></li>
-              <li><a href="#">Testimonios</a></li>
-              <li><a href="#">Reservas</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
-            <h4>Contacto</h4>
-            <ul class="footer-contact">
-              <li><span>CIUDAD GOTICA</span></li>
-              <li><span>+57 301 57946556</span></li>
-              <li><span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5f363139301f37302b3a332f2d3e363e713c3032">[email&#160;protected]</a></span></li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
-            <h4>Horario de Atención</h4>
-            <ul class="footer-hours">
-              <li>Recepción: 24 horas</li>
-              <li>Check-in: 15:00</li>
-              <li>Check-out: 12:00</li>
-              <li class="hours-reservas">
-                <strong>Reservas:</strong><br />
-                Lunes - Domingo<br />
-                9:00 - 21:00
-              </li>
-            </ul>
-          </div>
+    <section class="table-card">
+      <div class="table-head">
+        <div>
+          <h2>Lista de servicios</h2>
+          <p>Todos los servicios disponibles actualmente en Hotel Praia.</p>
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <div class="container">
-          <div class="footer-bottom-content">
-            <p>@ Hotel Praia. Todos los derechos reservados.</p>
-          </div>
-        </div>
+      <div th:if="${#lists.isEmpty(servicios)}" class="empty-state">
+        <p>No hay servicios registrados en este momento.</p>
       </div>
-    </footer>
-    <script>
-        document.querySelector(".navbar").classList.add("scrolled");
-        </script>
-     <script src="../js/servicios.js"></script>
-        
-  </body>
+
+      <div th:unless="${#lists.isEmpty(servicios)}" class="servicios-table-wrapper">
+        <table class="servicios-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Imagen</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="s : ${servicios}">
+              <td>
+                <span class="id-badge" th:text="${s.id}"></span>
+              </td>
+              <td th:text="${s.nombre}"></td>
+              <td th:text="${s.descripcion}"></td>
+              <td>
+                <span th:if="${s.precio > 0}" class="precio-pill precio-paid">
+                  $<span th:text="${s.precio}"></span>
+                </span>
+                <span th:if="${s.precio == 0}" class="precio-pill precio-free">
+                  Gratis
+                </span>
+              </td>
+              <td>
+                <img th:src="${s.imagenUrl}" alt="Imagen del servicio" class="img-thumb"/>
+              </td>
+              <td>
+                <div class="acciones">
+                  <a th:href="@{/servicios/admin/editar/{id}(id=${s.id})}" class="btn-action btn-edit">
+                    Editar
+                  </a>
+
+                  <form th:action="@{/servicios/admin/eliminar/{id}(id=${s.id})}" method="post"
+                        onsubmit="return confirm('¿Seguro que deseas eliminar este servicio?');">
+                    <button type="submit" class="btn-action btn-delete">Eliminar</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© Hotel Praia. Panel administrativo de servicios.</p>
+  </footer>
+
+</body>
 </html>

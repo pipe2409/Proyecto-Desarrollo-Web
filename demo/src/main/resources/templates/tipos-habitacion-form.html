@@ -8,118 +8,127 @@
 </head>
 
 <body class="bg-slate-950 text-slate-100">
-<header class="border-b border-slate-800 bg-slate-950/70 backdrop-blur">
-  <div class="mx-auto max-w-3xl px-4 py-5 flex items-center justify-between">
-    <div>
-      <h1 class="text-xl font-semibold"
-          th:text="${modo=='crear' ? 'Crear tipo de habitación' : 'Editar tipo de habitación'}"></h1>
-      <p class="text-sm text-slate-400">Completa los campos y guarda.</p>
+
+  
+
+  <!-- HEADER -->
+  <header class="border-b border-slate-800 bg-slate-950/70 backdrop-blur">
+    <div class="mx-auto max-w-3xl px-4 py-5 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold"
+            th:text="${modo=='crear' ? 'Crear tipo de habitación' : 'Editar tipo de habitación'}"></h1>
+        <p class="text-sm text-slate-400">Completa los campos y guarda.</p>
+      </div>
+      <a href="/tipos-habitacion/admin"
+         class="rounded-lg border border-slate-800 px-4 py-2 text-sm hover:bg-slate-900">
+        Volver
+      </a>
     </div>
-    <a href="/tipos-habitacion/admin"
-       class="rounded-lg border border-slate-800 px-4 py-2 text-sm hover:bg-slate-900">
-      Volver
-    </a>
-  </div>
-</header>
+  </header>
 
-<main class="mx-auto max-w-3xl px-4 py-8">
-  <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+  <!-- MAIN -->
+  <main class="mx-auto max-w-3xl px-4 py-8">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
 
-    <form th:object="${tipo}"
-      method="post"
-      th:action="@{/tipos-habitacion/admin/guardar}"
-      class="space-y-4">
+      <form th:object="${tipo}"
+            method="post"
+            th:action="@{/tipos-habitacion/admin/guardar}"
+            class="space-y-4">
 
-  <div th:if="${modo=='editar'}" class="text-xs text-slate-400">
-    ID: <span class="font-mono" th:text="*{id}"></span>
-  </div>
+        <div th:if="${modo=='editar'}" class="text-xs text-slate-400">
+          ID: <span class="font-mono" th:text="*{id}"></span>
+        </div>
 
-  <div>
-    <label class="block text-sm text-slate-300 mb-1">Nombre</label>
-    <input type="text"
-           th:field="*{nombre}"
-           required
-           class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
-           placeholder="Ej: Suite Presidencial">
-  </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Nombre</label>
+          <input type="text"
+                 th:field="*{nombre}"
+                 required
+                 class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                 placeholder="Ej: Suite Presidencial">
+        </div>
 
-  <div>
-    <label class="block text-sm text-slate-300 mb-1">Descripción</label>
-    <textarea th:field="*{descripcion}" required rows="3"
-              class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
-              placeholder="Descripción breve..."></textarea>
-  </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Descripción</label>
+          <textarea th:field="*{descripcion}" required rows="3"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                    placeholder="Descripción breve..."></textarea>
+        </div>
 
-  <div class="grid gap-4 sm:grid-cols-2">
-    <div>
-      <label class="block text-sm text-slate-300 mb-1">Precio (COP) por noche</label>
-      <input type="number"
-             th:field="*{precio}"
-             min="0"
-             required
-             class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
-             placeholder="180000">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Precio (COP) por noche</label>
+            <input type="number"
+                   th:field="*{precio}"
+                   min="0"
+                   required
+                   class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                   placeholder="180000">
+          </div>
+
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Capacidad (personas)</label>
+            <input type="number"
+                   th:field="*{capacidad}"
+                   min="1"
+                   required
+                   class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                   placeholder="2">
+          </div>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Camas</label>
+            <input type="text"
+                   th:field="*{camas}"
+                   required
+                   class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                   placeholder="1 King / 2 Dobles">
+          </div>
+
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Disponible</label>
+            <select th:field="*{disponible}"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500">
+              <option value="true">Sí</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">URL de imagen</label>
+          <input type="text"
+                 th:field="*{imagenUrl}"
+                 class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                 placeholder="https://...">
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Amenities (texto corto)</label>
+          <input type="text"
+                 th:field="*{amenities}"
+                 class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
+                 placeholder="Wi-Fi • TV • Aire • Jacuzzi...">
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="submit"
+                  class="rounded-xl bg-sky-600 px-5 py-2 text-sm font-medium hover:bg-sky-500">
+            Guardar
+          </button>
+
+          <a href="/tipos-habitacion/admin"
+             class="rounded-xl border border-slate-800 px-5 py-2 text-sm hover:bg-slate-900">
+            Cancelar
+          </a>
+        </div>
+
+      </form>
+
     </div>
+  </main>
 
-    <div>
-      <label class="block text-sm text-slate-300 mb-1">Capacidad (personas)</label>
-      <input type="number"
-             th:field="*{capacidad}"
-             min="1"
-             required
-             class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
-             placeholder="2">
-    </div>
-  </div>
-
-  <div class="grid gap-4 sm:grid-cols-2">
-    <div>
-      <label class="block text-sm text-slate-300 mb-1">Camas</label>
-      <input type="text"
-             th:field="*{camas}"
-             required
-             class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
-             placeholder="1 King / 2 Dobles">
-    </div>
-
-    <div>
-      <label class="block text-sm text-slate-300 mb-1">Disponible</label>
-      <select th:field="*{disponible}"
-              class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500">
-        <option value="true">Sí</option>
-        <option value="false">No</option>
-      </select>
-    </div>
-  </div>
-
-  <div>
-    <label class="block text-sm text-slate-300 mb-1">URL de imagen</label>
-    <input type="text"
-           th:field="*{imagenUrl}"
-           class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
-           placeholder="https://...">
-  </div>
-
-  <div>
-    <label class="block text-sm text-slate-300 mb-1">Amenities (texto corto)</label>
-    <input type="text"
-           th:field="*{amenities}"
-           class="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-sky-500"
-           placeholder="Wi-Fi • TV • Aire • Jacuzzi...">
-  </div>
-
-  <div class="pt-2 flex gap-2">
-    <button type="submit"
-            class="rounded-xl bg-sky-600 px-5 py-2 text-sm font-medium hover:bg-sky-500">
-      Guardar
-    </button>
-    <a href="/tipos-habitacion/admin"
-       class="rounded-xl border border-slate-800 px-5 py-2 text-sm hover:bg-slate-900">
-      Cancelar
-    </a>
-  </div>
-</form>
-  </div>
-</main>
 </body>
 </html>

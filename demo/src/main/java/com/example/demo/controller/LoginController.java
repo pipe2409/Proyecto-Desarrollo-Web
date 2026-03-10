@@ -47,7 +47,7 @@ public class LoginController {
         session.setAttribute("huespedId", h.getId());
         session.setAttribute("huespedNombre", h.getNombre());
 
-        return "redirect:/huespedes/mi-cuenta";
+        return "redirect:/huespedes/crud";
     }
 
     // ==========================
