@@ -1,51 +1,51 @@
-# Hotel Management System
+# Sistema de Gestión de Hotel
 
-This is a web application for managing a hotel, built with Spring Boot.
+Esta es una aplicación web para la gestión de un hotel, construida con Spring Boot.
 
-## Features
+## Características
 
-*   **User Management**: Guests can register and manage their accounts.
-*   **Room Management**: Administrators can manage room types and individual rooms.
-*   **Service Management**: Administrators can manage the services offered by the hotel.
-*   **Reservations**: Guests can make reservations for rooms.
-*   **Billing**: The system can generate bills for guests.
+*   **Gestión de Usuarios**: Los huéspedes pueden registrarse y gestionar sus cuentas.
+*   **Gestión de Habitaciones**: Los administradores pueden gestionar los tipos de habitación y las habitaciones individuales.
+*   **Gestión de Servicios**: Los administradores pueden gestionar los servicios ofrecidos por el hotel.
+*   **Reservas**: Los huéspedes pueden hacer reservas de habitaciones.
+*   **Facturación**: El sistema puede generar facturas para los huéspedes.
 
-## Technologies Used
+## Tecnologías Utilizadas
 
 *   **Backend**: Spring Boot, Spring Web, Spring Data JPA
 *   **Frontend**: Thymeleaf, HTML, CSS, JavaScript
-*   **Database**: H2 Database
-*   **Build Tool**: Maven
+*   **Base de Datos**: H2 Database
+*   **Herramienta de Construcción**: Maven
 
-## Getting Started
+## Primeros Pasos
 
-To get a local copy up and running, follow these simple steps.
+Para obtener una copia local y ponerla en marcha, sigue estos sencillos pasos.
 
-### Prerequisites
+### Prerrequisitos
 
-*   JDK 17 or later
-*   Maven 3.6 or later
+*   JDK 17 o posterior
+*   Maven 3.6 o posterior
 
-### Installation
+### Instalación
 
-1.  Clone the repo
+1.  Clona el repositorio
     ```sh
-    git clone https://github.com/your_username/Proyecto-Desarrollo-Web.git
+    git clone https://github.com/tu_usuario/Proyecto-Desarrollo-Web.git
     ```
-2.  Navigate to the `demo` directory
+2.  Navega al directorio `demo`
     ```sh
     cd Proyecto-Desarrollo-Web/demo
     ```
-3.  Run the application
+3.  Ejecuta la aplicación
     ```sh
     ./mvnw spring-boot:run
     ```
 
-The application will be available at `http://localhost:8080`.
+La aplicación estará disponible en `http://localhost:8080`.
 
-## Project Structure
+## Estructura del Proyecto
 
-The project is structured as a standard Maven project:
+El proyecto está estructurado como un proyecto estándar de Maven:
 
 ```
 .
@@ -69,23 +69,23 @@ The project is structured as a standard Maven project:
     └── Diagramaclases.png
 ```
 
-## Database
+## Base de Datos
 
-The application uses an in-memory H2 database. The database console is available at `http://localhost:8080/h2-console` with the following properties:
+La aplicación utiliza una base de datos en memoria H2. La consola de la base de datos está disponible en `http://localhost:8080/h2-console` con las siguientes propiedades:
 
-*   **Driver Class**: `org.h2.Driver`
-*   **JDBC URL**: `jdbc:h2:mem:hoteldb`
-*   **User Name**: `sa`
-*   **Password**: 
+*   **Clase del Driver**: `org.h2.Driver`
+*   **URL JDBC**: `jdbc:h2:mem:hoteldb`
+*   **Nombre de Usuario**: `sa`
+*   **Contraseña**: 
 
-## ER Diagram
+## Diagrama ER
 
-![Entity Relationship Diagram](docs/Diagrama%20entidad%20Relacion.png)
+![Diagrama de Entidad Relación](docs/Diagrama%20entidad%20Relacion.png)
 
-## Class Diagram
+## Diagrama de Clases
 
-![Class Diagram](docs/Diagramaclases.png)
+![Diagrama de Clases](docs/Diagramaclases.png)
 
-## License
+## Licencia
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distribuido bajo la Licencia MIT. Consulta `LICENSE` para más información.
