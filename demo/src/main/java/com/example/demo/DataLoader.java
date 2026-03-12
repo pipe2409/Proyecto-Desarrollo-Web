@@ -1,9 +1,11 @@
 package com.example.demo;
 
 import com.example.demo.entities.Habitacion;
+import com.example.demo.entities.Huesped;
 import com.example.demo.entities.Servicio;
 import com.example.demo.entities.TipoHabitacion;
 import com.example.demo.repository.HabitacionRepository;
+import com.example.demo.repository.HuespedRepository;
 import com.example.demo.repository.ServicioRepository;
 import com.example.demo.repository.TipoHabitacionRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -15,13 +17,16 @@ public class DataLoader implements CommandLineRunner {
     private final TipoHabitacionRepository tipoHabitacionRepository;
     private final HabitacionRepository habitacionRepository;
     private final ServicioRepository servicioRepository;
+    private final HuespedRepository huespedRepository;
 
     public DataLoader(TipoHabitacionRepository tipoHabitacionRepository,
                       HabitacionRepository habitacionRepository,
-                      ServicioRepository servicioRepository) {
+                      ServicioRepository servicioRepository,
+                      HuespedRepository huespedRepository) {
         this.tipoHabitacionRepository = tipoHabitacionRepository;
         this.habitacionRepository = habitacionRepository;
         this.servicioRepository = servicioRepository;
+        this.huespedRepository = huespedRepository;
     }
 
     @Override
@@ -33,43 +38,62 @@ public class DataLoader implements CommandLineRunner {
         TipoHabitacion simple = null;
         TipoHabitacion doble = null;
         TipoHabitacion suite = null;
+        TipoHabitacion economica = null;
+        TipoHabitacion familiar = null;
 
         if (tipoHabitacionRepository.count() == 0) {
             TipoHabitacion[] tipos = cargarTiposHabitacion();
             simple = tipos[0];
             doble = tipos[1];
             suite = tipos[2];
+            economica = tipos[3];
+            familiar = tipos[4];
             System.out.println("✓ Tipos de habitación cargados correctamente");
         } else {
             System.out.println("✓ Los tipos de habitación ya existen. Saltando carga.");
+
+            simple = tipoHabitacionRepository.findAll().stream()
+                    .filter(t -> "Habitación Simple".equals(t.getNombre()))
+                    .findFirst()
+                    .orElse(null);
+
+            doble = tipoHabitacionRepository.findAll().stream()
+                    .filter(t -> "Habitación Doble".equals(t.getNombre()))
+                    .findFirst()
+                    .orElse(null);
+
+            suite = tipoHabitacionRepository.findAll().stream()
+                    .filter(t -> "Suite".equals(t.getNombre()))
+                    .findFirst()
+                    .orElse(null);
+
+            economica = tipoHabitacionRepository.findAll().stream()
+                    .filter(t -> "Habitación Económica".equals(t.getNombre()))
+                    .findFirst()
+                    .orElse(null);
+
+            familiar = tipoHabitacionRepository.findAll().stream()
+                    .filter(t -> "Habitación Familiar".equals(t.getNombre()))
+                    .findFirst()
+                    .orElse(null);
         }
 
         if (habitacionRepository.count() == 0) {
-            if (simple == null || doble == null || suite == null) {
-                simple = tipoHabitacionRepository.findAll().stream()
-                        .filter(t -> "Habitación Simple".equals(t.getNombre()))
-                        .findFirst()
-                        .orElse(null);
-
-                doble = tipoHabitacionRepository.findAll().stream()
-                        .filter(t -> "Habitación Doble".equals(t.getNombre()))
-                        .findFirst()
-                        .orElse(null);
-
-                suite = tipoHabitacionRepository.findAll().stream()
-                        .filter(t -> "Suite".equals(t.getNombre()))
-                        .findFirst()
-                        .orElse(null);
-            }
-
-            if (simple != null && doble != null && suite != null) {
-                cargarHabitaciones(simple, doble, suite);
+            if (simple != null && doble != null && suite != null && economica != null && familiar != null) {
+                cargarHabitaciones(simple, doble, suite, economica, familiar);
                 System.out.println("✓ Habitaciones cargadas correctamente");
             } else {
                 System.out.println("✗ No se pudieron cargar habitaciones porque faltan tipos de habitación");
             }
         } else {
             System.out.println("✓ Las habitaciones ya existen. Saltando carga.");
+        }
+
+        if (huespedRepository.count() == 0) {
+            cargarHuespedes();
+            System.out.println("✓ Huéspedes cargados correctamente");
+        } else {
+            System.out.println("✓ Los huéspedes ya existen. Saltando carga.");
         }
 
         if (servicioRepository.count() == 0) {
@@ -125,83 +149,80 @@ public class DataLoader implements CommandLineRunner {
         economica.setCamas("Cama individual o doble");
         economica.setAmenities("WiFi, Baño compartido");
         economica.setDisponible(true);
-        tipoHabitacionRepository.save(economica);
+        economica = tipoHabitacionRepository.save(economica);
 
-        return new TipoHabitacion[]{simple, doble, suite};
+        TipoHabitacion familiar = new TipoHabitacion();
+        familiar.setNombre("Habitación Familiar");
+        familiar.setDescripcion("Habitación amplia ideal para familias");
+        familiar.setPrecio(150);
+        familiar.setImagenUrl("/images/familiar.jpg");
+        familiar.setCapacidad(5);
+        familiar.setCamas("2 camas dobles + 1 cama individual");
+        familiar.setAmenities("WiFi, TV, Aire acondicionado, Baño privado, Nevera");
+        familiar.setDisponible(true);
+        familiar = tipoHabitacionRepository.save(familiar);
+
+        return new TipoHabitacion[]{simple, doble, suite, economica, familiar};
     }
 
-    private void cargarHabitaciones(TipoHabitacion simple, TipoHabitacion doble, TipoHabitacion suite) {
-        Habitacion h1 = new Habitacion();
-        h1.setCodigo("101");
-        h1.setPiso(1);
-        h1.setEstado("DISPONIBLE");
-        h1.setTipoHabitacion(simple);
-        h1.setNotas("Vista a la calle");
-        habitacionRepository.save(h1);
+    private void cargarHabitaciones(TipoHabitacion simple, TipoHabitacion doble, TipoHabitacion suite,
+                                    TipoHabitacion economica, TipoHabitacion familiar) {
 
-        Habitacion h2 = new Habitacion();
-        h2.setCodigo("102");
-        h2.setPiso(1);
-        h2.setEstado("DISPONIBLE");
-        h2.setTipoHabitacion(doble);
-        h2.setNotas(null);
-        habitacionRepository.save(h2);
+        for (int i = 1; i <= 50; i++) {
+            Habitacion h = new Habitacion();
 
-        Habitacion h3 = new Habitacion();
-        h3.setCodigo("103");
-        h3.setPiso(1);
-        h3.setEstado("DISPONIBLE");
-        h3.setTipoHabitacion(suite);
-        h3.setNotas("Habitación de lujo");
-        habitacionRepository.save(h3);
+            int piso = ((i - 1) / 10) + 1;
+            int numeroDentroPiso = ((i - 1) % 10) + 1;
+            String codigo = piso + String.format("%02d", numeroDentroPiso);
 
-        Habitacion h4 = new Habitacion();
-        h4.setCodigo("201");
-        h4.setPiso(2);
-        h4.setEstado("DISPONIBLE");
-        h4.setTipoHabitacion(doble);
-        h4.setNotas(null);
-        habitacionRepository.save(h4);
+            h.setCodigo(codigo);
+            h.setPiso(piso);
 
-        Habitacion h5 = new Habitacion();
-        h5.setCodigo("202");
-        h5.setPiso(2);
-        h5.setEstado("DISPONIBLE");
-        h5.setTipoHabitacion(simple);
-        h5.setNotas("Con balcón");
-        habitacionRepository.save(h5);
+            if (i % 13 == 0) {
+                h.setEstado("MANTENIMIENTO");
+            } else {
+                h.setEstado("DISPONIBLE");
+            }
 
-        Habitacion h6 = new Habitacion();
-        h6.setCodigo("203");
-        h6.setPiso(2);
-        h6.setEstado("MANTENIMIENTO");
-        h6.setTipoHabitacion(simple);
-        h6.setNotas("En reparación");
-        habitacionRepository.save(h6);
+            if (i <= 10) {
+                h.setTipoHabitacion(simple);
+            } else if (i <= 20) {
+                h.setTipoHabitacion(doble);
+            } else if (i <= 30) {
+                h.setTipoHabitacion(suite);
+            } else if (i <= 40) {
+                h.setTipoHabitacion(economica);
+            } else {
+                h.setTipoHabitacion(familiar);
+            }
 
-        Habitacion h7 = new Habitacion();
-        h7.setCodigo("301");
-        h7.setPiso(3);
-        h7.setEstado("DISPONIBLE");
-        h7.setTipoHabitacion(suite);
-        h7.setNotas(null);
-        habitacionRepository.save(h7);
+            if (i % 5 == 0) {
+                h.setNotas("Vista exterior");
+            } else if (i % 7 == 0) {
+                h.setNotas("Cerca al ascensor");
+            } else if (i % 13 == 0) {
+                h.setNotas("En reparación");
+            } else {
+                h.setNotas(null);
+            }
 
-        Habitacion h8 = new Habitacion();
-        h8.setCodigo("302");
-        h8.setPiso(3);
-        h8.setEstado("DISPONIBLE");
-        h8.setTipoHabitacion(doble);
-        h8.setNotas("Vista al parque");
-        habitacionRepository.save(h8);
+            habitacionRepository.save(h);
+        }
+    }
 
-        Habitacion h9 = new Habitacion();
-        h9.setCodigo("303");
-        h9.setPiso(3);
-        h9.setEstado("DISPONIBLE");
-        h9.setTipoHabitacion(simple);
-        h9.setNotas(null);
-        habitacionRepository.save(h9);
+    private void cargarHuespedes() {
+        for (int i = 1; i <= 10; i++) {
+            Huesped h = new Huesped();
+            h.setNombre("Huesped" + i);
+            h.setApellido("Apellido" + i);
+            h.setCorreo("huesped" + i + "@correo.com");
+            h.setContrasena("123456");
+            h.setCedula("10000000" + i);
+            h.setTelefono("300000000" + i);
+            h.setDireccion("Calle " + i + " # 10-" + i);
+            h.setPais("Colombia");
+            huespedRepository.save(h);
+        }
     }
 
     private void cargarServicios() {
