@@ -14,7 +14,7 @@ public interface HabitacionService {
 
     Habitacion save(Habitacion habitacion);
 
-    Habitacion update(Integer id, Habitacion habitacion);
+    Habitacion update(Integer id, Habitacion habitacion, Integer tipoHabitacionId);
 
     void deleteById(Integer id);
 }

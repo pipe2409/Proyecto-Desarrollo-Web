@@ -16,7 +16,20 @@ public interface HuespedService {
 
     Huesped save(Huesped huesped);
 
-    Huesped update(Integer id, Huesped huesped);
+    Huesped update(Integer id,
+                                String nombre,
+                                String apellido,
+                                String correo,
+                                String telefono,
+                                String direccion,
+                                String pais);
+                                
 
     void deleteById(Integer id);
+
+    void cambiarContrasena(Integer id, String actual, String nueva, String confirmar);
+
+
+                             
+                               
 }

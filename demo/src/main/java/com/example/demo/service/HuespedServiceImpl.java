@@ -4,6 +4,8 @@ import com.example.demo.entities.Huesped;
 import com.example.demo.repository.HuespedRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,11 +14,10 @@ import java.util.List;
 @Transactional
 public class HuespedServiceImpl implements HuespedService {
 
-    private final HuespedRepository huespedRepository;
+    @Autowired
+    private  HuespedRepository huespedRepository;
 
-    public HuespedServiceImpl(HuespedRepository huespedRepository) {
-        this.huespedRepository = huespedRepository;
-    }
+   
 
     @Override
     public List<Huesped> findAll() {
@@ -25,7 +26,9 @@ public class HuespedServiceImpl implements HuespedService {
 
     @Override
     public Huesped findById(Integer id) {
-        return huespedRepository.findById(id).orElse(null);
+    return huespedRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "No existe el huésped con id=" + id));
     }
 
     @Override
@@ -44,24 +47,51 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     @Override
-    public Huesped update(Integer id, Huesped huesped) {
-        Huesped existente = huespedRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No existe el huésped con id=" + id));
+    public Huesped update(Integer id,
+                                String nombre,
+                                String apellido,
+                                String correo,
+                                String telefono,
+                                String direccion,
+                                String pais) {
+        Huesped huesped = huespedRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "No existe el huésped con id=" + id));
 
-        existente.setNombre(huesped.getNombre());
-        existente.setApellido(huesped.getApellido());
-        existente.setCorreo(huesped.getCorreo());
-        existente.setContrasena(huesped.getContrasena());
-        existente.setCedula(huesped.getCedula());
-        existente.setTelefono(huesped.getTelefono());
-        existente.setDireccion(huesped.getDireccion());
-        existente.setPais(huesped.getPais());
+    huesped.setNombre(nombre);
+    huesped.setApellido(apellido);
+    huesped.setCorreo(correo);
+    huesped.setTelefono(telefono);
+    huesped.setDireccion(direccion);
+    huesped.setPais(pais);
 
-        return huespedRepository.save(existente);
+    return huespedRepository.save(huesped);
     }
 
     @Override
     public void deleteById(Integer id) {
         huespedRepository.deleteById(id);
     }
+
+    public void cambiarContrasena(Integer id,
+                               String actual,
+                               String nueva,
+                               String confirmar) {
+
+    Huesped huesped = huespedRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "No existe el huésped"));
+
+    if (!huesped.getContrasena().equals(actual)) {
+        throw new RuntimeException("La contraseña actual es incorrecta.");
+    }
+
+    if (!nueva.equals(confirmar)) {
+        throw new RuntimeException("La nueva contraseña y la confirmación no coinciden.");
+    }
+
+    huesped.setContrasena(nueva);
+
+    huespedRepository.save(huesped);
+}
 }
