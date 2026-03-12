@@ -43,17 +43,7 @@ public class Reserva {
     @ManyToOne
     @JoinColumn(name = "operador_id")
     private Operador operador;
-    @OneToOne(mappedBy = "reserva")
-private CuentaHabitacion cuentaHabitacion;
 
-    public Reserva(LocalDateTime fechaInicio, LocalDateTime fechaFin, Integer cantidadPersonas,
-                   EstadoReserva estado, Huesped huesped, Habitacion habitacion, Operador operador) {
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        this.cantidadPersonas = cantidadPersonas;
-        this.estado = estado;
-        this.huesped = huesped;
-        this.habitacion = habitacion;
-        this.operador = operador;
-    }
+    @OneToOne(mappedBy = "reserva")
+    private CuentaHabitacion cuentaHabitacion;
 }
