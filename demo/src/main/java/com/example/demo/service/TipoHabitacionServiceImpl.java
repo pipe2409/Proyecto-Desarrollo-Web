@@ -24,11 +24,11 @@ public class TipoHabitacionServiceImpl implements TipoHabitacionService {
     }
 
     @Override
-public TipoHabitacion findById(Integer id) {
+    public TipoHabitacion findById(Integer id) {
     return tipoHabitacionRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                     "El tipo de habitación no existe con id=" + id));
-}
+    }
 
     @Override
     public TipoHabitacion save(TipoHabitacion tipoHabitacion) {

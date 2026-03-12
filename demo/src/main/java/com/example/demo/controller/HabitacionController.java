@@ -108,31 +108,25 @@ public String editar(@PathVariable Integer id, Model model, RedirectAttributes r
     }
 }
 
-    @PostMapping("/admin/actualizar/{id}")
-    public String actualizar(@PathVariable Integer id,
-                             @ModelAttribute("habitacion") Habitacion habitacion,
-                             @RequestParam("tipoHabitacionId") Integer tipoHabitacionId,
-                             RedirectAttributes ra) {
-        try {
-            TipoHabitacion tipo = tipoRepo.findById(tipoHabitacionId).orElse(null);
+   @PostMapping("/admin/actualizar/{id}")
+public String actualizar(@PathVariable Integer id,
+                         @ModelAttribute("habitacion") Habitacion habitacion,
+                         @RequestParam("tipoHabitacionId") Integer tipoHabitacionId,
+                         RedirectAttributes ra) {
 
-            if (tipo == null) {
-                ra.addFlashAttribute("err", "El tipo de habitación seleccionado no existe.");
-                return "redirect:/habitaciones/admin";
-            }
+    try {
 
-            habitacion.setTipoHabitacion(tipo);
-            habitacionService.update(id, habitacion);
+        habitacionService.update(id, habitacion, tipoHabitacionId);
 
-            ra.addFlashAttribute("ok", "Habitación actualizada.");
-            return "redirect:/habitaciones/admin?tipoId=" + tipoHabitacionId;
+        ra.addFlashAttribute("ok", "Habitación actualizada.");
+        return "redirect:/habitaciones/admin?tipoId=" + tipoHabitacionId;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            ra.addFlashAttribute("err", "No se pudo actualizar la habitación: " + e.getMessage());
-            return "redirect:/habitaciones/admin";
-        }
+    } catch (Exception e) {
+
+        ra.addFlashAttribute("err", e.getMessage());
+        return "redirect:/habitaciones/admin";
     }
+}
 
     @PostMapping("/admin/eliminar/{id}")
     public String eliminar(@PathVariable Integer id,

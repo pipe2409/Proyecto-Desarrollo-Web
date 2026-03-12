@@ -14,9 +14,6 @@ public class IndexController {
     @Autowired
     private TipoHabitacionRepository repo;
 
-    public IndexController(TipoHabitacionRepository repo) {
-        this.repo = repo;
-    }
 
     @GetMapping("")
     public String index(Model model) {
