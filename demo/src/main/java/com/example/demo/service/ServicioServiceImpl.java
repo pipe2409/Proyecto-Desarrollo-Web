@@ -5,6 +5,7 @@ import com.example.demo.repository.ServicioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -12,12 +13,10 @@ import java.util.List;
 @Transactional
 public class ServicioServiceImpl implements ServicioService {
 
-    private final ServicioRepository servicioRepository;
+    @Autowired
+    private  ServicioRepository servicioRepository;
 
-    public ServicioServiceImpl(ServicioRepository servicioRepository) {
-        this.servicioRepository = servicioRepository;
-    }
-
+    
     @Override
     public List<Servicio> findAll() {
         return servicioRepository.findAll();
