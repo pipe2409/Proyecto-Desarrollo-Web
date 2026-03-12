@@ -4,6 +4,8 @@ package com.example.demo.controller;
 import com.example.demo.entities.Servicio;
 import com.example.demo.service.ServicioService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,16 +45,16 @@ public class ServiciosController {
     }
 
     @GetMapping("/admin/editar/{id}")
-    public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
-        Servicio servicio = serviciosService.findById(id);
-        if (servicio == null) {
-            ra.addFlashAttribute("err", "No existe el servicio con id=" + id);
+public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+    try {
+            Servicio servicio = serviciosService.findById(id); // ahora lanza excepción si no existe
+            model.addAttribute("servicio", servicio);
+            model.addAttribute("modo", "editar");
+            return "servicios-form";
+        } catch (EntityNotFoundException e) {
+            ra.addFlashAttribute("err", e.getMessage());
             return "redirect:/servicios/admin";
         }
-
-        model.addAttribute("servicio", servicio);
-        model.addAttribute("modo", "editar");
-        return "servicios-form";
     }
 
     @PostMapping("/admin/actualizar/{id}")
