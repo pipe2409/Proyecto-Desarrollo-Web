@@ -1,10 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Habitacion;
+import com.example.demo.entities.TipoHabitacion;
 import com.example.demo.repository.HabitacionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.repository.TipoHabitacionRepository;
 
 import java.util.List;
 
@@ -12,11 +15,12 @@ import java.util.List;
 @Transactional
 public class HabitacionServiceImpl implements HabitacionService {
 
-    private final HabitacionRepository habitacionRepository;
+    @Autowired
+    private  HabitacionRepository habitacionRepository;
+    @Autowired
+    private  TipoHabitacionRepository tipoHabitacionRepository;
 
-    public HabitacionServiceImpl(HabitacionRepository habitacionRepository) {
-        this.habitacionRepository = habitacionRepository;
-    }
+
 
     @Override
     public List<Habitacion> findAll() {
@@ -33,7 +37,9 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     @Override
     public Habitacion findById(Integer id) {
-        return habitacionRepository.findById(id).orElse(null);
+    return habitacionRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "No existe la habitación con id=" + id));
     }
 
     @Override
@@ -42,17 +48,23 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     @Override
-    public Habitacion update(Integer id, Habitacion habitacion) {
+    public Habitacion update(Integer id, Habitacion habitacion, Integer tipoHabitacionId) {
+        
         Habitacion existente = habitacionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No existe la habitación con id=" + id));
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "No existe la habitación con id=" + id));
 
-        existente.setCodigo(habitacion.getCodigo());
-        existente.setPiso(habitacion.getPiso());
-        existente.setEstado(habitacion.getEstado());
-        existente.setTipoHabitacion(habitacion.getTipoHabitacion());
-        existente.setNotas(habitacion.getNotas());
+        TipoHabitacion tipo = tipoHabitacionRepository.findById(tipoHabitacionId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "El tipo de habitación seleccionado no existe"));
 
-        return habitacionRepository.save(existente);
+    existente.setCodigo(habitacion.getCodigo());
+    existente.setPiso(habitacion.getPiso());
+    existente.setEstado(habitacion.getEstado());
+    existente.setTipoHabitacion(tipo);
+    existente.setNotas(habitacion.getNotas());
+
+    return habitacionRepository.save(existente);
     }
 
     @Override

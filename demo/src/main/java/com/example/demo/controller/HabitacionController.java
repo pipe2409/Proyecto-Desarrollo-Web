@@ -4,6 +4,11 @@ import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.TipoHabitacion;
 import com.example.demo.repository.TipoHabitacionRepository;
 import com.example.demo.service.HabitacionService;
+import com.example.demo.service.TipoHabitacionService;
+
+import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,87 +22,91 @@ import java.util.Map;
 @Controller
 public class HabitacionController {
 
-    private final HabitacionService habitacionService;
-    private final TipoHabitacionRepository tipoRepo;
+    @Autowired
+    private  HabitacionService habitacionService;
+    @Autowired
+    private  TipoHabitacionService tipoHabitacionService;
 
-    public HabitacionController(HabitacionService habitacionService, TipoHabitacionRepository tipoRepo) {
-        this.habitacionService = habitacionService;
-        this.tipoRepo = tipoRepo;
+
+@GetMapping("/admin")
+public String admin(@RequestParam(value = "tipoId", required = false) Integer tipoId, Model model) {
+
+    List<Habitacion> habitaciones = habitacionService.findByTipoId(tipoId);
+    List<TipoHabitacion> tipos = tipoHabitacionService.findAll();
+
+    model.addAttribute("habitaciones", habitaciones);
+    model.addAttribute("tiposHabitacion", tipos);
+    model.addAttribute("tipoId", tipoId);
+
+    Map<Integer, String> nombresTipo = new LinkedHashMap<>();
+    for (TipoHabitacion t : tipos) {
+        nombresTipo.put(t.getId(), t.getNombre());
     }
 
-    @GetMapping("/admin")
-    public String admin(@RequestParam(value = "tipoId", required = false) Integer tipoId, Model model) {
-        List<Habitacion> habitaciones = habitacionService.findByTipoId(tipoId);
+    model.addAttribute("nombresTipo", nombresTipo);
 
-        model.addAttribute("habitaciones", habitaciones);
-        model.addAttribute("tiposHabitacion", tipoRepo.findAll());
-        model.addAttribute("tipoId", tipoId);
-
-        Map<Integer, String> nombresTipo = new LinkedHashMap<>();
-        for (TipoHabitacion t : tipoRepo.findAll()) {
-            nombresTipo.put(t.getId(), t.getNombre());
-        }
-        model.addAttribute("nombresTipo", nombresTipo);
-
-        return "habitaciones-admin";
-    }
+    return "habitaciones-admin";
+}
 
     @GetMapping("/admin/nuevo")
-    public String nuevo(@RequestParam(value = "tipoId", required = false) Integer tipoId, Model model) {
-        Habitacion h = new Habitacion();
-        h.setEstado("DISPONIBLE");
+public String nuevo(@RequestParam(value = "tipoId", required = false) Integer tipoId, Model model) {
 
-        model.addAttribute("habitacion", h);
-        model.addAttribute("tiposHabitacion", tipoRepo.findAll());
-        model.addAttribute("tipoIdSeleccionado", tipoId);
-        model.addAttribute("modo", "crear");
+    Habitacion h = new Habitacion();
+    h.setEstado("DISPONIBLE");
 
-        return "habitaciones-form";
-    }
+    model.addAttribute("habitacion", h);
+    model.addAttribute("tiposHabitacion", tipoHabitacionService.findAll());
+    model.addAttribute("tipoIdSeleccionado", tipoId);
+    model.addAttribute("modo", "crear");
+
+    return "habitaciones-form";
+}
 
     @PostMapping("/admin/guardar")
-    public String guardar(@ModelAttribute("habitacion") Habitacion habitacion,
-                          @RequestParam("tipoHabitacionId") Integer tipoHabitacionId,
-                          RedirectAttributes ra) {
-        try {
-            TipoHabitacion tipo = tipoRepo.findById(tipoHabitacionId).orElse(null);
+public String guardar(@ModelAttribute("habitacion") Habitacion habitacion,
+                      @RequestParam("tipoHabitacionId") Integer tipoHabitacionId,
+                      RedirectAttributes ra) {
 
-            if (tipo == null) {
-                ra.addFlashAttribute("err", "El tipo de habitación seleccionado no existe.");
-                return "redirect:/habitaciones/admin";
-            }
+    try {
 
-            habitacion.setTipoHabitacion(tipo);
-            habitacionService.save(habitacion);
+        TipoHabitacion tipo = tipoHabitacionService.findById(tipoHabitacionId);
 
-            ra.addFlashAttribute("ok", "Habitación creada.");
-            return "redirect:/habitaciones/admin?tipoId=" + tipoHabitacionId;
+        habitacion.setTipoHabitacion(tipo);
+        habitacionService.save(habitacion);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            ra.addFlashAttribute("err", "No se pudo crear la habitación: " + e.getMessage());
-            return "redirect:/habitaciones/admin";
-        }
+        ra.addFlashAttribute("ok", "Habitación creada.");
+        return "redirect:/habitaciones/admin?tipoId=" + tipoHabitacionId;
+
+    } catch (EntityNotFoundException e) {
+
+        ra.addFlashAttribute("err", e.getMessage());
+        return "redirect:/habitaciones/admin";
     }
+}
 
-    @GetMapping("/admin/editar/{id}")
-    public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+   @GetMapping("/admin/editar/{id}")
+public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+
+    try {
+
         Habitacion h = habitacionService.findById(id);
 
-        if (h == null) {
-            ra.addFlashAttribute("err", "No existe la habitación con id=" + id);
-            return "redirect:/habitaciones/admin";
-        }
-
-        Integer tipoIdSeleccionado = h.getTipoHabitacion() != null ? h.getTipoHabitacion().getId() : null;
+        Integer tipoIdSeleccionado =
+                h.getTipoHabitacion() != null ? h.getTipoHabitacion().getId() : null;
 
         model.addAttribute("habitacion", h);
-        model.addAttribute("tiposHabitacion", tipoRepo.findAll());
+        model.addAttribute("tiposHabitacion", tipoHabitacionService.findAll());
         model.addAttribute("tipoIdSeleccionado", tipoIdSeleccionado);
         model.addAttribute("modo", "editar");
 
         return "habitaciones-form";
+
+    } catch (EntityNotFoundException e) {
+
+        ra.addFlashAttribute("err", e.getMessage());
+        return "redirect:/habitaciones/admin";
     }
+}
 
     @PostMapping("/admin/actualizar/{id}")
     public String actualizar(@PathVariable Integer id,
