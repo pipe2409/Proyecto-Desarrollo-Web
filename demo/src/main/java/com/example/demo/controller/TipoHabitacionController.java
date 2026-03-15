@@ -2,11 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.entities.TipoHabitacion;
 import com.example.demo.service.TipoHabitacionService;
+import com.example.demo.service.HabitacionService;
+import com.example.demo.entities.Habitacion;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 
 @RequestMapping("/tipos-habitacion")
 @Controller
@@ -14,6 +17,10 @@ public class TipoHabitacionController {
 
     @Autowired
     private TipoHabitacionService tipoHabitacionService;
+
+    // needed to check for habitaciones antes de eliminar
+    @Autowired
+    private HabitacionService habitacionService;
 
     
 
@@ -40,17 +47,22 @@ public String guardar(@ModelAttribute("tipo") TipoHabitacion tipo,
                       RedirectAttributes ra,
                       Model model) {
     try {
-        tipoHabitacionService.save(tipo);
-        ra.addFlashAttribute("ok", "Tipo de habitación creado.");
+        if (tipo.getId() != null) {
+            tipoHabitacionService.update(tipo.getId(), tipo);
+            ra.addFlashAttribute("ok", "Tipo de habitación actualizado.");
+        } else {
+            tipoHabitacionService.save(tipo);
+            ra.addFlashAttribute("ok", "Tipo de habitación creado.");
+        }
         return "redirect:/tipos-habitacion/admin";
     } catch (Exception e) {
         e.printStackTrace();
         model.addAttribute("tipo", tipo);
-        model.addAttribute("modo", "crear");
+        model.addAttribute("modo", tipo.getId() != null ? "editar" : "crear");
         model.addAttribute("error", "No se pudo guardar el tipo de habitación.");
         return "tipos-habitacion-form";
     }
-}
+} 
     @GetMapping("/admin/editar/{id}")
     public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
         TipoHabitacion tipo = tipoHabitacionService.findById(id);
@@ -67,8 +79,19 @@ public String guardar(@ModelAttribute("tipo") TipoHabitacion tipo,
 
     @PostMapping("/admin/eliminar/{id}")
     public String eliminar(@PathVariable Integer id, RedirectAttributes ra) {
-        tipoHabitacionService.deleteById(id);
-        ra.addFlashAttribute("ok", "Tipo de habitación eliminado.");
+        // verificar si hay habitaciones asignadas antes de borrar
+        List<Habitacion> habitaciones = habitacionService.findByTipoId(id);
+        if (habitaciones != null && !habitaciones.isEmpty()) {
+            ra.addFlashAttribute("err", "No se puede eliminar; hay habitaciones asignadas a este tipo.");
+        } else {
+            try {
+                tipoHabitacionService.deleteById(id);
+                ra.addFlashAttribute("ok", "Tipo de habitación eliminado.");
+            } catch (Exception e) {
+                // por si falla por constraint de BD u otra razón
+                ra.addFlashAttribute("err", "Error al eliminar el tipo de habitación.");
+            }
+        }
         return "redirect:/tipos-habitacion/admin";
     }
 }
