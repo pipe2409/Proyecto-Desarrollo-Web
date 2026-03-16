@@ -24,7 +24,8 @@ public class ServicioServiceImpl implements ServicioService {
 
     @Override
     public Servicio findById(Integer id) {
-        return servicioRepository.findById(id).orElse(null);
+        return servicioRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("No existe el servicio con id=" + id));
     }
 
     @Override

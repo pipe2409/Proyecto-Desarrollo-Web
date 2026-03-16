@@ -35,8 +35,12 @@
             th:action="@{/tipos-habitacion/admin/guardar}"
             class="space-y-4">
 
-        <div th:if="${modo=='editar'}" class="text-xs text-slate-400">
-          ID: <span class="font-mono" th:text="*{id}"></span>
+        <!-- hidden id required for edit -->
+        <div th:if="${modo=='editar'}">
+          <input type="hidden" th:field="*{id}" />
+          <div class="text-xs text-slate-400">
+            ID: <span class="font-mono" th:text="*{id}"></span>
+          </div>
         </div>
 
         <div>

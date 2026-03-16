@@ -23,7 +23,7 @@ public class Servicio {
 
     @Column(nullable = false)
     private int precio;
-
+@Column(length = 10000)
     private String imagenUrl;
 
     @Column(nullable = false)
