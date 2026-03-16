@@ -216,7 +216,7 @@ public class DataLoader implements CommandLineRunner {
             Huesped h = new Huesped();
             h.setNombre("Huesped" + i);
             h.setApellido("Apellido" + i);
-            h.setCorreo("h" + i + "@correo.com");
+            h.setCorreo("h" + i + "@mail.com");
             h.setContrasena("123");
             h.setCedula("10000000" + i);
             h.setTelefono("300000000" + i);
