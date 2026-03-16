@@ -26,6 +26,8 @@ public class DataLoader implements CommandLineRunner {
     private  ServicioRepository servicioRepository;
     @Autowired
     private  HuespedRepository huespedRepository;
+   
+    
 
 
     @Override
