@@ -196,3 +196,39 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
 	at java.base/java.lang.Thread.run(Thread.java:1474)
+2026-03-15 14:17:56.419693-05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTEhMWFhUXFxoa... (20851)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTEhMWFhUXFxoa... (20851)"; SQL statement:
+update servicio set capacidad=?,descripcion=?,horario=?,imagen_url=?,nombre=?,precio=?,precio_tipo=? where id=? [22001-240]
+2026-03-15 14:18:37.042644-05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTEhMWFhUXFxoa... (20851)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTEhMWFhUXFxoa... (20851)"; SQL statement:
+insert into servicio (capacidad,descripcion,horario,imagen_url,nombre,precio,precio_tipo,id) values (?,?,?,?,?,?,?,default) [22001-240]
+2026-03-15 14:19:03.258965-05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxQTEhUTExIWFhUXGBoY... (13059)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxQTEhUTExIWFhUXGBoY... (13059)"; SQL statement:
+insert into servicio (capacidad,descripcion,horario,imagen_url,nombre,precio,precio_tipo,id) values (?,?,?,?,?,?,?,default) [22001-240]
+2026-03-15 16:40:50.912801-05:00 jdbc[26]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUTExMVFhUXFxoY... (16423)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUTExMVFhUXFxoY... (16423)"; SQL statement:
+update servicio set capacidad=?,descripcion=?,horario=?,imagen_url=?,nombre=?,precio=?,precio_tipo=? where id=? [22001-240]
+2026-03-15 16:41:32.323032-05:00 jdbc[30]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhMVFRUXGCEa... (1024)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhMVFRUXGCEa... (1024)"; SQL statement:
+update servicio set capacidad=?,descripcion=?,horario=?,imagen_url=?,nombre=?,precio=?,precio_tipo=? where id=? [22001-240]
+2026-03-15 16:42:00.573776-05:00 jdbc[30]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhMVFRUXGCEa... (1024)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhMVFRUXGCEa... (1024)"; SQL statement:
+insert into servicio (capacidad,descripcion,horario,imagen_url,nombre,precio,precio_tipo,id) values (?,?,?,?,?,?,?,default) [22001-240]
+2026-03-15 16:47:40.239045-05:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhMVFRUXGCEa... (1024)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhMVFRUXGCEa... (1024)"; SQL statement:
+insert into servicio (capacidad,descripcion,horario,imagen_url,nombre,precio,precio_tipo,id) values (?,?,?,?,?,?,?,default) [22001-240]
+2026-03-15 16:53:48.680617-05:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUSExMWFhUXGBcZ... (15915)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUSExMWFhUXGBcZ... (15915)"; SQL statement:
+update servicio set capacidad=?,descripcion=?,horario=?,imagen_url=?,nombre=?,precio=?,precio_tipo=? where id=? [22001-240]
+2026-03-15 16:54:59.622464-05:00 jdbc[33]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "IMAGEN_URL CHARACTER VARYING(255)": "'https://www.istockphoto.com/photo/healthy-breakfast-of-scrambled-eggs-cheese-ha... (257)"
+Value too long for column "IMAGEN_URL CHARACTER VARYING(255)": "'https://www.istockphoto.com/photo/healthy-breakfast-of-scrambled-eggs-cheese-ha... (257)"; SQL statement:
+update servicio set capacidad=?,descripcion=?,horario=?,imagen_url=?,nombre=?,precio=?,precio_tipo=? where id=? [22001-240]

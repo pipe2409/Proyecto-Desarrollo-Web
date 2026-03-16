@@ -36,7 +36,6 @@
       <a href="/#galeria" class="nav-link">Galería</a>
       <a href="/#testimonios" class="nav-link">Testimonios</a>
       <a href="/#contacto" class="nav-link">Contacto</a>
-      <a href="/#reservas" class="btn-reservar">Reservar</a>
     </div>
 
     <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menú">
@@ -50,15 +49,8 @@
 <!-- =========================
      HERO SIMPLE
 ========================= -->
-<section class="hero-simple">
-  <div class="hero-simple__overlay"></div>
-  <div class="hero-simple__content">
-    <h1 class="hero-simple__title">Servicios Adicionales</h1>
-    <p class="hero-simple__subtitle">
-      Mejora tu experiencia con nuestros servicios premium diseñados para tu comodidad
-    </p>
-  </div>
-</section>
+
+
 
 <!-- =========================
      ESTADO VACÍO
@@ -74,45 +66,65 @@
          th:if="${servicios != null and !#lists.isEmpty(servicios)}">
 
   <div class="container">
-    <div class="services-page__grid">
+    <div class="hero-simple__content">
+    <div class="hero-simple__title-box">
+      <h1 class="hero-simple__title">Servicios Adicionales</h1>
+      <p class="hero-simple__subtitle">
+        Mejora tu experiencia con nuestros servicios premium diseñados para tu comodidad
+      </p>
+    </div>
+  </div>
 
-      <article class="services-page__card" th:each="s : ${servicios}">
-        <img class="services-page__img"
-             th:src="${s.imagenUrl}"
-             th:alt="${s.nombre}" />
+    <div class="services-carousel-wrap">
+      <div class="services-carousel">
 
-        <div class="services-page__content">
-          <h3 class="services-page__name"
-              th:text="${s.nombre}">Servicio</h3>
+        <article class="services-page__card"
+                 th:each="s : ${servicios}"
+                 th:style="'--service-bg: url(' + ${s.imagenUrl} + ');'">
 
-          <p class="services-page__desc"
-             th:text="${s.descripcion}">Descripción</p>
+          <div class="services-page__bg"></div>
 
-          <div class="services-page__footer">
-            <div class="services-page__price">
-              $<span th:text="${s.precio}">0</span>
+          <div class="services-page__content">
+            <div class="services-page__media">
+              <img class="services-page__img"
+                   th:src="${s.imagenUrl}"
+                   th:alt="${s.nombre}" />
             </div>
 
-            <div class="services-page__actions">
-              <button class="btn btn-ocean" type="button">
-                Reservar
-              </button>
+            <div class="services-page__text">
+              <span class="services-page__tag">Servicio exclusivo</span>
 
-              <button class="btn btn-outline" type="button" th:attr="data-servicio-id=${s.id}">
-                Ver más
-              </button>
+              <h3 class="services-page__name"
+                  th:text="${s.nombre}">Servicio</h3>
+
+              <p class="services-page__desc"
+                 th:text="${s.descripcion}">Descripción</p>
+
+              <div class="services-page__footer">
+                <div class="services-page__price">
+                  Desde $<span th:text="${s.precio}">0</span>
+                </div>
+
+                <div class="services-page__actions">
+                  <button class="btn btn-ocean" type="button">
+                    Reservar
+                  </button>
+
+                  
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </article>
 
+        </article>
+
+      </div>
     </div>
   </div>
 </section>
 
-<!-- =========================
-     FOOTER (igual a index)
-========================= -->
+
+
 
 <!-- Modal detalles servicio -->
 <div id="servicioModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:9999;">
@@ -129,6 +141,42 @@
     </div>
   </div>
 </div>
+
+<section class="services-trust-panel">
+  <div class="container">
+    <div class="services-trust-panel__inner">
+
+      <article class="services-trust-card">
+        <div class="services-trust-card__icon services-trust-card__icon--blue">
+          <span>✓</span>
+        </div>
+        <h3>Calidad Garantizada</h3>
+        <p>Todos nuestros servicios cumplen con los más altos estándares de calidad</p>
+      </article>
+
+      <article class="services-trust-card">
+        <div class="services-trust-card__icon services-trust-card__icon--purple">
+          <span>◦</span>
+        </div>
+        <h3>Atención Personalizada</h3>
+        <p>Personal profesional dedicado a hacer tu experiencia única</p>
+      </article>
+
+      <article class="services-trust-card">
+        <div class="services-trust-card__icon services-trust-card__icon--gold">
+          <span>$</span>
+        </div>
+        <h3>Mejor Precio</h3>
+        <p>Tarifas competitivas con la mejor relación calidad-precio</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+
+
 <footer id="contacto" class="footer">
   <div class="container">
     <div class="footer-grid">
