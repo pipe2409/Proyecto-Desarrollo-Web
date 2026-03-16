@@ -6,23 +6,22 @@ import com.example.demo.entities.TipoHabitacion;
 import com.example.demo.repository.HabitacionRepository;
 import com.example.demo.repository.ServicioRepository;
 import com.example.demo.repository.TipoHabitacionRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final TipoHabitacionRepository tipoHabitacionRepository;
-    private final HabitacionRepository habitacionRepository;
-    private final ServicioRepository servicioRepository;
+    @Autowired
+    private  TipoHabitacionRepository tipoHabitacionRepository;
+    @Autowired
+    private  HabitacionRepository habitacionRepository;
+    @Autowired
+    private  ServicioRepository servicioRepository;
 
-    public DataLoader(TipoHabitacionRepository tipoHabitacionRepository,
-                      HabitacionRepository habitacionRepository,
-                      ServicioRepository servicioRepository) {
-        this.tipoHabitacionRepository = tipoHabitacionRepository;
-        this.habitacionRepository = habitacionRepository;
-        this.servicioRepository = servicioRepository;
-    }
 
     @Override
     public void run(String... args) {
