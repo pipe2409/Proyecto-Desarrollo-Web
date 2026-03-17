@@ -30,7 +30,7 @@ public class HabitacionController {
 @GetMapping("/reservar")
 public String reservar(Model model, HttpSession session) {
     model.addAttribute("habitaciones", habitacionService.findAll());
-    model.addAttribute("usuarioLogueado", session.getAttribute("huesped") != null);
+    model.addAttribute("usuarioLogueado", session.getAttribute("huespedId") != null);
     return "habitaciones-reservar";
 }
 

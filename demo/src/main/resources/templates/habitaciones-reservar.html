@@ -1066,7 +1066,9 @@
                   th:data-imagen="${hab.tipoHabitacion.imagenUrl}"
                   th:data-capacidad="${hab.tipoHabitacion.capacidad}"
                   th:data-camas="${hab.tipoHabitacion.camas}"
-                  th:data-logueado="${usuarioLogueado}">
+                  th:data-logueado="${usuarioLogueado}"
+                  onClick="manejarReserva(this)">
+                
               Reservar habitación
               </button>
               <button class="btn-reservar disabled"
@@ -1268,6 +1270,8 @@
     <script>
 
     console.log('SCRIPT CARGADO');
+
+    
   
 
   /* =============================================

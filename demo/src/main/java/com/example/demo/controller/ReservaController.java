@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.entities.Huesped;
 import com.example.demo.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;  
@@ -11,12 +10,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
+
 @Controller
 @RequestMapping("/reservas")
 public class ReservaController {
 
     @Autowired
     private ReservaService reservaService;
+
+
 
     @PostMapping("/crear")
     public String crear(@RequestParam Integer habitacionId,
@@ -26,10 +28,9 @@ public class ReservaController {
                         HttpSession session,
                         RedirectAttributes ra) {
 
-        // Obtener el huésped de la sesión
-        Huesped huesped = (Huesped) session.getAttribute("huesped");
+        Integer huespedId = (Integer) session.getAttribute("huespedId"); // ← cambia esto
 
-        if (huesped == null) {
+        if (huespedId == null) {
             return "redirect:/iniciar-sesion";
         }
 
@@ -37,13 +38,7 @@ public class ReservaController {
             LocalDateTime inicio = LocalDate.parse(fechaInicio).atStartOfDay();
             LocalDateTime fin    = LocalDate.parse(fechaFin).atStartOfDay();
 
-            reservaService.crearReserva(
-                habitacionId,
-                huesped.getId(),
-                inicio,
-                fin,
-                cantidadPersonas
-            );
+            reservaService.crearReserva(habitacionId, huespedId, inicio, fin, cantidadPersonas);
 
             return "redirect:/habitaciones/reservar?exito=1";
 
