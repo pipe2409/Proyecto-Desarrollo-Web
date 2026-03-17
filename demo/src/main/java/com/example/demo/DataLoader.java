@@ -2,12 +2,17 @@ package com.example.demo;
 
 import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.Huesped;
+import com.example.demo.entities.Reserva;
 import com.example.demo.entities.Servicio;
 import com.example.demo.entities.TipoHabitacion;
 import com.example.demo.repository.HabitacionRepository;
 import com.example.demo.repository.HuespedRepository;
 import com.example.demo.repository.ServicioRepository;
 import com.example.demo.repository.TipoHabitacionRepository;
+import com.example.demo.repository.ReservaRepository;
+import com.example.demo.entities.EstadoReserva;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -26,6 +31,8 @@ public class DataLoader implements CommandLineRunner {
     private  ServicioRepository servicioRepository;
     @Autowired
     private  HuespedRepository huespedRepository;
+    @Autowired
+    private  ReservaRepository reservaRepository;
    
 
 
@@ -105,8 +112,20 @@ public class DataLoader implements CommandLineRunner {
         }
 
         System.out.println("✓ Proceso de carga inicial finalizado");
+
+        if (reservaRepository.count() == 0) {
+    if (habitacionRepository.count() > 0 && huespedRepository.count() > 0) {
+        cargarReservas();
+        System.out.println("✓ Reservas cargadas correctamente");
+    } else {
+        System.out.println("✗ No se pudieron cargar reservas porque faltan habitaciones o huéspedes");
+    }
+    } else {
+        System.out.println("✓ Las reservas ya existen. Saltando carga.");
+    }
     }
 
+    
     private TipoHabitacion[] cargarTiposHabitacion() {
         TipoHabitacion simple = new TipoHabitacion();
         simple.setNombre("Habitación Simple");
@@ -164,6 +183,7 @@ public class DataLoader implements CommandLineRunner {
         familiar = tipoHabitacionRepository.save(familiar);
 
         return new TipoHabitacion[]{simple, doble, suite, economica, familiar};
+
     }
 
     private void cargarHabitaciones(TipoHabitacion simple, TipoHabitacion doble, TipoHabitacion suite,
@@ -277,4 +297,59 @@ public class DataLoader implements CommandLineRunner {
         restaurant.setHorario("12:00 - 23:00");
         servicioRepository.save(restaurant);
     }
+
+    private void cargarReservas() {
+    List<Habitacion> habitaciones = habitacionRepository.findAll();
+    List<Huesped> huespedes = huespedRepository.findAll();
+
+    // Reserva 1 - Confirmada
+    Reserva r1 = new Reserva();
+    r1.setFechaInicio(LocalDateTime.of(2025, 6, 1, 14, 0));
+    r1.setFechaFin(LocalDateTime.of(2025, 6, 5, 12, 0));
+    r1.setCantidadPersonas(1);
+    r1.setEstado(EstadoReserva.CONFIRMADA);
+    r1.setHuesped(huespedes.get(0));
+    r1.setHabitacion(habitaciones.get(0));
+    reservaRepository.save(r1);
+
+    // Reserva 2 - Pendiente
+    Reserva r2 = new Reserva();
+    r2.setFechaInicio(LocalDateTime.of(2025, 6, 10, 14, 0));
+    r2.setFechaFin(LocalDateTime.of(2025, 6, 15, 12, 0));
+    r2.setCantidadPersonas(2);
+    r2.setEstado(EstadoReserva.PENDIENTE);
+    r2.setHuesped(huespedes.get(1));
+    r2.setHabitacion(habitaciones.get(10));
+    reservaRepository.save(r2);
+
+    // Reserva 3 - En curso (Check-in activo)
+    Reserva r3 = new Reserva();
+    r3.setFechaInicio(LocalDateTime.now().minusDays(2));
+    r3.setFechaFin(LocalDateTime.now().plusDays(3));
+    r3.setCantidadPersonas(3);
+    r3.setEstado(EstadoReserva.PENDIENTE);
+    r3.setHuesped(huespedes.get(2));
+    r3.setHabitacion(habitaciones.get(20));
+    reservaRepository.save(r3);
+
+    // Reserva 4 - Cancelada
+    Reserva r4 = new Reserva();
+    r4.setFechaInicio(LocalDateTime.of(2025, 5, 1, 14, 0));
+    r4.setFechaFin(LocalDateTime.of(2025, 5, 4, 12, 0));
+    r4.setCantidadPersonas(2);
+    r4.setEstado(EstadoReserva.CANCELADA);
+    r4.setHuesped(huespedes.get(3));
+    r4.setHabitacion(habitaciones.get(30));
+    reservaRepository.save(r4);
+
+    // Reserva 5 - Completada
+    Reserva r5 = new Reserva();
+    r5.setFechaInicio(LocalDateTime.of(2025, 4, 20, 14, 0));
+    r5.setFechaFin(LocalDateTime.of(2025, 4, 25, 12, 0));
+    r5.setCantidadPersonas(4);
+    r5.setEstado(EstadoReserva.CONFIRMADA);
+    r5.setHuesped(huespedes.get(4));
+    r5.setHabitacion(habitaciones.get(40));
+    reservaRepository.save(r5);
+}
 }

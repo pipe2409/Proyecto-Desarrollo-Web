@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ReservaServiceImpl implements ReservaService {
@@ -23,6 +25,11 @@ public class ReservaServiceImpl implements ReservaService {
     private HabitacionRepository habitacionRepository;
     @Autowired
     private HuespedRepository huespedRepository;
+
+    @Override
+    public List<Reserva> findByHuesped(Huesped huesped) {
+    return reservaRepository.findByHuesped(huesped);
+        }
 
     @Override
     public Reserva crearReserva(Integer habitacionId,

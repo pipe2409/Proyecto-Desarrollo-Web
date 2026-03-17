@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.entities.Huesped;
 import com.example.demo.entities.Reserva;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public interface ReservaService{
@@ -11,4 +13,7 @@ public interface ReservaService{
                          LocalDateTime fechaInicio,
                          LocalDateTime fechaFin,
                          Integer cantidadPersonas);
+                        
+    List<Reserva> findByHuesped(Huesped huesped);
+                        
 }
