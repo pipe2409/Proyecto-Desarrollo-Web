@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.TipoHabitacion;
-import com.example.demo.repository.TipoHabitacionRepository;
 import com.example.demo.service.HabitacionService;
 import com.example.demo.service.TipoHabitacionService;
 
@@ -27,6 +26,12 @@ public class HabitacionController {
     @Autowired
     private  TipoHabitacionService tipoHabitacionService;
 
+@GetMapping("/reservar")
+public String reservar(Model model) {
+    List<Habitacion> habitaciones = habitacionService.findAll();
+    model.addAttribute("habitaciones", habitaciones);
+    return "habitaciones-reservar";
+}
 
 @GetMapping("/admin")
 public String admin(@RequestParam(value = "tipoId", required = false) Integer tipoId, Model model) {

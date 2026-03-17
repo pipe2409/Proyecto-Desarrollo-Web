@@ -1,0 +1,1418 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habitaciones - Hotel Praia</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* =============================================
+         CSS VARIABLES — mismas del index
+         ============================================= */
+      :root {
+        --color-bg: #0a0e1a;
+        --color-surface: #111827;
+        --color-surface-2: #1a2234;
+        --color-border: rgba(255, 255, 255, 0.08);
+        --color-text: #f1f5f9;
+        --color-text-muted: #94a3b8;
+        --color-accent: #3b82f6;
+        --color-accent-hover: #2563eb;
+        --color-gold: #f59e0b;
+        --color-success: #10b981;
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 20px;
+        --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+        --transition: 0.3s ease;
+        --font: 'Inter', sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--font);
+        background: var(--color-bg);
+        color: var(--color-text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* =============================================
+         NAVBAR — igual al index
+         ============================================= */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding: 1rem 0;
+        transition: background var(--transition), backdrop-filter var(--transition);
+        background: rgba(10, 14, 26, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+      }
+
+      .logo-icon img {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+      }
+
+      .logo-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-text);
+        letter-spacing: -0.02em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .nav-link {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: color var(--transition);
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        color: var(--color-text);
+      }
+
+      .nav-link-cta {
+        background: var(--color-accent);
+        color: #fff !important;
+        padding: 0.45rem 1.1rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        transition: background var(--transition), transform var(--transition);
+      }
+
+      .nav-link-cta:hover {
+        background: var(--color-accent-hover);
+        transform: translateY(-1px);
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+      }
+
+      .mobile-menu-btn span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--color-text);
+        border-radius: 2px;
+        transition: var(--transition);
+      }
+
+      /* =============================================
+         PAGE HERO — cabecera de página
+         ============================================= */
+      .page-hero {
+        padding: 8rem 1.5rem 4rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .page-hero::before {
+        content: '';
+        position: absolute;
+        top: -200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+        pointer-events: none;
+      }
+
+      .page-hero .kicker {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--color-accent);
+        margin-bottom: 1rem;
+      }
+
+      .page-hero h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+      }
+
+      .page-hero p {
+        font-size: 1.1rem;
+        color: var(--color-text-muted);
+        max-width: 560px;
+        margin: 0 auto;
+      }
+
+      /* =============================================
+         FILTROS
+         ============================================= */
+      .filtros-bar {
+        max-width: 1200px;
+        margin: 0 auto 2.5rem;
+        padding: 0 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .filtro-btn {
+        padding: 0.45rem 1.1rem;
+        border-radius: 999px;
+        border: 1px solid var(--color-border);
+        background: transparent;
+        color: var(--color-text-muted);
+        font-family: var(--font);
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+
+      .filtro-btn:hover,
+      .filtro-btn.active {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+        color: #fff;
+      }
+
+      /* =============================================
+         GRID DE HABITACIONES
+         ============================================= */
+      .catalogo-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem 5rem;
+      }
+
+      .habitaciones-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 1.75rem;
+      }
+
+      /* =============================================
+         TARJETA — mismo estilo que habitacion-slide
+         ============================================= */
+      .habitacion-card {
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--color-border);
+        transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .habitacion-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-card);
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+
+      .habitacion-card__image {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+      }
+
+      .habitacion-card__image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .habitacion-card:hover .habitacion-card__image img {
+        transform: scale(1.05);
+      }
+
+      .habitacion-card__overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(10, 14, 26, 0.7) 0%, transparent 60%);
+      }
+
+      .habitacion-card__badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        padding: 0.3rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .badge-disponible {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      .badge-mantenimiento {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+      }
+
+      .habitacion-card__precio {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        text-align: right;
+        line-height: 1.2;
+      }
+
+      .habitacion-card__precio .precio-valor {
+        display: block;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #fff;
+      }
+
+      .habitacion-card__precio .precio-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .habitacion-card__content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      .habitacion-card__meta {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+        margin-bottom: 0.6rem;
+      }
+
+      .habitacion-card__meta span.dot {
+        opacity: 0.4;
+      }
+
+      .habitacion-card__piso {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--color-accent);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 0.3rem;
+      }
+
+      .habitacion-card__nombre {
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+        color: var(--color-text);
+      }
+
+      .habitacion-card__codigo {
+        font-size: 0.78rem;
+        color: var(--color-text-muted);
+        margin-bottom: 0.6rem;
+      }
+
+      .habitacion-card__descripcion {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        flex: 1;
+      }
+
+      .habitacion-card__amenities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .amenity-tag {
+        padding: 0.25rem 0.6rem;
+        background: var(--color-surface-2);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        font-weight: 500;
+      }
+
+      .habitacion-card__actions {
+        margin-top: auto;
+      }
+
+      .btn-reservar {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 1.5rem;
+        background: var(--color-accent);
+        color: #fff;
+        text-decoration: none;
+        border-radius: var(--radius-sm);
+        font-family: var(--font);
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background var(--transition), transform var(--transition);
+      }
+
+      .btn-reservar:hover {
+        background: var(--color-accent-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-reservar:disabled,
+      .btn-reservar.disabled {
+        background: var(--color-surface-2);
+        color: var(--color-text-muted);
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* =============================================
+         MODAL DE RESERVA
+         ============================================= */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--transition);
+      }
+
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .modal {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 560px;
+        max-height: 90vh;
+        overflow-y: auto;
+        transform: translateY(24px) scale(0.97);
+        transition: transform var(--transition);
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-border) transparent;
+      }
+
+      .modal-overlay.open .modal {
+        transform: translateY(0) scale(1);
+      }
+
+      .modal-header {
+        padding: 1.75rem 1.75rem 1rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .modal-header h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .modal-header p {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-top: 0.25rem;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        font-size: 1.4rem;
+        line-height: 1;
+        padding: 0.2rem;
+        transition: color var(--transition);
+        flex-shrink: 0;
+      }
+
+      .modal-close:hover {
+        color: var(--color-text);
+      }
+
+      /* Resumen de la habitación en el modal */
+      .modal-habitacion-info {
+        margin: 1.25rem 1.75rem;
+        padding: 1rem 1.25rem;
+        background: var(--color-surface-2);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-border);
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .modal-habitacion-info img {
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        border-radius: var(--radius-sm);
+        flex-shrink: 0;
+      }
+
+      .modal-habitacion-info .info-text h4 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+      }
+
+      .modal-habitacion-info .info-text span {
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+      }
+
+      .modal-habitacion-info .info-precio {
+        margin-left: auto;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      .modal-habitacion-info .info-precio strong {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--color-accent);
+      }
+
+      .modal-habitacion-info .info-precio small {
+        font-size: 0.72rem;
+        color: var(--color-text-muted);
+      }
+
+      /* Formulario */
+      .modal-form {
+        padding: 0 1.75rem 1.75rem;
+      }
+
+      .form-section-title {
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-accent);
+        margin: 1.5rem 0 0.75rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.02em;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 0.65rem 0.9rem;
+        background: var(--color-surface-2);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        color: var(--color-text);
+        font-family: var(--font);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      }
+
+      .form-group select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.9rem center;
+        padding-right: 2.2rem;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .resumen-precio {
+        background: var(--color-surface-2);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 1.1rem 1.25rem;
+        margin: 1.25rem 0;
+      }
+
+      .resumen-precio .resumen-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-bottom: 0.5rem;
+      }
+
+      .resumen-precio .resumen-row:last-child {
+        margin-bottom: 0;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--color-border);
+        color: var(--color-text);
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+
+      .resumen-precio .resumen-row span:last-child {
+        color: var(--color-text);
+        font-weight: 600;
+      }
+
+      .resumen-precio .resumen-row:last-child span:last-child {
+        color: var(--color-accent);
+        font-size: 1.05rem;
+      }
+
+      .btn-submit {
+        display: block;
+        width: 100%;
+        padding: 0.85rem 1.5rem;
+        background: var(--color-accent);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-family: var(--font);
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background var(--transition), transform var(--transition);
+        letter-spacing: 0.01em;
+      }
+
+      .btn-submit:hover {
+        background: var(--color-accent-hover);
+        transform: translateY(-1px);
+      }
+
+      .form-note {
+        text-align: center;
+        font-size: 0.78rem;
+        color: var(--color-text-muted);
+        margin-top: 0.75rem;
+      }
+
+      /* =============================================
+         TOAST
+         ============================================= */
+      .toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 9999;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-md);
+        font-size: 0.9rem;
+        font-weight: 600;
+        max-width: 360px;
+        transform: translateY(120%);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .toast.success {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        color: #34d399;
+      }
+
+      .toast.error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #f87171;
+      }
+
+      /* =============================================
+         EMPTY STATE
+         ============================================= */
+      .empty-state {
+        text-align: center;
+        padding: 5rem 1.5rem;
+        color: var(--color-text-muted);
+      }
+
+      .empty-state svg {
+        opacity: 0.3;
+        margin-bottom: 1.5rem;
+      }
+
+      .empty-state h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--color-text);
+      }
+
+      /* =============================================
+         FOOTER — igual al index
+         ============================================= */
+      .footer {
+        background: var(--color-surface);
+        border-top: 1px solid var(--color-border);
+        padding: 4rem 0 0;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+        gap: 3rem;
+        margin-bottom: 3rem;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .footer-logo img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+      }
+
+      .footer-col p {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        background: var(--color-surface-2);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        color: var(--color-text-muted);
+        text-decoration: none;
+        transition: all var(--transition);
+      }
+
+      .social-link:hover {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+        color: #fff;
+      }
+
+      .footer-col h4 {
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text);
+        margin-bottom: 1.25rem;
+      }
+
+      .footer-links,
+      .footer-contact,
+      .footer-hours {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .footer-links a,
+      .footer-contact a {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: color var(--transition);
+      }
+
+      .footer-links a:hover {
+        color: var(--color-accent);
+      }
+
+      .footer-contact span,
+      .footer-hours li {
+        color: var(--color-text-muted);
+        font-size: 0.875rem;
+      }
+
+      .hours-reservas {
+        margin-top: 0.5rem;
+        line-height: 1.8;
+      }
+
+      .footer-bottom {
+        border-top: 1px solid var(--color-border);
+        padding: 1.5rem 0;
+      }
+
+      .footer-bottom-content {
+        display: flex;
+        justify-content: center;
+        font-size: 0.82rem;
+        color: var(--color-text-muted);
+      }
+
+      /* =============================================
+         RESPONSIVE
+         ============================================= */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+          position: fixed;
+          top: 64px;
+          left: 0;
+          right: 0;
+          background: var(--color-surface);
+          flex-direction: column;
+          padding: 1.5rem;
+          gap: 1rem;
+          border-bottom: 1px solid var(--color-border);
+        }
+
+        .nav-links.open {
+          display: flex;
+        }
+
+        .mobile-menu-btn {
+          display: flex;
+        }
+
+        .habitaciones-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+        }
+
+        .modal-habitacion-info {
+          flex-wrap: wrap;
+        }
+
+        .modal-habitacion-info .info-precio {
+          margin-left: 0;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .modal {
+          max-height: 95vh;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- =============================================
+         NAVBAR
+         ============================================= -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <a href="/" class="nav-logo">
+          <div class="logo-icon" aria-hidden="true">
+            <img src="/images/logoPraia.png" alt="logoPraia" />
+          </div>
+          <span class="logo-text">Hotel Praia</span>
+        </a>
+
+        <div class="nav-links" id="navLinks">
+          <a href="/#inicio" class="nav-link">Inicio</a>
+          <a href="/habitaciones" class="nav-link active">Habitaciones</a>
+          <a href="/servicios/op" class="nav-link">Servicios</a>
+          <a href="/#galeria" class="nav-link">Galería</a>
+          <a href="/#testimonios" class="nav-link">Testimonios</a>
+          <a href="/#contacto" class="nav-link">Contacto</a>
+          <a href="/iniciar-sesion" class="nav-link nav-link-cta">Reservar</a>
+        </div>
+
+        <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menú">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- =============================================
+         PAGE HERO
+         ============================================= -->
+    <section class="page-hero">
+      <span class="kicker">Hotel Praia</span>
+      <h1>Nuestras Habitaciones</h1>
+      <p>
+        Encuentra la habitación perfecta para tu estancia. Cada espacio diseñado
+        para ofrecerte confort, elegancia y una experiencia inolvidable.
+      </p>
+    </section>
+
+    <!-- =============================================
+         FILTROS
+         ============================================= -->
+    <div class="filtros-bar" id="filtrosBar">
+      <button class="filtro-btn active" data-filtro="todos">Todas</button>
+      <button class="filtro-btn" data-filtro="disponible">Disponibles</button>
+      <!-- Los filtros por tipo se generan con JS a partir de los datos -->
+    </div>
+
+    <!-- =============================================
+         CATÁLOGO DE HABITACIONES
+         ============================================= -->
+    <section class="catalogo-section">
+      <div class="habitaciones-grid" id="habitacionesGrid">
+
+        <!--
+          =========================================================
+          THYMELEAF — iterar sobre habitaciones
+          El controlador debe enviar: model.addAttribute("habitaciones", habitaciones)
+          Cada habitación tiene: id, codigo, piso, estado, notas
+          y tipoHabitacion: {nombre, descripcion, precio, imagenUrl, capacidad, camas, amenities}
+          =========================================================
+        -->
+        <article class="habitacion-card"
+                 th:each="hab : ${habitaciones}"
+                 th:data-tipo="${hab.tipoHabitacion.nombre}"
+                 th:data-estado="${hab.estado}">
+
+          <div class="habitacion-card__image">
+            <img th:src="${hab.tipoHabitacion.imagenUrl}"
+                 th:alt="${hab.tipoHabitacion.nombre}"
+                 loading="lazy" />
+            <div class="habitacion-card__overlay"></div>
+
+            <!-- Badge estado -->
+            <span class="habitacion-card__badge"
+                  th:classappend="${hab.estado == 'DISPONIBLE'} ? 'badge-disponible' : 'badge-mantenimiento'"
+                  th:text="${hab.estado == 'DISPONIBLE'} ? 'Disponible' : 'Mantenimiento'">
+              Disponible
+            </span>
+
+            <!-- Precio -->
+            <div class="habitacion-card__precio">
+              <span class="precio-valor"
+                    th:text="${'$' + #numbers.formatInteger(hab.tipoHabitacion.precio, 3, 'POINT')}">
+                $80
+              </span>
+              <span class="precio-label">/noche</span>
+            </div>
+          </div>
+
+          <div class="habitacion-card__content">
+            <div class="habitacion-card__piso"
+                 th:text="${'Piso ' + hab.piso}">
+              Piso 1
+            </div>
+
+            <h3 class="habitacion-card__nombre"
+                th:text="${hab.tipoHabitacion.nombre}">
+              Suite
+            </h3>
+
+            <p class="habitacion-card__codigo"
+               th:text="${'Habitación #' + hab.codigo}">
+              Habitación #101
+            </p>
+
+            <p class="habitacion-card__descripcion"
+               th:text="${hab.tipoHabitacion.descripcion}">
+              Descripción de la habitación
+            </p>
+
+            <!-- Amenities como tags -->
+            <div class="habitacion-card__amenities">
+              <span class="amenity-tag"
+                    th:each="a, st : ${#strings.arraySplit(hab.tipoHabitacion.amenities, ',')}"
+                    th:if="${st.index < 3}"
+                    th:text="${#strings.trim(a)}">
+                WiFi
+              </span>
+            </div>
+
+            <!-- Meta: capacidad + camas -->
+            <div class="habitacion-card__meta">
+              <span th:text="${hab.tipoHabitacion.capacidad + ' huéspedes'}">2 huéspedes</span>
+              <span class="dot">·</span>
+              <span th:text="${hab.tipoHabitacion.camas}">Cama doble</span>
+            </div>
+
+            <div class="habitacion-card__actions">
+              <!-- Si disponible, botón activo; si no, deshabilitado -->
+              <button class="btn-reservar"
+                      th:if="${hab.estado == 'DISPONIBLE'}"
+                      th:data-id="${hab.id}"
+                      th:data-nombre="${hab.tipoHabitacion.nombre}"
+                      th:data-codigo="${hab.codigo}"
+                      th:data-precio="${hab.tipoHabitacion.precio}"
+                      th:data-imagen="${hab.tipoHabitacion.imagenUrl}"
+                      th:data-capacidad="${hab.tipoHabitacion.capacidad}"
+                      th:data-camas="${hab.tipoHabitacion.camas}"
+                      onclick="abrirModal(this)">
+                Reservar habitación
+              </button>
+              <button class="btn-reservar disabled"
+                      th:unless="${hab.estado == 'DISPONIBLE'}"
+                      disabled>
+                No disponible
+              </button>
+            </div>
+          </div>
+
+        </article>
+
+      </div>
+
+      <!-- Estado vacío (si no hay habitaciones) -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9,22 9,12 15,12 15,22"/>
+        </svg>
+        <h3>No se encontraron habitaciones</h3>
+        <p>Prueba cambiando el filtro o vuelve más tarde.</p>
+      </div>
+    </section>
+
+
+    <!-- =============================================
+         MODAL DE RESERVA
+         ============================================= -->
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal" id="modal">
+
+        <div class="modal-header">
+          <div>
+            <h3 id="modalTitle">Reservar habitación</h3>
+            <p id="modalSubtitle">Completa los datos para confirmar tu reserva</p>
+          </div>
+          <button class="modal-close" onclick="cerrarModal()" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <!-- Resumen de la habitación seleccionada -->
+        <div class="modal-habitacion-info">
+          <img id="modalImg" src="" alt="" />
+          <div class="info-text">
+            <h4 id="modalNombre">Suite</h4>
+            <span id="modalDetalle">2 huéspedes · Cama King</span>
+          </div>
+          <div class="info-precio">
+            <strong id="modalPrecio">$80</strong>
+            <small>/noche</small>
+          </div>
+        </div>
+
+        <!-- Formulario de reserva -->
+        <form class="modal-form" id="reservaForm"
+              th:action="@{/reservas/crear}"
+              method="POST">
+
+          <!-- Hidden fields -->
+          <input type="hidden" name="habitacionId" id="inputHabitacionId" />
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+          <p class="form-section-title">Fechas de estadía</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fechaInicio">Check-in *</label>
+              <input type="date" id="fechaInicio" name="fechaInicio" required />
+            </div>
+            <div class="form-group">
+              <label for="fechaFin">Check-out *</label>
+              <input type="date" id="fechaFin" name="fechaFin" required />
+            </div>
+          </div>
+
+          <p class="form-section-title">Huéspedes</p>
+
+          <div class="form-group">
+            <label for="cantidadPersonas">Número de personas *</label>
+            <select id="cantidadPersonas" name="cantidadPersonas" required>
+              <option value="1">1 Persona</option>
+              <option value="2" selected>2 Personas</option>
+              <option value="3">3 Personas</option>
+              <option value="4">4 Personas</option>
+              <option value="5">5 Personas</option>
+            </select>
+          </div>
+
+          <!-- Resumen de precio calculado -->
+          <div class="resumen-precio" id="resumenPrecio">
+            <div class="resumen-row">
+              <span>Precio por noche</span>
+              <span id="resumenNoche">$0</span>
+            </div>
+            <div class="resumen-row">
+              <span>Noches</span>
+              <span id="resumenNoches">0</span>
+            </div>
+            <div class="resumen-row">
+              <span>Total estimado</span>
+              <span id="resumenTotal">$0</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            Confirmar Reserva
+          </button>
+          <p class="form-note">* Al confirmar, tu reserva quedará en estado PENDIENTE hasta ser aprobada.</p>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- =============================================
+         FOOTER — igual al index
+         ============================================= -->
+    <footer id="contacto" class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="footer-logo">
+              <span>Hotel Praia</span>
+              <img src="/images/logoPraia.png" alt="" />
+            </div>
+            <p>Experimenta el lujo frente al océano en nuestro exclusivo resort playero</p>
+            <div class="social-links">
+              <a href="#" class="social-link" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+              </a>
+              <a href="#" class="social-link" aria-label="Facebook">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+              </a>
+              <a href="#" class="social-link" aria-label="X">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4l16 16M20 4L4 20"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Enlaces Rápidos</h4>
+            <ul class="footer-links">
+              <li><a href="/#inicio">Inicio</a></li>
+              <li><a href="/habitaciones">Habitaciones</a></li>
+              <li><a href="/servicios/op">Servicios</a></li>
+              <li><a href="/#galeria">Galería</a></li>
+              <li><a href="/#testimonios">Testimonios</a></li>
+              <li><a href="/#reservas">Reservas</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Contacto</h4>
+            <ul class="footer-contact">
+              <li><span>CUIDAD GOTICA</span></li>
+              <li><span>+57 301 57946556</span></li>
+              <li><span>contacto@hotelpraia.com</span></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Horario de Atención</h4>
+            <ul class="footer-hours">
+              <li>Recepción: 24 horas</li>
+              <li>Check-in: 15:00</li>
+              <li>Check-out: 12:00</li>
+              <li class="hours-reservas">
+                <strong>Reservas:</strong><br />
+                Lunes - Domingo<br />
+                9:00 - 21:00
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <div class="footer-bottom-content">
+            <p>@ Hotel Praia. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <!-- =============================================
+         JAVASCRIPT
+         ============================================= -->
+    <script>
+      /* ---------- Navbar móvil ---------- */
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      const navLinks  = document.getElementById('navLinks');
+      if (mobileBtn) {
+        mobileBtn.addEventListener('click', () => {
+          navLinks.classList.toggle('open');
+        });
+      }
+
+      /* ---------- Estado del modal ---------- */
+      let precioNoche = 0;
+
+      function abrirModal(btn) {
+        const id       = btn.dataset.id;
+        const nombre   = btn.dataset.nombre;
+        const codigo   = btn.dataset.codigo;
+        const precio   = parseInt(btn.dataset.precio);
+        const imagen   = btn.dataset.imagen;
+        const cap      = btn.dataset.capacidad;
+        const camas    = btn.dataset.camas;
+
+        // Llenar modal
+        document.getElementById('inputHabitacionId').value = id;
+        document.getElementById('modalNombre').textContent  = nombre;
+        document.getElementById('modalDetalle').textContent = cap + ' huéspedes · ' + camas;
+        document.getElementById('modalImg').src             = imagen;
+        document.getElementById('modalImg').alt             = nombre;
+        document.getElementById('modalPrecio').textContent  = '$' + precio.toLocaleString('es-CO');
+        document.getElementById('modalSubtitle').textContent = 'Habitación #' + codigo;
+
+        precioNoche = precio;
+        actualizarResumen();
+
+        // Fechas mínimas = hoy
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fechaInicio').min = hoy;
+        document.getElementById('fechaFin').min    = hoy;
+
+        document.getElementById('modalOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function cerrarModal() {
+        document.getElementById('modalOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      // Cerrar al hacer clic fuera
+      document.getElementById('modalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) cerrarModal();
+      });
+
+      // Cerrar con ESC
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') cerrarModal();
+      });
+
+      /* ---------- Calcular resumen de precio ---------- */
+      function actualizarResumen() {
+        const inicio = document.getElementById('fechaInicio').value;
+        const fin    = document.getElementById('fechaFin').value;
+
+        if (inicio && fin) {
+          const d1     = new Date(inicio);
+          const d2     = new Date(fin);
+          const noches = Math.max(0, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
+          const total  = noches * precioNoche;
+
+          document.getElementById('resumenNoches').textContent = noches;
+          document.getElementById('resumenNoche').textContent  = '$' + precioNoche.toLocaleString('es-CO');
+          document.getElementById('resumenTotal').textContent  = '$' + total.toLocaleString('es-CO');
+        }
+      }
+
+      document.getElementById('fechaInicio').addEventListener('change', function() {
+        // Check-out mínimo = día siguiente al check-in
+        const d = new Date(this.value);
+        d.setDate(d.getDate() + 1);
+        document.getElementById('fechaFin').min = d.toISOString().split('T')[0];
+        actualizarResumen();
+      });
+
+      document.getElementById('fechaFin').addEventListener('change', actualizarResumen);
+
+      /* ---------- Filtros ---------- */
+      const filtros = document.querySelectorAll('.filtro-btn');
+      const cards   = document.querySelectorAll('.habitacion-card');
+      const empty   = document.getElementById('emptyState');
+
+      // Generar filtros por tipo de forma dinámica
+      const tipos = new Set();
+      cards.forEach(c => {
+        const t = c.dataset.tipo;
+        if (t) tipos.add(t);
+      });
+
+      const filtrosBar = document.getElementById('filtrosBar');
+      tipos.forEach(tipo => {
+        const btn = document.createElement('button');
+        btn.className = 'filtro-btn';
+        btn.dataset.filtro = tipo;
+        btn.textContent = tipo;
+        filtrosBar.appendChild(btn);
+      });
+
+      // Event listener en el bar (delegación)
+      filtrosBar.addEventListener('click', function(e) {
+        const btn = e.target.closest('.filtro-btn');
+        if (!btn) return;
+
+        document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filtro = btn.dataset.filtro;
+        let visibles  = 0;
+
+        cards.forEach(card => {
+          const matchTipo   = filtro === 'todos' || card.dataset.tipo === filtro;
+          const matchEstado = filtro === 'disponible' ? card.dataset.estado === 'DISPONIBLE' : true;
+          const show        = matchTipo && matchEstado;
+          card.style.display = show ? '' : 'none';
+          if (show) visibles++;
+        });
+
+        empty.style.display = visibles === 0 ? 'block' : 'none';
+      });
+
+      /* ---------- Toast helper ---------- */
+      function showToast(msg, type = 'success') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className   = 'toast ' + type + ' show';
+        setTimeout(() => t.classList.remove('show'), 4000);
+      }
+
+      /* ---------- Mensaje de éxito/error desde Thymeleaf ---------- */
+      // Puedes pasar th:data-success o th:data-error desde el controlador
+      window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('exito') === '1') {
+          showToast('¡Reserva realizada con éxito! Está pendiente de confirmación.', 'success');
+        }
+        if (params.get('error') === '1') {
+          showToast('Ocurrió un error al procesar tu reserva. Intenta nuevamente.', 'error');
+        }
+      });
+    </script>
+
+  </body>
+</html>

@@ -61,39 +61,28 @@ public class HuespedesController {
     }
 
     @PostMapping("/mi-cuenta")
-    public String actualizarMiCuenta(
-            HttpSession session,
-            @RequestParam String nombre,
-            @RequestParam String apellido,
-            @RequestParam String correo,
-            @RequestParam String telefono,
-            @RequestParam String direccion,
-            @RequestParam String pais
-    ) {
-        Integer huespedId = (Integer) session.getAttribute("huespedId");
+public String actualizarMiCuenta(
+        HttpSession session,
+        @RequestParam String nombre,
+        @RequestParam String apellido,
+        @RequestParam String correo,
+        @RequestParam String telefono,
+        @RequestParam String direccion,
+        @RequestParam String pais) {
 
-        if (huespedId == null) {
-            return "redirect:/iniciar-sesion";
-        }
+    Integer huespedId = (Integer) session.getAttribute("huespedId");
 
-        Huesped huesped = huespedService.findById(huespedId);
-        if (huesped == null) {
-            session.invalidate();
-            return "redirect:/iniciar-sesion";
-        }
-
-        huesped.setNombre(nombre);
-        huesped.setApellido(apellido);
-        huesped.setCorreo(correo);
-        huesped.setTelefono(telefono);
-        huesped.setDireccion(direccion);
-        huesped.setPais(pais);
-
-        huespedService.save(huesped);
-        session.setAttribute("huespedNombre", huesped.getNombre());
-
-        return "redirect:/huespedes/crud?ok";
+    if (huespedId == null) {
+        return "redirect:/iniciar-sesion";
     }
+
+    huespedService.update(
+            huespedId, nombre, apellido, correo, telefono, direccion, pais);
+
+    session.setAttribute("huespedNombre", nombre);
+
+    return "redirect:/huespedes/crud?ok";
+}
 
     @GetMapping("/cambiar-contrasena")
     public String verCambiarContrasena(HttpSession session) {
@@ -107,41 +96,33 @@ public class HuespedesController {
     }
 
     @PostMapping("/cambiar-contrasena")
-    public String cambiarContrasena(
-            HttpSession session,
-            @RequestParam("actual") String actual,
-            @RequestParam("nueva") String nueva,
-            @RequestParam("confirmar") String confirmar,
-            Model model
-    ) {
-        Integer huespedId = (Integer) session.getAttribute("huespedId");
+public String cambiarContrasena(
+        HttpSession session,
+        @RequestParam String actual,
+        @RequestParam String nueva,
+        @RequestParam String confirmar,
+        Model model) {
 
-        if (huespedId == null) {
-            return "redirect:/iniciar-sesion";
-        }
+    Integer huespedId = (Integer) session.getAttribute("huespedId");
 
-        Huesped huesped = huespedService.findById(huespedId);
-        if (huesped == null) {
-            session.invalidate();
-            return "redirect:/iniciar-sesion";
-        }
+    if (huespedId == null) {
+        return "redirect:/iniciar-sesion";
+    }
 
-        if (!huesped.getContrasena().equals(actual)) {
-            model.addAttribute("error", "La contraseña actual es incorrecta.");
-            return "cambiar-contrasena";
-        }
+    try {
 
-        if (!nueva.equals(confirmar)) {
-            model.addAttribute("error", "La nueva contraseña y la confirmación no coinciden.");
-            return "cambiar-contrasena";
-        }
-
-        huesped.setContrasena(nueva);
-        huespedService.save(huesped);
+        huespedService.cambiarContrasena(huespedId, actual, nueva, confirmar);
 
         model.addAttribute("ok", "Contraseña actualizada correctamente.");
-        return "cambiar-contrasena";
+
+    } catch (RuntimeException e) {
+
+        model.addAttribute("error", e.getMessage());
     }
+
+    return "cambiar-contrasena";
+}
+
     @PostMapping("/eliminar-cuenta")
 public String eliminarCuenta(HttpSession session) {
 
