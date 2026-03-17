@@ -3,12 +3,7 @@
    Estilo tipo carrusel premium
    ======================================== */
 body{
-  background:
-    
-    url("https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1800&q=80")
-    center / cover no-repeat fixed;
-
-  background-attachment: fixed;
+  background-color: #0a192f;
 }
 
 /* ========================================
