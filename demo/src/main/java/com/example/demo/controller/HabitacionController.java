@@ -6,6 +6,7 @@ import com.example.demo.service.HabitacionService;
 import com.example.demo.service.TipoHabitacionService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,9 +28,9 @@ public class HabitacionController {
     private  TipoHabitacionService tipoHabitacionService;
 
 @GetMapping("/reservar")
-public String reservar(Model model) {
-    List<Habitacion> habitaciones = habitacionService.findAll();
-    model.addAttribute("habitaciones", habitaciones);
+public String reservar(Model model, HttpSession session) {
+    model.addAttribute("habitaciones", habitacionService.findAll());
+    model.addAttribute("usuarioLogueado", session.getAttribute("huesped") != null);
     return "habitaciones-reservar";
 }
 

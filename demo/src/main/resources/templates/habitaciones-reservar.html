@@ -1058,16 +1058,16 @@
             <div class="habitacion-card__actions">
               <!-- Si disponible, botón activo; si no, deshabilitado -->
               <button class="btn-reservar"
-                      th:if="${hab.estado == 'DISPONIBLE'}"
-                      th:data-id="${hab.id}"
-                      th:data-nombre="${hab.tipoHabitacion.nombre}"
-                      th:data-codigo="${hab.codigo}"
-                      th:data-precio="${hab.tipoHabitacion.precio}"
-                      th:data-imagen="${hab.tipoHabitacion.imagenUrl}"
-                      th:data-capacidad="${hab.tipoHabitacion.capacidad}"
-                      th:data-camas="${hab.tipoHabitacion.camas}"
-                      onclick="abrirModal(this)">
-                Reservar habitación
+                  th:if="${hab.estado == 'DISPONIBLE'}"
+                  th:data-id="${hab.id}"
+                  th:data-nombre="${hab.tipoHabitacion.nombre}"
+                  th:data-codigo="${hab.codigo}"
+                  th:data-precio="${hab.tipoHabitacion.precio}"
+                  th:data-imagen="${hab.tipoHabitacion.imagenUrl}"
+                  th:data-capacidad="${hab.tipoHabitacion.capacidad}"
+                  th:data-camas="${hab.tipoHabitacion.camas}"
+                  th:data-logueado="${usuarioLogueado}">
+              Reservar habitación
               </button>
               <button class="btn-reservar disabled"
                       th:unless="${hab.estado == 'DISPONIBLE'}"
@@ -1127,7 +1127,7 @@
 
           <!-- Hidden fields -->
           <input type="hidden" name="habitacionId" id="inputHabitacionId" />
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        
 
           <p class="form-section-title">Fechas de estadía</p>
 
@@ -1266,153 +1266,174 @@
          JAVASCRIPT
          ============================================= -->
     <script>
-      /* ---------- Navbar móvil ---------- */
-      const mobileBtn = document.getElementById('mobileMenuBtn');
-      const navLinks  = document.getElementById('navLinks');
-      if (mobileBtn) {
-        mobileBtn.addEventListener('click', () => {
-          navLinks.classList.toggle('open');
-        });
-      }
 
-      /* ---------- Estado del modal ---------- */
-      let precioNoche = 0;
+    console.log('SCRIPT CARGADO');
+  
 
-      function abrirModal(btn) {
-        const id       = btn.dataset.id;
-        const nombre   = btn.dataset.nombre;
-        const codigo   = btn.dataset.codigo;
-        const precio   = parseInt(btn.dataset.precio);
-        const imagen   = btn.dataset.imagen;
-        const cap      = btn.dataset.capacidad;
-        const camas    = btn.dataset.camas;
+  /* =============================================
+     FUNCIONES GLOBALES
+     Deben estar fuera del DOMContentLoaded para
+     que los onclick inline puedan encontrarlas
+     ============================================= */
+  let precioNoche = 0;
 
-        // Llenar modal
-        document.getElementById('inputHabitacionId').value = id;
-        document.getElementById('modalNombre').textContent  = nombre;
-        document.getElementById('modalDetalle').textContent = cap + ' huéspedes · ' + camas;
-        document.getElementById('modalImg').src             = imagen;
-        document.getElementById('modalImg').alt             = nombre;
-        document.getElementById('modalPrecio').textContent  = '$' + precio.toLocaleString('es-CO');
-        document.getElementById('modalSubtitle').textContent = 'Habitación #' + codigo;
+  function manejarReserva(btn) {
+    if (btn.dataset.logueado !== 'true') {
+      window.location.href = '/iniciar-sesion';
+      return;
+    }
+    abrirModal(btn);
+  }
 
-        precioNoche = precio;
-        actualizarResumen();
+  function abrirModal(btn) {
+    const id     = btn.dataset.id;
+    const nombre = btn.dataset.nombre;
+    const codigo = btn.dataset.codigo;
+    const precio = parseInt(btn.dataset.precio);
+    const imagen = btn.dataset.imagen;
+    const cap    = btn.dataset.capacidad;
+    const camas  = btn.dataset.camas;
 
-        // Fechas mínimas = hoy
-        const hoy = new Date().toISOString().split('T')[0];
-        document.getElementById('fechaInicio').min = hoy;
-        document.getElementById('fechaFin').min    = hoy;
+    document.getElementById('inputHabitacionId').value  = id;
+    document.getElementById('modalNombre').textContent   = nombre;
+    document.getElementById('modalDetalle').textContent  = cap + ' huéspedes · ' + camas;
+    document.getElementById('modalImg').src              = imagen;
+    document.getElementById('modalImg').alt              = nombre;
+    document.getElementById('modalPrecio').textContent   = '$' + precio.toLocaleString('es-CO');
+    document.getElementById('modalSubtitle').textContent = 'Habitación #' + codigo;
 
-        document.getElementById('modalOverlay').classList.add('open');
-        document.body.style.overflow = 'hidden';
-      }
+    precioNoche = precio;
+    actualizarResumen();
 
-      function cerrarModal() {
-        document.getElementById('modalOverlay').classList.remove('open');
-        document.body.style.overflow = '';
-      }
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById('fechaInicio').min = hoy;
+    document.getElementById('fechaFin').min    = hoy;
 
-      // Cerrar al hacer clic fuera
-      document.getElementById('modalOverlay').addEventListener('click', function(e) {
-        if (e.target === this) cerrarModal();
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function actualizarResumen() {
+    const inicio = document.getElementById('fechaInicio').value;
+    const fin    = document.getElementById('fechaFin').value;
+
+    if (inicio && fin) {
+      const d1     = new Date(inicio);
+      const d2     = new Date(fin);
+      const noches = Math.max(0, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
+      const total  = noches * precioNoche;
+
+      document.getElementById('resumenNoches').textContent = noches;
+      document.getElementById('resumenNoche').textContent  = '$' + precioNoche.toLocaleString('es-CO');
+      document.getElementById('resumenTotal').textContent  = '$' + total.toLocaleString('es-CO');
+    }
+  }
+
+  function showToast(msg, type = 'success') {
+    const t       = document.getElementById('toast');
+    t.textContent = msg;
+    t.className   = 'toast ' + type + ' show';
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  /* =============================================
+     DOM CONTENT LOADED
+     Todo lo que accede al DOM va aquí adentro
+     ============================================= */
+  document.addEventListener('DOMContentLoaded', () => {
+
+    console.log('DOM listo ✓');
+
+    /* Navbar móvil */
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const navLinks  = document.getElementById('navLinks');
+    if (mobileBtn) {
+      mobileBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+    }
+
+    /* Cerrar modal al hacer clic fuera */
+    document.getElementById('modalOverlay')?.addEventListener('click', function(e) {
+      if (e.target === this) cerrarModal();
+    });
+
+    /* Cerrar modal con ESC */
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') cerrarModal();
+    });
+
+    /* Fechas */
+    document.getElementById('fechaInicio')?.addEventListener('change', function() {
+      const d = new Date(this.value);
+      d.setDate(d.getDate() + 1);
+      document.getElementById('fechaFin').min = d.toISOString().split('T')[0];
+      actualizarResumen();
+    });
+    document.getElementById('fechaFin')?.addEventListener('change', actualizarResumen);
+
+    /* Filtros — generar botones por tipo dinámicamente */
+    const cards      = document.querySelectorAll('.habitacion-card');
+    const empty      = document.getElementById('emptyState');
+    const filtrosBar = document.getElementById('filtrosBar');
+
+    const tipos = new Set();
+    cards.forEach(c => { if (c.dataset.tipo) tipos.add(c.dataset.tipo); });
+
+    tipos.forEach(tipo => {
+      const btn          = document.createElement('button');
+      btn.className      = 'filtro-btn';
+      btn.dataset.filtro = tipo;
+      btn.textContent    = tipo;
+      filtrosBar.appendChild(btn);
+    });
+
+    filtrosBar?.addEventListener('click', function(e) {
+      const btn = e.target.closest('.filtro-btn');
+      if (!btn) return;
+
+      document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filtro = btn.dataset.filtro;
+      let visibles = 0;
+
+      cards.forEach(card => {
+        const matchTipo   = filtro === 'todos' || card.dataset.tipo === filtro;
+        const matchEstado = filtro === 'disponible' ? card.dataset.estado === 'DISPONIBLE' : true;
+        const show        = matchTipo && matchEstado;
+        card.style.display = show ? '' : 'none';
+        if (show) visibles++;
       });
 
-      // Cerrar con ESC
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') cerrarModal();
+      if (empty) empty.style.display = visibles === 0 ? 'block' : 'none';
+    });
+
+    /* Botones reservar */
+    const botones = document.querySelectorAll('.btn-reservar');
+    console.log('Botones encontrados:', botones.length);
+
+    botones.forEach(btn => {
+      btn.addEventListener('click', () => {
+        console.log('data-logueado:', btn.dataset.logueado);
+        manejarReserva(btn);
       });
+    });
 
-      /* ---------- Calcular resumen de precio ---------- */
-      function actualizarResumen() {
-        const inicio = document.getElementById('fechaInicio').value;
-        const fin    = document.getElementById('fechaFin').value;
+    /* Toast desde parámetros URL */
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('exito') === '1') {
+      showToast('¡Reserva realizada con éxito! Está pendiente de confirmación.', 'success');
+    }
+    if (params.get('error') === '1') {
+      showToast('Ocurrió un error al procesar tu reserva. Intenta nuevamente.', 'error');
+    }
 
-        if (inicio && fin) {
-          const d1     = new Date(inicio);
-          const d2     = new Date(fin);
-          const noches = Math.max(0, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
-          const total  = noches * precioNoche;
-
-          document.getElementById('resumenNoches').textContent = noches;
-          document.getElementById('resumenNoche').textContent  = '$' + precioNoche.toLocaleString('es-CO');
-          document.getElementById('resumenTotal').textContent  = '$' + total.toLocaleString('es-CO');
-        }
-      }
-
-      document.getElementById('fechaInicio').addEventListener('change', function() {
-        // Check-out mínimo = día siguiente al check-in
-        const d = new Date(this.value);
-        d.setDate(d.getDate() + 1);
-        document.getElementById('fechaFin').min = d.toISOString().split('T')[0];
-        actualizarResumen();
-      });
-
-      document.getElementById('fechaFin').addEventListener('change', actualizarResumen);
-
-      /* ---------- Filtros ---------- */
-      const filtros = document.querySelectorAll('.filtro-btn');
-      const cards   = document.querySelectorAll('.habitacion-card');
-      const empty   = document.getElementById('emptyState');
-
-      // Generar filtros por tipo de forma dinámica
-      const tipos = new Set();
-      cards.forEach(c => {
-        const t = c.dataset.tipo;
-        if (t) tipos.add(t);
-      });
-
-      const filtrosBar = document.getElementById('filtrosBar');
-      tipos.forEach(tipo => {
-        const btn = document.createElement('button');
-        btn.className = 'filtro-btn';
-        btn.dataset.filtro = tipo;
-        btn.textContent = tipo;
-        filtrosBar.appendChild(btn);
-      });
-
-      // Event listener en el bar (delegación)
-      filtrosBar.addEventListener('click', function(e) {
-        const btn = e.target.closest('.filtro-btn');
-        if (!btn) return;
-
-        document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const filtro = btn.dataset.filtro;
-        let visibles  = 0;
-
-        cards.forEach(card => {
-          const matchTipo   = filtro === 'todos' || card.dataset.tipo === filtro;
-          const matchEstado = filtro === 'disponible' ? card.dataset.estado === 'DISPONIBLE' : true;
-          const show        = matchTipo && matchEstado;
-          card.style.display = show ? '' : 'none';
-          if (show) visibles++;
-        });
-
-        empty.style.display = visibles === 0 ? 'block' : 'none';
-      });
-
-      /* ---------- Toast helper ---------- */
-      function showToast(msg, type = 'success') {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.className   = 'toast ' + type + ' show';
-        setTimeout(() => t.classList.remove('show'), 4000);
-      }
-
-      /* ---------- Mensaje de éxito/error desde Thymeleaf ---------- */
-      // Puedes pasar th:data-success o th:data-error desde el controlador
-      window.addEventListener('DOMContentLoaded', () => {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('exito') === '1') {
-          showToast('¡Reserva realizada con éxito! Está pendiente de confirmación.', 'success');
-        }
-        if (params.get('error') === '1') {
-          showToast('Ocurrió un error al procesar tu reserva. Intenta nuevamente.', 'error');
-        }
-      });
-    </script>
+  });
+</script>
 
   </body>
 </html>
