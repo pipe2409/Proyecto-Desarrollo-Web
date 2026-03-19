@@ -17,7 +17,7 @@ public class CuentaHabitacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(nullable = false)
     private int total;
 

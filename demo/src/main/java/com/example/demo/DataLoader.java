@@ -2,14 +2,18 @@ package com.example.demo;
 
 import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.Huesped;
+import com.example.demo.entities.ItemCuenta;
 import com.example.demo.entities.Reserva;
 import com.example.demo.entities.Servicio;
 import com.example.demo.entities.TipoHabitacion;
+import com.example.demo.repository.CuentaHabitacionRepository;
 import com.example.demo.repository.HabitacionRepository;
 import com.example.demo.repository.HuespedRepository;
+import com.example.demo.repository.ItemCuentaRepository;
 import com.example.demo.repository.ServicioRepository;
 import com.example.demo.repository.TipoHabitacionRepository;
 import com.example.demo.repository.ReservaRepository;
+import com.example.demo.entities.CuentaHabitacion;
 import com.example.demo.entities.EstadoReserva;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +37,10 @@ public class DataLoader implements CommandLineRunner {
     private  HuespedRepository huespedRepository;
     @Autowired
     private  ReservaRepository reservaRepository;
+    @Autowired
+    private ItemCuentaRepository itemCuentaRepository;
+    @Autowired
+    private CuentaHabitacionRepository cuentaHabitacionRepository;
    
 
 
@@ -123,7 +131,66 @@ public class DataLoader implements CommandLineRunner {
     } else {
         System.out.println("✓ Las reservas ya existen. Saltando carga.");
     }
+
+    if (cuentaHabitacionRepository.count() == 0) {
+        if (reservaRepository.count() > 0 && servicioRepository.count() > 0) {
+            cargarCuentasHabitacion();
+            System.out.println("✓ Cuentas de habitación cargadas correctamente");
+        } else {
+            System.out.println("✗ No se pudieron cargar cuentas porque faltan reservas o servicios");
+        }
+        } else {
+        System.out.println("✓ Las cuentas ya existen. Saltando carga.");
+        }
     }
+
+    private void cargarCuentasHabitacion() {
+    List<Reserva> reservas = reservaRepository.findAll();
+    List<Servicio> servicios = servicioRepository.findAll();
+
+    for (int i = 0; i < 5; i++) {
+        CuentaHabitacion cuenta = new CuentaHabitacion();
+        cuenta.setReserva(reservas.get(i));
+        cuenta.setTotal(0); // se calculará al agregar items
+        cuenta = cuentaHabitacionRepository.save(cuenta);
+
+        cargarItemsCuenta(cuenta, servicios, i);
+    }
+}
+
+private void cargarItemsCuenta(CuentaHabitacion cuenta, List<Servicio> servicios, int index) {
+    int totalCuenta = 0;
+
+    // Cada cuenta tendrá entre 1 y 3 items usando servicios distintos
+    int[][] combinaciones = {
+        {0, 1},       // cuenta 0: servicios 0 y 1
+        {1, 2},       // cuenta 1: servicios 1 y 2
+        {0, 2, 3},    // cuenta 2: servicios 0, 2 y 3
+        {3, 4},       // cuenta 3: servicios 3 y 4
+        {0, 1, 4}     // cuenta 4: servicios 0, 1 y 4
+    };
+
+    for (int servicioIndex : combinaciones[index]) {
+        Servicio servicio = servicios.get(servicioIndex);
+        int cantidad = index + 1; // cantidad varía por cuenta (1 a 5)
+        int subtotal = servicio.getPrecio() * cantidad;
+
+        ItemCuenta item = new ItemCuenta();
+        item.setCuentaHabitacion(cuenta);
+        item.setServicio(servicio);
+        item.setCantidad(cantidad);
+        item.setSubtotal(subtotal);
+        itemCuentaRepository.save(item);
+
+        totalCuenta += subtotal;
+    }
+
+    // Actualizar el total de la cuenta
+    cuenta.setTotal(totalCuenta);
+    cuentaHabitacionRepository.save(cuenta);
+}
+
+
 
     
     private TipoHabitacion[] cargarTiposHabitacion() {
