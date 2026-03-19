@@ -36,7 +36,7 @@ public String editarReserva(@PathVariable Integer id, Model model) {
     model.addAttribute("huespedes", huespedService.findAll());
     model.addAttribute("habitaciones", habitacionService.findAll());
     model.addAttribute("modo", "editar");
-    return "reserva-form-admin";
+    return "reservas-form";
 }
 
 // Guardar cambios
