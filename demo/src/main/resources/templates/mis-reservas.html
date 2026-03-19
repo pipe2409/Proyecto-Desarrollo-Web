@@ -209,7 +209,6 @@
                 onsubmit="return confirm('¿Seguro que quieres cancelar esta reserva?')"
                 style="display:inline"
               >
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <button type="submit" class="rc-btn rc-btn--cancel">Cancelar</button>
               </form>
             </div>

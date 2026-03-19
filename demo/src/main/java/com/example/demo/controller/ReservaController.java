@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.entities.Huesped;
 import com.example.demo.entities.Reserva;
 import com.example.demo.service.ReservaService;
+import com.example.demo.service.HuespedService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;  
 import org.springframework.web.bind.annotation.*;
@@ -21,20 +23,23 @@ public class ReservaController {
 
     @Autowired
     private ReservaService reservaService;
+    @Autowired
+    private HuespedService huespedService;
+   
    
     
 
     @GetMapping("/mis-reservas")
     public String misReservas(Model model, HttpSession session) {
-    Huesped huesped = (Huesped) session.getAttribute("huespedLogueado");
-    
-    if (huesped == null) return "redirect:/login";
-    
-    List<Reserva> reservas = reservaService.findByHuesped(huesped);
-    model.addAttribute("reservas", reservas);
-    return "mis-reservas";
+        Integer huespedId = (Integer) session.getAttribute("huespedId");
+        
+        if (huespedId == null) return "redirect:/iniciar-sesion";
+        
+        Huesped huesped = huespedService.findById(huespedId);
+        List<Reserva> reservas = reservaService.findByHuesped(huesped);
+        model.addAttribute("reservas", reservas);
+        return "mis-reservas";
     }
-
     @PostMapping("/crear")
     public String crear(@RequestParam Integer habitacionId,
                         @RequestParam String fechaInicio,
