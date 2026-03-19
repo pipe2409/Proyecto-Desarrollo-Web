@@ -129,11 +129,8 @@
 
             <div class="mt-3 text-xs text-slate-400" th:text="${t.amenities}"></div>
 
-            <div class="mt-5 flex items-center justify-between">
-              <span th:if="${t.disponible}" class="inline-flex items-center gap-2 text-xs text-emerald-200">
-                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-                Disponible
-              </span>
+            <div class="mt-5 flex items-center justify-between">              
+              
 
               <span th:if="${!t.disponible}" class="inline-flex items-center gap-2 text-xs text-rose-200">
                 <span class="h-2 w-2 rounded-full bg-rose-400"></span>

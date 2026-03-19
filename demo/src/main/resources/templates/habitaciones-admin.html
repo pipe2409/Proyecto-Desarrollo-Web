@@ -120,8 +120,19 @@
             <td class="px-5 py-3 font-medium" th:text="${h.codigo}">101</td>
             <td class="px-5 py-3" th:text="${h.piso}">1</td>
             <td class="px-5 py-3">
-              <span class="rounded-full border border-slate-700 bg-slate-950 px-3 py-1 text-xs"
-                    th:text="${h.estado}">DISPONIBLE</span>
+              
+
+
+              <span 
+  class="rounded-full px-3 py-1 text-xs font-medium border"
+  th:text="${h.estado}"
+  th:classappend="
+    ${h.estado == 'DISPONIBLE'} ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
+    (${h.estado == 'OCUPADA'} ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' :
+    (${h.estado == 'MANTENIMIENTO'} ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+    'bg-slate-800 text-slate-300 border-slate-700'))
+  ">
+</span>
             </td>
             <td class="px-5 py-3"
                 th:text="${h.tipoHabitacion != null ? h.tipoHabitacion.nombre : 'Sin tipo'}">
