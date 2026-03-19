@@ -26,6 +26,14 @@ public class ReservaServiceImpl implements ReservaService {
     @Autowired
     private HuespedRepository huespedRepository;
 
+    public Reserva save(Reserva reserva) {
+    return reservaRepository.save(reserva);
+    }
+   
+    public Reserva findById(Integer id) {
+    return reservaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
+    }
     public List<Reserva> findAll() {
     return reservaRepository.findAll();
     }
