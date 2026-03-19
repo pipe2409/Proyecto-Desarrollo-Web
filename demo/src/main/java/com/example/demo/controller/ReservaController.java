@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.entities.Huesped;
 import com.example.demo.entities.Reserva;
-import com.example.demo.service.HuespedService;
 import com.example.demo.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;  
@@ -22,8 +21,8 @@ public class ReservaController {
 
     @Autowired
     private ReservaService reservaService;
-    @Autowired
-    private HuespedService huespedService;
+   
+    
 
     @GetMapping("/mis-reservas")
     public String misReservas(Model model, HttpSession session) {
