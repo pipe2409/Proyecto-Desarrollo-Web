@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.Huesped;
 import com.example.demo.entities.ItemCuenta;
+import com.example.demo.entities.Operador;
 import com.example.demo.entities.Reserva;
 import com.example.demo.entities.Servicio;
 import com.example.demo.entities.TipoHabitacion;
@@ -12,6 +13,7 @@ import com.example.demo.repository.HuespedRepository;
 import com.example.demo.repository.ItemCuentaRepository;
 import com.example.demo.repository.ServicioRepository;
 import com.example.demo.repository.TipoHabitacionRepository;
+import com.example.demo.repository.OperadorRepository;
 import com.example.demo.repository.ReservaRepository;
 import com.example.demo.entities.CuentaHabitacion;
 import com.example.demo.entities.EstadoReserva;
@@ -41,6 +43,8 @@ public class DataLoader implements CommandLineRunner {
     private ItemCuentaRepository itemCuentaRepository;
     @Autowired
     private CuentaHabitacionRepository cuentaHabitacionRepository;
+    @Autowired
+    private OperadorRepository operadorRepository;
    
 
 
@@ -142,6 +146,13 @@ public class DataLoader implements CommandLineRunner {
         } else {
         System.out.println("✓ Las cuentas ya existen. Saltando carga.");
         }
+        
+    if (operadorRepository.count() == 0) {
+    cargarOperadores();
+        System.out.println("✓ Operadores cargados correctamente");
+    } else {
+        System.out.println("✓ Los operadores ya existen. Saltando carga.");
+    }
     }
 
     private void cargarCuentasHabitacion() {
@@ -155,6 +166,24 @@ public class DataLoader implements CommandLineRunner {
         cuenta = cuentaHabitacionRepository.save(cuenta);
 
         cargarItemsCuenta(cuenta, servicios, i);
+    }
+
+}
+
+private void cargarOperadores() {
+    String[][] datos = {
+        {"admin@hotel.com",    "admin123"},
+        {"recepcion@hotel.com","recep456"},
+        {"caja@hotel.com",     "caja789"},
+        {"supervisor@hotel.com","super321"},
+        {"soporte@hotel.com",  "soporte000"}
+    };
+
+    for (String[] d : datos) {
+        Operador op = new Operador();
+        op.setCorreo(d[0]);
+        op.setContrasena(d[1]);
+        operadorRepository.save(op);
     }
 }
 
