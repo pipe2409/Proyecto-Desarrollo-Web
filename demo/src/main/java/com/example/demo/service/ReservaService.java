@@ -15,5 +15,5 @@ public interface ReservaService{
                          Integer cantidadPersonas);
                         
     List<Reserva> findByHuesped(Huesped huesped);
-                        
+    List<Reserva> findAll();                    
 }

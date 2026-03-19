@@ -26,7 +26,11 @@ public class ReservaController {
     @Autowired
     private HuespedService huespedService;
    
-   
+   @GetMapping("/admin")
+    public String adminReservas(Model model) {
+        model.addAttribute("reservas", reservaService.findAll());
+        return "reservas-admin";
+    }
     
 
     @GetMapping("/mis-reservas")

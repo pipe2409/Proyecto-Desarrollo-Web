@@ -26,6 +26,10 @@ public class ReservaServiceImpl implements ReservaService {
     @Autowired
     private HuespedRepository huespedRepository;
 
+    public List<Reserva> findAll() {
+    return reservaRepository.findAll();
+    }
+
     @Override
     public List<Reserva> findByHuesped(Huesped huesped) {
     return reservaRepository.findByHuesped(huesped);
