@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-
 import java.util.List;
 
 @Service
@@ -26,22 +25,45 @@ public class ReservaServiceImpl implements ReservaService {
     @Autowired
     private HuespedRepository huespedRepository;
 
+    @Override
     public Reserva save(Reserva reserva) {
-    return reservaRepository.save(reserva);
+        return reservaRepository.save(reserva);
+    }
+    
+    @Override
+    public void deleteById(Integer id) {
+        reservaRepository.deleteById(id);
     }
    
+    @Override
     public Reserva findById(Integer id) {
-    return reservaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
+        return reservaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
     }
+    
+    @Override
     public List<Reserva> findAll() {
-    return reservaRepository.findAll();
+        return reservaRepository.findAll();
     }
 
     @Override
     public List<Reserva> findByHuesped(Huesped huesped) {
-    return reservaRepository.findByHuesped(huesped);
-        }
+        return reservaRepository.findByHuesped(huesped);
+    }
+
+    @Override
+public boolean tieneReservasActivas(Integer huespedId) {
+    Huesped huesped = huespedRepository.findById(huespedId)
+            .orElseThrow(() -> new EntityNotFoundException("Huésped no encontrado"));
+    
+    List<Reserva> reservas = reservaRepository.findByHuesped(huesped);
+    
+    return reservas.stream().anyMatch(reserva -> 
+        reserva.getEstado() == EstadoReserva.PENDIENTE || 
+        reserva.getEstado() == EstadoReserva.CONFIRMADA
+    );
+}
+
 
     @Override
     public Reserva crearReserva(Integer habitacionId,
@@ -65,5 +87,57 @@ public class ReservaServiceImpl implements ReservaService {
         reserva.setEstado(EstadoReserva.PENDIENTE);
 
         return reservaRepository.save(reserva);
+    }
+    
+    // ==================== NUEVOS MÉTODOS ====================
+    
+    @Override
+    public boolean isHabitacionDisponible(Integer habitacionId, LocalDateTime inicio, LocalDateTime fin) {
+        List<Reserva> reservas = reservaRepository.findByHabitacionId(habitacionId);
+        
+        for (Reserva reserva : reservas) {
+            // Ignorar reservas canceladas
+            if (reserva.getEstado() == EstadoReserva.CANCELADA) {
+                continue;
+            }
+            
+            // Verificar superposición: NO disponible si hay conflicto
+            // Conflicto cuando: reserva existente NO termina antes de la nueva O NO empieza después de la nueva
+            boolean hayConflicto = !(fin.isBefore(reserva.getFechaInicio()) || 
+                                      inicio.isAfter(reserva.getFechaFin()));
+            
+            if (hayConflicto) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    @Override
+    public boolean isHabitacionDisponibleParaEditar(Integer habitacionId, 
+                                                     LocalDateTime inicio, 
+                                                     LocalDateTime fin, 
+                                                     Integer reservaId) {
+        List<Reserva> reservas = reservaRepository.findByHabitacionId(habitacionId);
+        
+        for (Reserva reserva : reservas) {
+            // Ignorar la reserva que estamos editando
+            if (reserva.getId().equals(reservaId)) {
+                continue;
+            }
+            
+            // Ignorar reservas canceladas
+            if (reserva.getEstado() == EstadoReserva.CANCELADA) {
+                continue;
+            }
+            
+            boolean hayConflicto = !(fin.isBefore(reserva.getFechaInicio()) || 
+                                      inicio.isAfter(reserva.getFechaFin()));
+            
+            if (hayConflicto) {
+                return false;
+            }
+        }
+        return true;
     }
 }

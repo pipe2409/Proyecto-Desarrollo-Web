@@ -18,4 +18,9 @@ public interface ReservaService{
     List<Reserva> findAll();  
     Reserva findById(Integer id);  
     Reserva save(Reserva reserva);
+    void deleteById(Integer id);
+
+    boolean tieneReservasActivas(Integer huespedId);
+    boolean isHabitacionDisponible(Integer habitacionId, LocalDateTime inicio, LocalDateTime fin);
+    boolean isHabitacionDisponibleParaEditar(Integer habitacionId, LocalDateTime inicio, LocalDateTime fin, Integer reservaId);
 }               

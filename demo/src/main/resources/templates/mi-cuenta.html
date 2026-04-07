@@ -20,7 +20,7 @@
       }
       main {
         padding-top: 90px;
-      } /* separa del navbar fixed */
+      }
       .container {
         max-width: 1100px;
         margin: 0 auto;
@@ -124,6 +124,15 @@
         border-radius: 12px;
         margin-bottom: 14px;
       }
+      /* Estilo para mensaje de error - NUEVO */
+      .alertError {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 10px 12px;
+        border-radius: 12px;
+        margin-bottom: 14px;
+      }
       @media (max-width: 900px) {
         .profileTop {
           grid-template-columns: 1fr;
@@ -168,7 +177,11 @@
 
     <main>
       <div class="container">
+        <!-- Mensaje de éxito al guardar cambios -->
         <div th:if="${param.ok}" class="alertOk">Cambios guardados.</div>
+
+        <!-- Mensaje de error al intentar eliminar cuenta con reservas activas - NUEVO -->
+        <div th:if="${error}" class="alertError" th:text="${error}"></div>
 
         <div class="card">
           <div class="profileTop">

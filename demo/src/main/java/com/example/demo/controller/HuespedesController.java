@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entities.Huesped;
 import com.example.demo.service.HuespedService;
+import com.example.demo.service.ReservaService;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -122,14 +124,27 @@ public String cambiarContrasena(
 
     return "cambiar-contrasena";
 }
+  @Autowired
+private ReservaService reservaService;  
 
-    @PostMapping("/eliminar-cuenta")
-public String eliminarCuenta(HttpSession session) {
+@PostMapping("/eliminar-cuenta")
+public String eliminarCuenta(HttpSession session, Model model) {
 
     Integer huespedId = (Integer) session.getAttribute("huespedId");
 
     if (huespedId == null) {
         return "redirect:/iniciar-sesion";
+    }
+
+    // Verificar si tiene reservas activas
+    if (reservaService.tieneReservasActivas(huespedId)) {
+        model.addAttribute("error", "No puedes eliminar tu cuenta porque tienes reservas activas o pendientes. Cancela tus reservas primero.");
+        
+        // Obtener los datos del huésped para mostrar la página nuevamente
+        Huesped huesped = huespedService.findById(huespedId);
+        model.addAttribute("huesped", huesped);
+        model.addAttribute("nombreCompleto", huesped.getNombre() + " " + huesped.getApellido());
+        return "mi-cuenta";  // Regresar a la página de cuenta con el mensaje de error
     }
 
     Huesped huesped = huespedService.findById(huespedId);
