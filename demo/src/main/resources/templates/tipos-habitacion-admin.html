@@ -132,10 +132,6 @@
             <div class="mt-5 flex items-center justify-between">              
               
 
-              <span th:if="${!t.disponible}" class="inline-flex items-center gap-2 text-xs text-rose-200">
-                <span class="h-2 w-2 rounded-full bg-rose-400"></span>
-                No disponible
-              </span>
 
               <div class="flex gap-2 flex-wrap justify-end">
                 <a th:href="@{/tipos-habitacion/admin/editar/{id}(id=${t.id})}"

@@ -30,5 +30,4 @@ public class TipoHabitacion {
 
     private String amenities;
 
-    private boolean disponible;
 }

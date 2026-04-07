@@ -47,7 +47,7 @@ public class TipoHabitacionServiceImpl implements TipoHabitacionService {
         existente.setCapacidad(tipoHabitacion.getCapacidad());
         existente.setCamas(tipoHabitacion.getCamas());
         existente.setAmenities(tipoHabitacion.getAmenities());
-        existente.setDisponible(tipoHabitacion.isDisponible());
+       
 
         return tipoHabitacionRepository.save(existente);
     }
