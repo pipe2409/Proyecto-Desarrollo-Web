@@ -2,59 +2,42 @@ package com.example.demo.controller;
 
 import com.example.demo.entities.Huesped;
 import com.example.demo.service.HuespedService;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@Controller
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:4200")
 public class LoginController {
 
     @Autowired
     private HuespedService huespedService;
 
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
+        String correo    = body.get("correo");
+        String contrasena = body.get("contrasena");
 
-    // ==========================
-    // GET - Mostrar login
-    // ==========================
-    @GetMapping("/iniciar-sesion")
-    public String iniciarSesion() {
-        return "iniciar-sesion";
-    }
-
-    // ==========================
-    // POST - Procesar login
-    // ==========================
-    @PostMapping("/iniciar-sesion")
-    public String procesarLogin(
-            @RequestParam("correo") String correo,
-            @RequestParam("contrasena") String contrasena,
-            HttpSession session,
-            Model model
-    ) {
         Huesped h = huespedService.login(correo, contrasena);
 
         if (h == null) {
-            model.addAttribute("error", "Correo o contraseña incorrectos");
-            return "iniciar-sesion";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("err", "Correo o contraseña incorrectos."));
         }
 
-        // Guardamos el id en sesión
-        session.setAttribute("huespedId", h.getId());
-        session.setAttribute("huespedNombre", h.getNombre());
-
-        return "redirect:/huespedes/crud";
+        // 👇 retornamos los datos que Angular necesita guardar localmente
+        return ResponseEntity.ok(Map.of(
+            "huespedId",     h.getId(),
+            "nombre",        h.getNombre(),
+            "apellido",      h.getApellido(),
+            "correo",        h.getCorreo()
+        ));
     }
 
-    // ==========================
-    // Logout
-    // ==========================
-    @GetMapping("/cerrar-sesion")
-    public String cerrarSesion(HttpSession session) {
-        session.invalidate();
-        return "redirect:/";
-    }
+    // 👇 el logout ya no necesita endpoint — Angular solo borra el localStorage
 }
