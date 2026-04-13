@@ -5,20 +5,20 @@ import com.example.demo.entities.Reserva;
 import com.example.demo.service.ReservaService;
 import com.example.demo.service.HuespedService;
 import com.example.demo.service.HabitacionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;  
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import jakarta.servlet.http.HttpSession;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import org.springframework.ui.Model;
 import java.util.List;
+import java.util.Map;
 
-
-
-@Controller
-@RequestMapping("/reservas")
+@RestController
+@RequestMapping("/api/reservas")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ReservaController {
 
     @Autowired
@@ -28,81 +28,84 @@ public class ReservaController {
     @Autowired
     private HabitacionService habitacionService;
 
-   // Mostrar formulario editar
-@GetMapping("/admin/editar/{id}")
-public String editarReserva(@PathVariable Integer id, Model model) {
-    Reserva reserva = reservaService.findById(id);
-    model.addAttribute("reserva", reserva);
-    model.addAttribute("huespedes", huespedService.findAll());
-    model.addAttribute("habitaciones", habitacionService.findAll());
-    model.addAttribute("modo", "editar");
-    return "reservas-form";
-}
-
-// Guardar cambios
-@PostMapping("/admin/actualizar/{id}")
-public String actualizarReserva(
-        @PathVariable Integer id,
-        @ModelAttribute Reserva reserva,
-        @RequestParam Integer huespedId,
-        @RequestParam Integer habitacionId,
-        @RequestParam(required = false) Integer operadorId,
-        @RequestParam String fechaInicio,
-        @RequestParam String fechaFin,
-        RedirectAttributes ra) {
-
-    reserva.setHuesped(huespedService.findById(huespedId));
-    reserva.setHabitacion(habitacionService.findById(habitacionId));
-    reserva.setFechaInicio(LocalDateTime.parse(fechaInicio));
-    reserva.setFechaFin(LocalDateTime.parse(fechaFin));
-    reservaService.save(reserva);
-    ra.addFlashAttribute("ok", "Reserva actualizada correctamente.");
-    return "redirect:/reservas/admin";
+    // Admin: listar todas
+    @GetMapping("/admin")
+    public ResponseEntity<List<Reserva>> getAll() {
+        return ResponseEntity.ok(reservaService.findAll());
     }
-   
-   @GetMapping("/admin")
-    public String adminReservas(Model model) {
-        model.addAttribute("reservas", reservaService.findAll());
-        return "reservas-admin";
+
+    // Admin: obtener una por id
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<Reserva> getById(@PathVariable Integer id) {
+        Reserva reserva = reservaService.findById(id);
+        if (reserva == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(reserva);
     }
-    
 
-    @GetMapping("/mis-reservas")
-    public String misReservas(Model model, HttpSession session) {
-        Integer huespedId = (Integer) session.getAttribute("huespedId");
-        
-        if (huespedId == null) return "redirect:/iniciar-sesion";
-        
-        Huesped huesped = huespedService.findById(huespedId);
-        List<Reserva> reservas = reservaService.findByHuesped(huesped);
-        model.addAttribute("reservas", reservas);
-        return "mis-reservas";
-    }
-    @PostMapping("/crear")
-    public String crear(@RequestParam Integer habitacionId,
-                        @RequestParam String fechaInicio,
-                        @RequestParam String fechaFin,
-                        @RequestParam Integer cantidadPersonas,
-                        HttpSession session,
-                        RedirectAttributes ra) {
-
-        Integer huespedId = (Integer) session.getAttribute("huespedId"); // ← cambia esto
-
-        if (huespedId == null) {
-            return "redirect:/iniciar-sesion";
-        }
-
+    // Admin: actualizar reserva
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<Reserva> actualizar(@PathVariable Integer id,
+                                               @RequestBody Map<String, Object> body) {
         try {
+            Reserva reserva = reservaService.findById(id);
+            if (reserva == null) return ResponseEntity.notFound().build();
+
+            Integer huespedId    = (Integer) body.get("huespedId");
+            Integer habitacionId = (Integer) body.get("habitacionId");
+            String fechaInicio   = (String)  body.get("fechaInicio");
+            String fechaFin      = (String)  body.get("fechaFin");
+
+            reserva.setHuesped(huespedService.findById(huespedId));
+            reserva.setHabitacion(habitacionService.findById(habitacionId));
+            reserva.setFechaInicio(LocalDateTime.parse(fechaInicio));
+            reserva.setFechaFin(LocalDateTime.parse(fechaFin));
+
+            return ResponseEntity.ok(reservaService.save(reserva));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Admin: eliminar reserva
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+        try {
+            reservaService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // Huésped: ver sus reservas (👇 ya no usa sesión, recibe el id por parámetro)
+    @GetMapping("/mis-reservas/{huespedId}")
+    public ResponseEntity<List<Reserva>> misReservas(@PathVariable Integer huespedId) {
+        Huesped huesped = huespedService.findById(huespedId);
+        if (huesped == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(reservaService.findByHuesped(huesped));
+    }
+
+    // Huésped: crear reserva
+    @PostMapping("/crear")
+    public ResponseEntity<Map<String, String>> crear(@RequestBody Map<String, Object> body) {
+        try {
+            Integer habitacionId     = (Integer) body.get("habitacionId");
+            Integer huespedId        = (Integer) body.get("huespedId");
+            Integer cantidadPersonas = (Integer) body.get("cantidadPersonas");
+            String fechaInicio       = (String)  body.get("fechaInicio");
+            String fechaFin          = (String)  body.get("fechaFin");
+
             LocalDateTime inicio = LocalDate.parse(fechaInicio).atStartOfDay();
             LocalDateTime fin    = LocalDate.parse(fechaFin).atStartOfDay();
 
             reservaService.crearReserva(habitacionId, huespedId, inicio, fin, cantidadPersonas);
 
-            return "redirect:/habitaciones/reservar?exito=1";
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("ok", "Reserva creada correctamente."));
 
         } catch (Exception e) {
-            ra.addFlashAttribute("err", e.getMessage());
-            return "redirect:/habitaciones/reservar?error=1";
+            return ResponseEntity.badRequest()
+                    .body(Map.of("err", e.getMessage()));
         }
     }
 }
