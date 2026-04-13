@@ -1,87 +1,58 @@
 package com.example.demo.controller;
 
-
 import com.example.demo.entities.Servicio;
 import com.example.demo.service.ServicioService;
 
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.List;
 
-@RequestMapping("/servicios")
-@Controller
+@RestController                              // 👈 cambia @Controller
+@RequestMapping("/api/servicios")            // 👈 cambia la ruta base
+@CrossOrigin(origins = "http://localhost:4200") // 👈 permite llamadas desde Angular
 public class ServiciosController {
 
     @Autowired
     private ServicioService serviciosService;
 
-    @GetMapping("/admin")
-    public String admin(Model model) {
-
-
-        model.addAttribute("servicios", serviciosService.findAll());
-        return "servicios-admin";
+    @GetMapping
+    public ResponseEntity<List<Servicio>> getAll() {
+        return ResponseEntity.ok(serviciosService.findAll());
     }
 
-    @GetMapping("/admin/nuevo")
-    public String nuevo(Model model) {
-        model.addAttribute("servicio", new Servicio());
-        model.addAttribute("modo", "crear");
-        return "servicios-form";
-    }
-
-    @PostMapping("/admin/guardar")
-    public String guardar(@ModelAttribute("servicio") Servicio servicio, RedirectAttributes ra) {
-        serviciosService.save(servicio);
-        ra.addFlashAttribute("ok", "Servicio creado.");
-
-        return "redirect:/servicios/admin";
-    }
-
-    @GetMapping("/admin/editar/{id}")
-public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
-    try {
-            Servicio servicio = serviciosService.findById(id); // ahora lanza excepción si no existe
-            model.addAttribute("servicio", servicio);
-            model.addAttribute("modo", "editar");
-            return "servicios-form";
-        } catch (EntityNotFoundException e) {
-            ra.addFlashAttribute("err", e.getMessage());
-            return "redirect:/servicios/admin";
-        }
-    }
-
-    @PostMapping("/admin/actualizar/{id}")
-    public String actualizar(@PathVariable Integer id,
-                             @ModelAttribute("servicio") Servicio servicio,
-                             RedirectAttributes ra) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Servicio> getById(@PathVariable Integer id) {
         try {
-            serviciosService.update(id, servicio);
-            ra.addFlashAttribute("ok", "Servicio actualizado.");
-        } catch (Exception e) {
-            ra.addFlashAttribute("err", "No existe el servicio con id=" + id);
+            return ResponseEntity.ok(serviciosService.findById(id));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-        return "redirect:/servicios/admin";
     }
 
-    @PostMapping("/admin/eliminar/{id}")
-    public String eliminar(@PathVariable Integer id, RedirectAttributes ra) {
+    @PostMapping
+    public ResponseEntity<Servicio> crear(@RequestBody Servicio servicio) {
+        Servicio nuevo = serviciosService.save(servicio);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Servicio> actualizar(@PathVariable Integer id,
+                                               @RequestBody Servicio servicio) {
+        try {
+            return ResponseEntity.ok(serviciosService.update(id, servicio));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         serviciosService.deleteById(id);
-        ra.addFlashAttribute("ok", "Servicio eliminado.");
-
-
-        return "redirect:/servicios/admin";
-    }
-
-     @GetMapping("/op")
-    public String serviciosOp(Model model) {
-        model.addAttribute("servicios", serviciosService.findAll());
-        return "servicios-op";
-
+        return ResponseEntity.noContent().build();
     }
 }
