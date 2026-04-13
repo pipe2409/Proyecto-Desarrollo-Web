@@ -2,33 +2,31 @@ package com.example.demo.controller;
 
 import com.example.demo.entities.Huesped;
 import com.example.demo.service.HuespedService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@RequestMapping("/registrarse")
-@Controller
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:4200")
 public class RegistrarseController {
 
     @Autowired
     private HuespedService huespedService;
 
-
-    @GetMapping("")
-    public String registrarse(Model model) {
-        model.addAttribute("huesped", new Huesped());
-        return "registrarse";
-    }
-
-    @PostMapping("")
-    public String guardarHuesped(@ModelAttribute Huesped huesped, Model model) {
+    @PostMapping("/registro")
+    public ResponseEntity<Map<String, String>> registro(@RequestBody Huesped huesped) {
         try {
             huespedService.save(huesped);
-            return "redirect:/iniciar-sesion";
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("ok", "Registro exitoso."));
         } catch (Exception e) {
-            model.addAttribute("error", "Ocurrió un error al registrarse. Intenta de nuevo.");
-            return "registrarse";
+            return ResponseEntity.badRequest()
+                    .body(Map.of("err", "Ocurrió un error al registrarse. Intenta de nuevo."));
         }
     }
 }
