@@ -4,157 +4,91 @@ import com.example.demo.entities.Huesped;
 import com.example.demo.service.HuespedService;
 import com.example.demo.service.ReservaService;
 
-import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/huespedes")
-@Controller
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/huespedes")
+@CrossOrigin(origins = "http://localhost:4200")
 public class HuespedesController {
 
     @Autowired
     private HuespedService huespedService;
 
+    @Autowired
+    private ReservaService reservaService;
 
+    // Admin: listar todos
     @GetMapping("/admin")
-    public String huespedesAdmin(Model model) {
-        model.addAttribute("huespedes", huespedService.findAll());
-        return "huespedes-admin";
+    public ResponseEntity<List<Huesped>> getAll() {
+        return ResponseEntity.ok(huespedService.findAll());
     }
 
-    @GetMapping("/crud")
-    public String crudHuespedes(HttpSession session, Model model) {
-        Integer huespedId = (Integer) session.getAttribute("huespedId");
+    // Obtener huesped por id (👇 ya no usa sesión, Angular envía el id)
+    @GetMapping("/{id}")
+    public ResponseEntity<Huesped> getById(@PathVariable Integer id) {
+        Huesped huesped = huespedService.findById(id);
+        if (huesped == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(huesped);
+    }
 
-        if (huespedId == null) {
-            return "redirect:/iniciar-sesion";
+    // Actualizar datos personales
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, String>> actualizar(@PathVariable Integer id,
+                                                           @RequestBody Map<String, String> body) {
+        try {
+            huespedService.update(
+                id,
+                body.get("nombre"),
+                body.get("apellido"),
+                body.get("correo"),
+                body.get("telefono"),
+                body.get("direccion"),
+                body.get("pais")
+            );
+            return ResponseEntity.ok(Map.of("ok", "Datos actualizados correctamente."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("err", e.getMessage()));
+        }
+    }
+
+    // Cambiar contraseña
+    @PutMapping("/{id}/cambiar-contrasena")
+    public ResponseEntity<Map<String, String>> cambiarContrasena(@PathVariable Integer id,
+                                                                   @RequestBody Map<String, String> body) {
+        try {
+            huespedService.cambiarContrasena(
+                id,
+                body.get("actual"),
+                body.get("nueva"),
+                body.get("confirmar")
+            );
+            return ResponseEntity.ok(Map.of("ok", "Contraseña actualizada correctamente."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("err", e.getMessage()));
+        }
+    }
+
+    // Eliminar cuenta
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> eliminarCuenta(@PathVariable Integer id) {
+        // 👇 misma validación que tenías: no eliminar si tiene reservas activas
+        if (reservaService.tieneReservasActivas(id)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("err", "No puedes eliminar tu cuenta porque tienes reservas activas o pendientes."));
         }
 
-        Huesped huesped = huespedService.findById(huespedId);
-        if (huesped == null) {
-            session.invalidate();
-            return "redirect:/iniciar-sesion";
-        }
+        Huesped huesped = huespedService.findById(id);
+        if (huesped == null) return ResponseEntity.notFound().build();
 
-        model.addAttribute("huesped", huesped);
-        model.addAttribute("nombreCompleto", huesped.getNombre() + " " + huesped.getApellido());
-        return "crud-huespedes";
+        huespedService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/mi-cuenta")
-    public String miCuenta(HttpSession session, Model model) {
-        Integer huespedId = (Integer) session.getAttribute("huespedId");
-
-        if (huespedId == null) {
-            return "redirect:/iniciar-sesion";
-        }
-
-        Huesped huesped = huespedService.findById(huespedId);
-        if (huesped == null) {
-            session.invalidate();
-            return "redirect:/iniciar-sesion";
-        }
-
-        model.addAttribute("huesped", huesped);
-        model.addAttribute("nombreCompleto", huesped.getNombre() + " " + huesped.getApellido());
-        return "mi-cuenta";
-    }
-
-    @PostMapping("/mi-cuenta")
-public String actualizarMiCuenta(
-        HttpSession session,
-        @RequestParam String nombre,
-        @RequestParam String apellido,
-        @RequestParam String correo,
-        @RequestParam String telefono,
-        @RequestParam String direccion,
-        @RequestParam String pais) {
-
-    Integer huespedId = (Integer) session.getAttribute("huespedId");
-
-    if (huespedId == null) {
-        return "redirect:/iniciar-sesion";
-    }
-
-    huespedService.update(
-            huespedId, nombre, apellido, correo, telefono, direccion, pais);
-
-    session.setAttribute("huespedNombre", nombre);
-
-    return "redirect:/huespedes/crud?ok";
-}
-
-    @GetMapping("/cambiar-contrasena")
-    public String verCambiarContrasena(HttpSession session) {
-        Integer huespedId = (Integer) session.getAttribute("huespedId");
-
-        if (huespedId == null) {
-            return "redirect:/iniciar-sesion";
-        }
-
-        return "cambiar-contrasena";
-    }
-
-    @PostMapping("/cambiar-contrasena")
-public String cambiarContrasena(
-        HttpSession session,
-        @RequestParam String actual,
-        @RequestParam String nueva,
-        @RequestParam String confirmar,
-        Model model) {
-
-    Integer huespedId = (Integer) session.getAttribute("huespedId");
-
-    if (huespedId == null) {
-        return "redirect:/iniciar-sesion";
-    }
-
-    try {
-
-        huespedService.cambiarContrasena(huespedId, actual, nueva, confirmar);
-
-        model.addAttribute("ok", "Contraseña actualizada correctamente.");
-
-    } catch (RuntimeException e) {
-
-        model.addAttribute("error", e.getMessage());
-    }
-
-    return "cambiar-contrasena";
-}
-  @Autowired
-private ReservaService reservaService;  
-
-@PostMapping("/eliminar-cuenta")
-public String eliminarCuenta(HttpSession session, Model model) {
-
-    Integer huespedId = (Integer) session.getAttribute("huespedId");
-
-    if (huespedId == null) {
-        return "redirect:/iniciar-sesion";
-    }
-
-    // Verificar si tiene reservas activas
-    if (reservaService.tieneReservasActivas(huespedId)) {
-        model.addAttribute("error", "No puedes eliminar tu cuenta porque tienes reservas activas o pendientes. Cancela tus reservas primero.");
-        
-        // Obtener los datos del huésped para mostrar la página nuevamente
-        Huesped huesped = huespedService.findById(huespedId);
-        model.addAttribute("huesped", huesped);
-        model.addAttribute("nombreCompleto", huesped.getNombre() + " " + huesped.getApellido());
-        return "mi-cuenta";  // Regresar a la página de cuenta con el mensaje de error
-    }
-
-    Huesped huesped = huespedService.findById(huespedId);
-
-    if (huesped != null) {
-        huespedService.deleteById(huespedId);
-    }
-
-    session.invalidate();
-
-    return "redirect:/?cuentaEliminada";
-}
 }
