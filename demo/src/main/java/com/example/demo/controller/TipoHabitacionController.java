@@ -1,97 +1,76 @@
 package com.example.demo.controller;
 
 import com.example.demo.entities.TipoHabitacion;
+import com.example.demo.entities.Habitacion;
 import com.example.demo.service.TipoHabitacionService;
 import com.example.demo.service.HabitacionService;
-import com.example.demo.entities.Habitacion;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.beans.factory.annotation.Autowired;
-import java.util.List;
 
-@RequestMapping("/tipos-habitacion")
-@Controller
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController                                         // 👈 cambia @Controller
+@RequestMapping("/api/tipos-habitacion")               // 👈 cambia la ruta base
+@CrossOrigin(origins = "http://localhost:4200")        // 👈 permite Angular
 public class TipoHabitacionController {
 
     @Autowired
     private TipoHabitacionService tipoHabitacionService;
 
-    // needed to check for habitaciones antes de eliminar
     @Autowired
     private HabitacionService habitacionService;
 
-    
-
     @GetMapping
-    public String home() {
-        return "redirect:/tipos-habitacion/admin";
+    public ResponseEntity<List<TipoHabitacion>> getAll() {
+        return ResponseEntity.ok(tipoHabitacionService.findAll());
     }
 
-    @GetMapping("/admin")
-    public String admin(Model model) {
-        model.addAttribute("tiposHabitacion", tipoHabitacionService.findAll());
-        return "tipos-habitacion-admin";
-    }
-
-    @GetMapping("/admin/nuevo")
-    public String nuevo(Model model) {
-        model.addAttribute("tipo", new TipoHabitacion());
-        model.addAttribute("modo", "crear");
-        return "tipos-habitacion-form";
-    }
-
-   @PostMapping("/admin/guardar")
-public String guardar(@ModelAttribute("tipo") TipoHabitacion tipo,
-                      RedirectAttributes ra,
-                      Model model) {
-    try {
-        if (tipo.getId() != null) {
-            tipoHabitacionService.update(tipo.getId(), tipo);
-            ra.addFlashAttribute("ok", "Tipo de habitación actualizado.");
-        } else {
-            tipoHabitacionService.save(tipo);
-            ra.addFlashAttribute("ok", "Tipo de habitación creado.");
-        }
-        return "redirect:/tipos-habitacion/admin";
-    } catch (Exception e) {
-        e.printStackTrace();
-        model.addAttribute("tipo", tipo);
-        model.addAttribute("modo", tipo.getId() != null ? "editar" : "crear");
-        model.addAttribute("error", "No se pudo guardar el tipo de habitación.");
-        return "tipos-habitacion-form";
-    }
-} 
-    @GetMapping("/admin/editar/{id}")
-    public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+    @GetMapping("/{id}")
+    public ResponseEntity<TipoHabitacion> getById(@PathVariable Integer id) {
         TipoHabitacion tipo = tipoHabitacionService.findById(id);
         if (tipo == null) {
-            ra.addFlashAttribute("err", "No existe el tipo con id=" + id);
-            return "redirect:/tipos-habitacion/admin";
+            return ResponseEntity.notFound().build();
         }
-        model.addAttribute("tipo", tipo);
-        model.addAttribute("modo", "editar");
-        return "tipos-habitacion-form";
+        return ResponseEntity.ok(tipo);
     }
 
-    
+    @PostMapping
+    public ResponseEntity<TipoHabitacion> crear(@RequestBody TipoHabitacion tipo) {
+        TipoHabitacion nuevo = tipoHabitacionService.save(tipo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+    }
 
-    @PostMapping("/admin/eliminar/{id}")
-    public String eliminar(@PathVariable Integer id, RedirectAttributes ra) {
-        // verificar si hay habitaciones asignadas antes de borrar
+    @PutMapping("/{id}")
+    public ResponseEntity<TipoHabitacion> actualizar(@PathVariable Integer id,
+                                                      @RequestBody TipoHabitacion tipo) {
+        try {
+            TipoHabitacion actualizado = tipoHabitacionService.update(id, tipo);
+            return ResponseEntity.ok(actualizado);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> eliminar(@PathVariable Integer id) {
+        // 👇 misma validación que tenías: no eliminar si tiene habitaciones asignadas
         List<Habitacion> habitaciones = habitacionService.findByTipoId(id);
         if (habitaciones != null && !habitaciones.isEmpty()) {
-            ra.addFlashAttribute("err", "No se puede eliminar; hay habitaciones asignadas a este tipo.");
-        } else {
-            try {
-                tipoHabitacionService.deleteById(id);
-                ra.addFlashAttribute("ok", "Tipo de habitación eliminado.");
-            } catch (Exception e) {
-                // por si falla por constraint de BD u otra razón
-                ra.addFlashAttribute("err", "Error al eliminar el tipo de habitación.");
-            }
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("err", "No se puede eliminar; hay habitaciones asignadas a este tipo."));
         }
-        return "redirect:/tipos-habitacion/admin";
+        try {
+            tipoHabitacionService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("err", "Error al eliminar el tipo de habitación."));
+        }
     }
 }
