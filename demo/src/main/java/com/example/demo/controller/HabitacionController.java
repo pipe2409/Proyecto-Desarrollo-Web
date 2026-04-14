@@ -50,11 +50,12 @@ public class HabitacionController {
             TipoHabitacion tipo = tipoHabitacionService.findById(tipoHabitacionId);
 
             Habitacion habitacion = new Habitacion();
-            habitacion.setEstado((String) body.get("estado"));
-            habitacion.setTipoHabitacion(tipo);
-            // 👇 agrega aquí los demás campos de tu entidad Habitacion
-            // habitacion.setNumero((String) body.get("numero"));
-            // habitacion.setPiso((Integer) body.get("piso"));
+           habitacion.setCodigo((String) body.get("codigo"));     
+        habitacion.setPiso((Integer) body.get("piso"));           
+        habitacion.setEstado((String) body.get("estado"));
+        habitacion.setTipoHabitacion(tipo);
+        habitacion.setNotas((String) body.get("notas")); 
+           
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(habitacionService.save(habitacion));
@@ -70,9 +71,10 @@ public class HabitacionController {
         try {
             Integer tipoHabitacionId = (Integer) body.get("tipoHabitacionId");
             Habitacion habitacion = habitacionService.findById(id);
-            habitacion.setEstado((String) body.get("estado"));
-            // 👇 agrega aquí los demás campos
-            // habitacion.setNumero((String) body.get("numero"));
+             habitacion.setCodigo((String) body.get("codigo"));        // ← Agregar
+        habitacion.setPiso((Integer) body.get("piso"));           // ← Agregar
+        habitacion.setEstado((String) body.get("estado"));
+        habitacion.setNotas((String) body.get("notas")); 
 
             habitacionService.update(id, habitacion, tipoHabitacionId);
             return ResponseEntity.ok(habitacion);
