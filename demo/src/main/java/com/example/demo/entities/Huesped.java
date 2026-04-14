@@ -3,6 +3,8 @@ package com.example.demo.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +28,7 @@ public class Huesped {
     @Column(nullable = false, unique = true, length = 150)
     private String correo;
 
+    @JsonIgnore
     @Column(nullable = false, length = 255)
     private String contrasena;
 
@@ -39,8 +42,9 @@ public class Huesped {
     private String direccion;
 
     @Column(length = 50)
-    private String pais;
+    private String nacionalidad;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "huesped", cascade = CascadeType.ALL)
     private List<Reserva> historialReservas = new ArrayList<>();
 }

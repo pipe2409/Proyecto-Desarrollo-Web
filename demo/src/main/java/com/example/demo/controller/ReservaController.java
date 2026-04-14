@@ -18,13 +18,18 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reservas")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(
+    origins = "http://localhost:4200",
+    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+)
 public class ReservaController {
 
     @Autowired
     private ReservaService reservaService;
+
     @Autowired
     private HuespedService huespedService;
+
     @Autowired
     private HabitacionService habitacionService;
 
@@ -45,15 +50,15 @@ public class ReservaController {
     // Admin: actualizar reserva
     @PutMapping("/admin/{id}")
     public ResponseEntity<Reserva> actualizar(@PathVariable Integer id,
-                                               @RequestBody Map<String, Object> body) {
+                                              @RequestBody Map<String, Object> body) {
         try {
             Reserva reserva = reservaService.findById(id);
             if (reserva == null) return ResponseEntity.notFound().build();
 
-            Integer huespedId    = (Integer) body.get("huespedId");
+            Integer huespedId = (Integer) body.get("huespedId");
             Integer habitacionId = (Integer) body.get("habitacionId");
-            String fechaInicio   = (String)  body.get("fechaInicio");
-            String fechaFin      = (String)  body.get("fechaFin");
+            String fechaInicio = (String) body.get("fechaInicio");
+            String fechaFin = (String) body.get("fechaFin");
 
             reserva.setHuesped(huespedService.findById(huespedId));
             reserva.setHabitacion(habitacionService.findById(habitacionId));
@@ -77,9 +82,28 @@ public class ReservaController {
         }
     }
 
-    // Huésped: ver sus reservas (👇 ya no usa sesión, recibe el id por parámetro)
+    @DeleteMapping("/{id}")
+public ResponseEntity<Map<String, String>> cancelarReserva(@PathVariable Integer id) {
+    Reserva reserva = reservaService.findById(id);
+    if (reserva == null) {
+        return ResponseEntity.notFound().build();
+    }
+
+    reservaService.deleteById(id);
+    return ResponseEntity.ok(Map.of("ok", "Reserva cancelada correctamente."));
+}
+
+    // Huésped: ver sus reservas
     @GetMapping("/mis-reservas/{huespedId}")
     public ResponseEntity<List<Reserva>> misReservas(@PathVariable Integer huespedId) {
+        Huesped huesped = huespedService.findById(huespedId);
+        if (huesped == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(reservaService.findByHuesped(huesped));
+    }
+
+    // 👇 NUEVO: endpoint que Angular está esperando
+    @GetMapping("/huesped/{huespedId}")
+    public ResponseEntity<List<Reserva>> listarPorHuesped(@PathVariable Integer huespedId) {
         Huesped huesped = huespedService.findById(huespedId);
         if (huesped == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(reservaService.findByHuesped(huesped));
@@ -89,20 +113,19 @@ public class ReservaController {
     @PostMapping("/crear")
     public ResponseEntity<Map<String, String>> crear(@RequestBody Map<String, Object> body) {
         try {
-            Integer habitacionId     = (Integer) body.get("habitacionId");
-            Integer huespedId        = (Integer) body.get("huespedId");
+            Integer habitacionId = (Integer) body.get("habitacionId");
+            Integer huespedId = (Integer) body.get("huespedId");
             Integer cantidadPersonas = (Integer) body.get("cantidadPersonas");
-            String fechaInicio       = (String)  body.get("fechaInicio");
-            String fechaFin          = (String)  body.get("fechaFin");
+            String fechaInicio = (String) body.get("fechaInicio");
+            String fechaFin = (String) body.get("fechaFin");
 
             LocalDateTime inicio = LocalDate.parse(fechaInicio).atStartOfDay();
-            LocalDateTime fin    = LocalDate.parse(fechaFin).atStartOfDay();
+            LocalDateTime fin = LocalDate.parse(fechaFin).atStartOfDay();
 
             reservaService.crearReserva(habitacionId, huespedId, inicio, fin, cantidadPersonas);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("ok", "Reserva creada correctamente."));
-
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(Map.of("err", e.getMessage()));

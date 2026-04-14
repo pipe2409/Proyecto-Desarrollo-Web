@@ -14,7 +14,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/huespedes")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(
+    origins = "http://localhost:4200",
+    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+)
 public class HuespedesController {
 
     @Autowired
@@ -39,24 +42,25 @@ public class HuespedesController {
 
     // Actualizar datos personales
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, String>> actualizar(@PathVariable Integer id,
-                                                           @RequestBody Map<String, String> body) {
-        try {
-            huespedService.update(
-                id,
-                body.get("nombre"),
-                body.get("apellido"),
-                body.get("correo"),
-                body.get("telefono"),
-                body.get("direccion"),
-                body.get("pais")
-            );
-            return ResponseEntity.ok(Map.of("ok", "Datos actualizados correctamente."));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("err", e.getMessage()));
-        }
+public ResponseEntity<Map<String, String>> actualizar(@PathVariable Integer id,
+                                                       @RequestBody Map<String, String> body) {
+    try {
+        huespedService.update(
+            id,
+            body.get("nombre"),
+            body.get("apellido"),
+            body.get("correo"),
+            body.get("cedula"),
+            body.get("telefono"),
+            body.get("direccion"),
+            body.get("nacionalidad")
+        );
+        return ResponseEntity.ok(Map.of("ok", "Datos actualizados correctamente."));
+    } catch (Exception e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("err", e.getMessage()));
     }
+}
 
     // Cambiar contraseña
     @PutMapping("/{id}/cambiar-contrasena")

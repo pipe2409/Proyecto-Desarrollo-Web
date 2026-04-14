@@ -46,27 +46,33 @@ public class HuespedServiceImpl implements HuespedService {
         return huespedRepository.save(huesped);
     }
 
-    @Override
-    public Huesped update(Integer id,
-                                String nombre,
-                                String apellido,
-                                String correo,
-                                String telefono,
-                                String direccion,
-                                String pais) {
-        Huesped huesped = huespedRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                    "No existe el huésped con id=" + id));
+@Override
+public Huesped update(
+        Integer id,
+        String nombre,
+        String apellido,
+        String correo,
+        String cedula,
+        String telefono,
+        String direccion,
+        String nacionalidad
+) {
+    Huesped huesped = findById(id);
+
+    if (huesped == null) {
+        throw new RuntimeException("Huésped no encontrado.");
+    }
 
     huesped.setNombre(nombre);
     huesped.setApellido(apellido);
     huesped.setCorreo(correo);
+    huesped.setCedula(cedula);
     huesped.setTelefono(telefono);
     huesped.setDireccion(direccion);
-    huesped.setPais(pais);
+    huesped.setNacionalidad(nacionalidad);
 
-    return huespedRepository.save(huesped);
-    }
+    return save(huesped);
+}
 
     @Override
     public void deleteById(Integer id) {

@@ -812,3 +812,15 @@ The connection was not closed by the application and is garbage collected [90018
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
 	... 56 more
+2026-04-13 13:05:23.562086-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM RESERVA RESERVA [*]SERVICIO SERVICIO"; SQL statement:
+SELECT * FROM RESERVA RESERVA SERVICIO SERVICIO [42000-240]
+2026-04-13 13:05:24.275616-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM RESERVA RESERVA [*]SERVICIO SERVICIO"; SQL statement:
+SELECT * FROM RESERVA RESERVA SERVICIO SERVICIO [42000-240]
+2026-04-13 13:05:24.696630-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM RESERVA RESERVA [*]SERVICIO SERVICIO"; SQL statement:
+SELECT * FROM RESERVA RESERVA SERVICIO SERVICIO [42000-240]
+2026-04-13 13:05:26.171444-05:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM RESERVA RESERVA [*]SERVICIO SERVICIO"; SQL statement:
+SELECT * FROM RESERVA RESERVA SERVICIO SERVICIO [42000-240]

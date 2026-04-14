@@ -332,7 +332,7 @@ private void cargarItemsCuenta(CuentaHabitacion cuenta, List<Servicio> servicios
             h.setCedula("10000000" + i);
             h.setTelefono("300000000" + i);
             h.setDireccion("Calle " + i + " # 10-" + i);
-            h.setPais("Colombia");
+            h.setNacionalidad("Colombia");
             huespedRepository.save(h);
         }
     }
