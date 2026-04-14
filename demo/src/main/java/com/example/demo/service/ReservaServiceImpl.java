@@ -38,10 +38,10 @@ public void deleteById(Integer id) {
     reservaRepository.deleteById(id);
     
     // Actualizar el estado de la habitación después de eliminar la reserva
-    if (habitacion != null) {
-        habitacion.actualizarEstado();
-        habitacionRepository.save(habitacion);
-    }
+   // if (habitacion != null) {
+        //habitacion.actualizarEstado();
+        //habitacionRepository.save(habitacion);
+    //}
 }
    
     @Override
@@ -98,8 +98,8 @@ public Reserva crearReserva(Integer habitacionId,
     Reserva savedReserva = reservaRepository.save(reserva);
     
     // Actualizar el estado de la habitación
-    habitacion.actualizarEstado();
-    habitacionRepository.save(habitacion);
+    //habitacion.actualizarEstado();
+    //habitacionRepository.save(habitacion);
     
     return savedReserva;
 }

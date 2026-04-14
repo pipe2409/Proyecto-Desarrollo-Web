@@ -46,4 +46,12 @@ public class Reserva {
 
     @OneToOne(mappedBy = "reserva")
     private CuentaHabitacion cuentaHabitacion;
+    //@PreUpdate
+    //@PrePersist
+    //@PreRemove
+    //public void actualizarEstadoHabitacion() {
+        //if (habitacion != null) {
+         //   habitacion.actualizarEstado();
+        //}
+    //}
 }

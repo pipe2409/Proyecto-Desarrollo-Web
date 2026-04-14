@@ -96,8 +96,8 @@ public ResponseEntity<Map<String, String>> cancelarReserva(@PathVariable Integer
         reservaService.save(reserva);
         
         // Actualizar el estado de la habitación
-        Habitacion habitacion = reserva.getHabitacion();
-        habitacion.actualizarEstado();
+       Habitacion habitacion = reserva.getHabitacion();
+       // habitacion.actualizarEstado();
         habitacionService.save(habitacion);
         
         return ResponseEntity.ok(Map.of("ok", "Reserva cancelada correctamente"));
@@ -136,7 +136,7 @@ public ResponseEntity<Map<String, String>> cancelarReserva(@PathVariable Integer
             LocalDateTime inicio = LocalDate.parse(fechaInicio).atStartOfDay();
             LocalDateTime fin = LocalDate.parse(fechaFin).atStartOfDay();
 
-            reservaService.crearReserva(habitacionId, huespedId, inicio, fin, cantidadPersonas);
+            //reservaService.crearReserva(habitacionId, huespedId, inicio, fin, cantidadPersonas);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("ok", "Reserva creada correctamente."));

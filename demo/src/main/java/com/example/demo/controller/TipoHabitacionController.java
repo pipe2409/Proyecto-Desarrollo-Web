@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@RestController                                         // 👈 cambia @Controller
-@RequestMapping("/api/tipos-habitacion")               // 👈 cambia la ruta base
-@CrossOrigin(origins = "http://localhost:4200")        // 👈 permite Angular
+@RestController                                        
+@RequestMapping("/api/tipos-habitacion")               
+@CrossOrigin(origins = "http://localhost:4200")        
 public class TipoHabitacionController {
 
     @Autowired
