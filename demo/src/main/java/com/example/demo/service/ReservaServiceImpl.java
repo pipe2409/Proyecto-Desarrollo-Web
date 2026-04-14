@@ -31,9 +31,18 @@ public class ReservaServiceImpl implements ReservaService {
     }
     
     @Override
-    public void deleteById(Integer id) {
-        reservaRepository.deleteById(id);
+public void deleteById(Integer id) {
+    Reserva reserva = findById(id);
+    Habitacion habitacion = reserva.getHabitacion();
+    
+    reservaRepository.deleteById(id);
+    
+    // Actualizar el estado de la habitación después de eliminar la reserva
+    if (habitacion != null) {
+        habitacion.actualizarEstado();
+        habitacionRepository.save(habitacion);
     }
+}
    
     @Override
     public Reserva findById(Integer id) {
@@ -65,29 +74,35 @@ public boolean tieneReservasActivas(Integer huespedId) {
 }
 
 
-    @Override
-    public Reserva crearReserva(Integer habitacionId,
-                                Integer huespedId,
-                                LocalDateTime fechaInicio,
-                                LocalDateTime fechaFin,
-                                Integer cantidadPersonas) {
+   @Override
+public Reserva crearReserva(Integer habitacionId,
+                            Integer huespedId,
+                            LocalDateTime fechaInicio,
+                            LocalDateTime fechaFin,
+                            Integer cantidadPersonas) {
 
-        Habitacion habitacion = habitacionRepository.findById(habitacionId)
-                .orElseThrow(() -> new EntityNotFoundException("Habitación no encontrada"));
+    Habitacion habitacion = habitacionRepository.findById(habitacionId)
+            .orElseThrow(() -> new EntityNotFoundException("Habitación no encontrada"));
 
-        Huesped huesped = huespedRepository.findById(huespedId)
-                .orElseThrow(() -> new EntityNotFoundException("Huésped no encontrado"));
+    Huesped huesped = huespedRepository.findById(huespedId)
+            .orElseThrow(() -> new EntityNotFoundException("Huésped no encontrado"));
 
-        Reserva reserva = new Reserva();
-        reserva.setHabitacion(habitacion);
-        reserva.setHuesped(huesped);
-        reserva.setFechaInicio(fechaInicio);
-        reserva.setFechaFin(fechaFin);
-        reserva.setCantidadPersonas(cantidadPersonas);
-        reserva.setEstado(EstadoReserva.PENDIENTE);
-
-        return reservaRepository.save(reserva);
-    }
+    Reserva reserva = new Reserva();
+    reserva.setHabitacion(habitacion);
+    reserva.setHuesped(huesped);
+    reserva.setFechaInicio(fechaInicio);
+    reserva.setFechaFin(fechaFin);
+    reserva.setCantidadPersonas(cantidadPersonas);
+    reserva.setEstado(EstadoReserva.PENDIENTE);
+    
+    Reserva savedReserva = reservaRepository.save(reserva);
+    
+    // Actualizar el estado de la habitación
+    habitacion.actualizarEstado();
+    habitacionRepository.save(habitacion);
+    
+    return savedReserva;
+}
     
     // ==================== NUEVOS MÉTODOS ====================
     

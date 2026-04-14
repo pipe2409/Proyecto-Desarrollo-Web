@@ -50,9 +50,24 @@ public class DataLoader implements CommandLineRunner {
 
 
     @Override
-    public void run(String... args) {
-        cargarDatosIniciales();
+public void run(String... args) {
+    cargarDatosIniciales();
+    //sincronizarEstadosHabitaciones();  
+}
+
+/*private void sincronizarEstadosHabitaciones() {
+    List<Habitacion> habitaciones = habitacionRepository.findAll();
+    for (Habitacion habitacion : habitaciones) {
+        String estadoAnterior = habitacion.getEstado();
+        habitacion.actualizarEstado();
+        if (!estadoAnterior.equals(habitacion.getEstado())) {
+            habitacionRepository.save(habitacion);
+            System.out.println("Habitación " + habitacion.getCodigo() + 
+                               " cambió de " + estadoAnterior + " a " + habitacion.getEstado());
+        }
     }
+    System.out.println("✓ Estados de habitaciones sincronizados");
+}*/        
 
     private void cargarDatosIniciales() {
         TipoHabitacion simple = null;
@@ -414,5 +429,5 @@ private void cargarReservas() {
         reservaRepository.save(r);
     }
 }
-    
+   
 }

@@ -2,6 +2,8 @@ package com.example.demo.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name = "tipo_habitacion")
@@ -31,5 +33,8 @@ public class TipoHabitacion {
     private String amenities;
     @Column(nullable = false)
     private boolean disponible = true; 
+     @OneToMany(mappedBy = "tipoHabitacion")
+    @JsonIgnore 
+    private java.util.List<Habitacion> habitaciones;
 
 }

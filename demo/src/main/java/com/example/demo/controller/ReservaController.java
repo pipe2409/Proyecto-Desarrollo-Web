@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.entities.EstadoReserva;
+import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.Huesped;
 import com.example.demo.entities.Reserva;
 import com.example.demo.service.ReservaService;
@@ -82,15 +84,27 @@ public class ReservaController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/{id}/cancelar")
 public ResponseEntity<Map<String, String>> cancelarReserva(@PathVariable Integer id) {
-    Reserva reserva = reservaService.findById(id);
-    if (reserva == null) {
-        return ResponseEntity.notFound().build();
+    try {
+        Reserva reserva = reservaService.findById(id);
+        if (reserva == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        reserva.setEstado(EstadoReserva.CANCELADA);
+        reservaService.save(reserva);
+        
+        // Actualizar el estado de la habitación
+        Habitacion habitacion = reserva.getHabitacion();
+        habitacion.actualizarEstado();
+        habitacionService.save(habitacion);
+        
+        return ResponseEntity.ok(Map.of("ok", "Reserva cancelada correctamente"));
+    } catch (Exception e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("err", e.getMessage()));
     }
-
-    reservaService.deleteById(id);
-    return ResponseEntity.ok(Map.of("ok", "Reserva cancelada correctamente."));
 }
 
     // Huésped: ver sus reservas
@@ -131,4 +145,8 @@ public ResponseEntity<Map<String, String>> cancelarReserva(@PathVariable Integer
                     .body(Map.of("err", e.getMessage()));
         }
     }
+
+
+
+
 }
