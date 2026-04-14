@@ -27,10 +27,19 @@ public class HabitacionController {
 
     // Listar todas (con filtro opcional por tipoId)
     @GetMapping
-    public ResponseEntity<List<Habitacion>> getAll(
-            @RequestParam(value = "tipoId", required = false) Integer tipoId) {
-        return ResponseEntity.ok(habitacionService.findByTipoId(tipoId));
-    }
+public ResponseEntity<List<Habitacion>> getAll(
+        @RequestParam(value = "tipoId", required = false) Integer tipoId) {
+    List<Habitacion> habitaciones = habitacionService.findByTipoId(tipoId);
+    
+    // Forzar la carga de tipoHabitacion
+    habitaciones.forEach(h -> {
+        if (h.getTipoHabitacion() != null) {
+            h.getTipoHabitacion().getId(); // Forzar carga
+        }
+    });
+    
+    return ResponseEntity.ok(habitaciones);
+}
 
     // Obtener una por id
     @GetMapping("/{id}")
@@ -71,8 +80,8 @@ public class HabitacionController {
         try {
             Integer tipoHabitacionId = (Integer) body.get("tipoHabitacionId");
             Habitacion habitacion = habitacionService.findById(id);
-             habitacion.setCodigo((String) body.get("codigo"));        // ← Agregar
-        habitacion.setPiso((Integer) body.get("piso"));           // ← Agregar
+             habitacion.setCodigo((String) body.get("codigo"));       
+        habitacion.setPiso((Integer) body.get("piso"));           
         habitacion.setEstado((String) body.get("estado"));
         habitacion.setNotas((String) body.get("notas")); 
 

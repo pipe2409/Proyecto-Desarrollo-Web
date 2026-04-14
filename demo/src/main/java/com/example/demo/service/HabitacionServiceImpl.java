@@ -43,9 +43,14 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     @Override
-    public Habitacion save(Habitacion habitacion) {
-        return habitacionRepository.save(habitacion);
+public Habitacion save(Habitacion habitacion) {
+    Habitacion saved = habitacionRepository.save(habitacion);
+    // Forzar carga del tipo
+    if (saved.getTipoHabitacion() != null) {
+        saved.getTipoHabitacion().getId();
     }
+    return saved;
+}
 
     @Override
     public Habitacion update(Integer id, Habitacion habitacion, Integer tipoHabitacionId) {
