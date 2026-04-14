@@ -29,5 +29,7 @@ public class TipoHabitacion {
     private String camas;
 
     private String amenities;
+    @Column(nullable = false)
+    private boolean disponible = true; 
 
 }
