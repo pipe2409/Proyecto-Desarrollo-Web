@@ -42,9 +42,39 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     @Override
-    public Huesped save(Huesped huesped) {
-        return huespedRepository.save(huesped);
+public Huesped save(Huesped huesped) {
+    if (huesped.getNombre() == null || huesped.getNombre().isBlank()) {
+        throw new RuntimeException("El nombre es obligatorio.");
     }
+
+    if (huesped.getApellido() == null || huesped.getApellido().isBlank()) {
+        throw new RuntimeException("El apellido es obligatorio.");
+    }
+
+    if (huesped.getCorreo() == null || huesped.getCorreo().isBlank()) {
+        throw new RuntimeException("El correo es obligatorio.");
+    }
+
+    if (huesped.getContrasena() == null || huesped.getContrasena().isBlank()) {
+        throw new RuntimeException("La contraseña es obligatoria.");
+    }
+
+    if (huesped.getCedula() == null || huesped.getCedula().isBlank()) {
+        throw new RuntimeException("La cédula es obligatoria.");
+    }
+
+    Huesped existenteCorreo = huespedRepository.findByCorreo(huesped.getCorreo()).orElse(null);
+    if (existenteCorreo != null) {
+        throw new RuntimeException("Ya existe un usuario con ese correo.");
+    }
+
+    Huesped existenteCedula = huespedRepository.findByCedula(huesped.getCedula()).orElse(null);
+    if (existenteCedula != null) {
+        throw new RuntimeException("Ya existe un usuario con esa cédula.");
+    }
+
+    return huespedRepository.save(huesped);
+}
 
 @Override
 public Huesped update(

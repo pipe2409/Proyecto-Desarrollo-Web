@@ -19,14 +19,15 @@ public class RegistrarseController {
     private HuespedService huespedService;
 
     @PostMapping("/registro")
-    public ResponseEntity<Map<String, String>> registro(@RequestBody Huesped huesped) {
-        try {
-            huespedService.save(huesped);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("ok", "Registro exitoso."));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("err", "Ocurrió un error al registrarse. Intenta de nuevo."));
-        }
+public ResponseEntity<Map<String, String>> registro(@RequestBody Huesped huesped) {
+    try {
+        huespedService.save(huesped);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("ok", "Registro exitoso."));
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.badRequest()
+                .body(Map.of("err", e.getMessage()));
     }
+}
 }
