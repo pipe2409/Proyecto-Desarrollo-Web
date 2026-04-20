@@ -103,6 +103,56 @@ public Reserva crearReserva(Integer habitacionId,
     
     return savedReserva;
 }
+
+@Override
+public Reserva crearReservaPorTipo(Integer tipoHabitacionId,
+                                   Integer huespedId,
+                                   LocalDateTime fechaInicio,
+                                   LocalDateTime fechaFin,
+                                   Integer cantidadPersonas) {
+
+    // Buscar huésped
+    Huesped huesped = huespedRepository.findById(huespedId)
+            .orElseThrow(() -> new EntityNotFoundException("Huésped no encontrado"));
+
+    // Buscar habitaciones de ese tipo
+    List<Habitacion> habitaciones = habitacionRepository.findByTipoHabitacion_Id(tipoHabitacionId);
+
+    if (habitaciones == null || habitaciones.isEmpty()) {
+        throw new RuntimeException("No existen habitaciones para este tipo");
+    }
+
+    // Buscar una habitación disponible
+    Habitacion habitacionDisponible = null;
+
+    for (Habitacion habitacion : habitaciones) {
+        boolean disponible = isHabitacionDisponible(
+                habitacion.getId(),
+                fechaInicio,
+                fechaFin
+        );
+
+        if (disponible) {
+            habitacionDisponible = habitacion;
+            break;
+        }
+    }
+
+    if (habitacionDisponible == null) {
+        throw new RuntimeException("No hay habitaciones disponibles para ese tipo en esas fechas");
+    }
+
+    // Crear reserva
+    Reserva reserva = new Reserva();
+    reserva.setHabitacion(habitacionDisponible);
+    reserva.setHuesped(huesped);
+    reserva.setFechaInicio(fechaInicio);
+    reserva.setFechaFin(fechaFin);
+    reserva.setCantidadPersonas(cantidadPersonas);
+    reserva.setEstado(EstadoReserva.PENDIENTE);
+
+    return reservaRepository.save(reserva);
+}
     
     // ==================== NUEVOS MÉTODOS ====================
     
