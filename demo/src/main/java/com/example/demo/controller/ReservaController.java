@@ -68,6 +68,7 @@ public class ReservaController {
             Integer huespedId = (Integer) body.get("huespedId");
             Integer habitacionId = (Integer) body.get("habitacionId");
             Integer cantidadPersonas = (Integer) body.get("cantidadPersonas");
+            String estado = (String) body.get("estado");
             String fechaInicio = (String) body.get("fechaInicio");
             String fechaFin = (String) body.get("fechaFin");
 
@@ -93,6 +94,11 @@ public class ReservaController {
             reserva.setCantidadPersonas(cantidadPersonas);
             reserva.setFechaInicio(inicio);
             reserva.setFechaFin(fin);
+            
+            // ✅ NUEVO: Actualizar el estado de la reserva
+            if (estado != null) {
+                reserva.setEstado(EstadoReserva.valueOf(estado));
+            }
 
             return ResponseEntity.ok(reservaService.save(reserva));
         } catch (Exception e) {
