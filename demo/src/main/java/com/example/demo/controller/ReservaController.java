@@ -137,6 +137,19 @@ public class ReservaController {
         }
     }
 
+
+    // Finalizar reserva (solo si cuenta está pagada)
+@PutMapping("/{id}/finalizar")
+public ResponseEntity<Map<String, String>> finalizarReserva(@PathVariable Integer id) {
+    try {
+        Map<String, String> resultado = reservaService.finalizarReserva(id);
+        return ResponseEntity.ok(resultado);
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("err", e.getMessage()));
+    }
+}
+
     // Huésped: ver sus reservas
     @GetMapping("/mis-reservas/{huespedId}")
     public ResponseEntity<List<Reserva>> misReservas(@PathVariable Integer huespedId) {

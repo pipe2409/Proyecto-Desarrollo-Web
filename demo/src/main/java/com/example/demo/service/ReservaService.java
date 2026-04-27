@@ -5,6 +5,7 @@ import com.example.demo.entities.Reserva;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface ReservaService {
 
@@ -29,4 +30,7 @@ public interface ReservaService {
     boolean tieneReservasActivas(Integer huespedId);
     boolean isHabitacionDisponible(Integer habitacionId, LocalDateTime inicio, LocalDateTime fin);
     boolean isHabitacionDisponibleParaEditar(Integer habitacionId, LocalDateTime inicio, LocalDateTime fin, Integer reservaId);
+    
+    // 👇 AGREGAR ESTE MÉTODO
+    Map<String, String> finalizarReserva(Integer reservaId);
 }
