@@ -15,6 +15,9 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
     List<Reserva> findByHuesped(Huesped huesped);
     List<Reserva> findByHabitacionId(Integer habitacionId);
     
+    @Query("SELECT COUNT(r) FROM Reserva r WHERE r.huesped.id = :huespedId AND r.estado = com.example.demo.entities.EstadoReserva.CONFIRMADA")
+    Long contarReservasConfirmadas(@Param("huespedId") Integer huespedId);
+
     @Query("SELECT r FROM Reserva r WHERE r.habitacion.id = :habitacionId " +
            "AND r.fechaInicio < :fechaFin AND r.fechaFin > :fechaInicio")
     List<Reserva> findReservasConflictivas(@Param("habitacionId") Integer habitacionId,
