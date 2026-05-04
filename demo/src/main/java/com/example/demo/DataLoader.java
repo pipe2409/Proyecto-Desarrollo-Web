@@ -187,11 +187,11 @@ public void run(String... args) {
 
 private void cargarOperadores() {
     String[][] datos = {
-        {"admin@hotel.com",    "admin123"},
-        {"recepcion@hotel.com","recep456"},
-        {"caja@hotel.com",     "caja789"},
+        {"admin@hotel.com",     "admin123"},
+        {"recepcion@hotel.com", "recep456"},
+        {"caja@hotel.com",      "caja789"},
         {"supervisor@hotel.com","super321"},
-        {"soporte@hotel.com",  "soporte000"}
+        {"soporte@hotel.com",   "soporte000"}
     };
 
     for (String[] d : datos) {
@@ -201,7 +201,6 @@ private void cargarOperadores() {
         operadorRepository.save(op);
     }
 }
-
 private void cargarItemsCuenta(CuentaHabitacion cuenta, List<Servicio> servicios, int index) {
     int totalCuenta = 0;
 

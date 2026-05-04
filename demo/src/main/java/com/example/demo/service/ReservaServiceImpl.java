@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Map;    
+import java.util.HashMap; 
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,6 +45,9 @@ public void deleteById(Integer id) {
         //habitacionRepository.save(habitacion);
     //}
 }
+
+
+
    
     @Override
     public Reserva findById(Integer id) {
@@ -205,4 +210,51 @@ public Reserva crearReservaPorTipo(Integer tipoHabitacionId,
         }
         return true;
     }
+
+@Override
+public Map<String, String> finalizarReserva(Integer reservaId) {
+    Reserva reserva = findById(reservaId);
+    
+    // Solo se puede finalizar si está CONFIRMADA o PENDIENTE
+    if (reserva.getEstado() != EstadoReserva.CONFIRMADA && 
+        reserva.getEstado() != EstadoReserva.PENDIENTE) {
+        throw new RuntimeException("Solo se pueden finalizar reservas CONFIRMADAS o PENDIENTES");
+    }
+    
+    // Verificar si tiene cuenta y deuda pendiente
+    CuentaHabitacion cuenta = reserva.getCuentaHabitacion();
+    if (cuenta != null && cuenta.getTotal() > 0) {
+        throw new RuntimeException("❌ No se puede finalizar la reserva. El huésped tiene una deuda pendiente de $" + cuenta.getTotal());
+    }
+    
+    reserva.setEstado(EstadoReserva.FINALIZADA);
+    save(reserva);
+    
+    // Opcional: Actualizar estado de habitación a DISPONIBLE
+    Habitacion habitacion = reserva.getHabitacion();
+    habitacion.setEstado("DISPONIBLE");
+    // Si tienes habitacionRepository inyectado, úsalo
+    // habitacionRepository.save(habitacion);
+    
+    return Map.of("ok", "Reserva finalizada correctamente");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

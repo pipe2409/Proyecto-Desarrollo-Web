@@ -15,9 +15,7 @@ import java.util.List;
 public class HuespedServiceImpl implements HuespedService {
 
     @Autowired
-    private  HuespedRepository huespedRepository;
-
-   
+    private HuespedRepository huespedRepository;
 
     @Override
     public List<Huesped> findAll() {
@@ -26,9 +24,9 @@ public class HuespedServiceImpl implements HuespedService {
 
     @Override
     public Huesped findById(Integer id) {
-    return huespedRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                    "No existe el huésped con id=" + id));
+        return huespedRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No existe el huésped con id=" + id));
     }
 
     @Override
@@ -42,92 +40,115 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     @Override
-public Huesped save(Huesped huesped) {
-    if (huesped.getNombre() == null || huesped.getNombre().isBlank()) {
-        throw new RuntimeException("El nombre es obligatorio.");
+    public Huesped save(Huesped huesped) {
+        if (huesped.getNombre() == null || huesped.getNombre().isBlank()) {
+            throw new RuntimeException("El nombre es obligatorio.");
+        }
+
+        if (huesped.getApellido() == null || huesped.getApellido().isBlank()) {
+            throw new RuntimeException("El apellido es obligatorio.");
+        }
+
+        if (huesped.getCorreo() == null || huesped.getCorreo().isBlank()) {
+            throw new RuntimeException("El correo es obligatorio.");
+        }
+
+        if (huesped.getContrasena() == null || huesped.getContrasena().isBlank()) {
+            throw new RuntimeException("La contraseña es obligatoria.");
+        }
+
+        if (huesped.getCedula() == null || huesped.getCedula().isBlank()) {
+            throw new RuntimeException("La cédula es obligatoria.");
+        }
+
+        Huesped existenteCorreo = huespedRepository.findByCorreo(huesped.getCorreo()).orElse(null);
+        if (existenteCorreo != null) {
+            throw new RuntimeException("Ya existe un usuario con ese correo.");
+        }
+
+        Huesped existenteCedula = huespedRepository.findByCedula(huesped.getCedula()).orElse(null);
+        if (existenteCedula != null) {
+            throw new RuntimeException("Ya existe un usuario con esa cédula.");
+        }
+
+        return huespedRepository.save(huesped);
     }
 
-    if (huesped.getApellido() == null || huesped.getApellido().isBlank()) {
-        throw new RuntimeException("El apellido es obligatorio.");
+    @Override
+    public Huesped update(
+            Integer id,
+            String nombre,
+            String apellido,
+            String correo,
+            String cedula,
+            String telefono,
+            String direccion,
+            String nacionalidad
+    ) {
+        Huesped huesped = findById(id);
+
+        if (nombre == null || nombre.isBlank()) {
+            throw new RuntimeException("El nombre es obligatorio.");
+        }
+
+        if (apellido == null || apellido.isBlank()) {
+            throw new RuntimeException("El apellido es obligatorio.");
+        }
+
+        if (correo == null || correo.isBlank()) {
+            throw new RuntimeException("El correo es obligatorio.");
+        }
+
+        if (cedula == null || cedula.isBlank()) {
+            throw new RuntimeException("La cédula es obligatoria.");
+        }
+
+        Huesped existenteCorreo = huespedRepository.findByCorreo(correo).orElse(null);
+        if (existenteCorreo != null && !existenteCorreo.getId().equals(id)) {
+            throw new RuntimeException("Ya existe un usuario con ese correo.");
+        }
+
+        Huesped existenteCedula = huespedRepository.findByCedula(cedula).orElse(null);
+        if (existenteCedula != null && !existenteCedula.getId().equals(id)) {
+            throw new RuntimeException("Ya existe un usuario con esa cédula.");
+        }
+
+        huesped.setNombre(nombre);
+        huesped.setApellido(apellido);
+        huesped.setCorreo(correo);
+        huesped.setCedula(cedula);
+        huesped.setTelefono(telefono);
+        huesped.setDireccion(direccion);
+        huesped.setNacionalidad(nacionalidad);
+
+        return huespedRepository.save(huesped);
     }
-
-    if (huesped.getCorreo() == null || huesped.getCorreo().isBlank()) {
-        throw new RuntimeException("El correo es obligatorio.");
-    }
-
-    if (huesped.getContrasena() == null || huesped.getContrasena().isBlank()) {
-        throw new RuntimeException("La contraseña es obligatoria.");
-    }
-
-    if (huesped.getCedula() == null || huesped.getCedula().isBlank()) {
-        throw new RuntimeException("La cédula es obligatoria.");
-    }
-
-    Huesped existenteCorreo = huespedRepository.findByCorreo(huesped.getCorreo()).orElse(null);
-    if (existenteCorreo != null) {
-        throw new RuntimeException("Ya existe un usuario con ese correo.");
-    }
-
-    Huesped existenteCedula = huespedRepository.findByCedula(huesped.getCedula()).orElse(null);
-    if (existenteCedula != null) {
-        throw new RuntimeException("Ya existe un usuario con esa cédula.");
-    }
-
-    return huespedRepository.save(huesped);
-}
-
-@Override
-public Huesped update(
-        Integer id,
-        String nombre,
-        String apellido,
-        String correo,
-        String cedula,
-        String telefono,
-        String direccion,
-        String nacionalidad
-) {
-    Huesped huesped = findById(id);
-
-    if (huesped == null) {
-        throw new RuntimeException("Huésped no encontrado.");
-    }
-
-    huesped.setNombre(nombre);
-    huesped.setApellido(apellido);
-    huesped.setCorreo(correo);
-    huesped.setCedula(cedula);
-    huesped.setTelefono(telefono);
-    huesped.setDireccion(direccion);
-    huesped.setNacionalidad(nacionalidad);
-
-    return save(huesped);
-}
 
     @Override
     public void deleteById(Integer id) {
         huespedRepository.deleteById(id);
     }
 
+    @Override
     public void cambiarContrasena(Integer id,
-                               String actual,
-                               String nueva,
-                               String confirmar) {
+                                  String actual,
+                                  String nueva,
+                                  String confirmar) {
 
-    Huesped huesped = huespedRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                    "No existe el huésped"));
+        Huesped huesped = huespedRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No existe el huésped"));
 
-    if (!huesped.getContrasena().equals(actual)) {
-        throw new RuntimeException("La contraseña actual es incorrecta.");
+        if (!huesped.getContrasena().equals(actual)) {
+            throw new RuntimeException("La contraseña actual es incorrecta.");
+        }
+
+        if (!nueva.equals(confirmar)) {
+            throw new RuntimeException("La nueva contraseña y la confirmación no coinciden.");
+        }
+
+        huesped.setContrasena(nueva);
+
+        huespedRepository.save(huesped);
     }
-
-    if (!nueva.equals(confirmar)) {
-        throw new RuntimeException("La nueva contraseña y la confirmación no coinciden.");
-    }
-
-    huesped.setContrasena(nueva);
-
-    huespedRepository.save(huesped);
-}
 }
