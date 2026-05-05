@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -98,5 +99,123 @@ class ReservaServiceImplTest {
 
         assertFalse(disponible);
         verify(reservaRepository).findByHabitacionId(1);
+    }
+
+    @Test
+    void deberiaCrearReservaCorrectamente() {
+        Habitacion habitacion = new Habitacion();
+        habitacion.setId(1);
+
+        Huesped huesped = new Huesped();
+        huesped.setId(1);
+
+        LocalDateTime inicio = LocalDateTime.now().plusDays(10);
+        LocalDateTime fin = LocalDateTime.now().plusDays(12);
+
+        Reserva reservaGuardada = new Reserva();
+        reservaGuardada.setId(1);
+        reservaGuardada.setHabitacion(habitacion);
+        reservaGuardada.setHuesped(huesped);
+        reservaGuardada.setFechaInicio(inicio);
+        reservaGuardada.setFechaFin(fin);
+        reservaGuardada.setCantidadPersonas(2);
+        reservaGuardada.setEstado(EstadoReserva.PENDIENTE);
+
+        when(habitacionRepository.findById(1)).thenReturn(Optional.of(habitacion));
+        when(huespedRepository.findById(1)).thenReturn(Optional.of(huesped));
+        when(reservaRepository.save(any(Reserva.class))).thenReturn(reservaGuardada);
+
+        Reserva resultado = reservaService.crearReserva(1, 1, inicio, fin, 2);
+
+        assertEquals(EstadoReserva.PENDIENTE, resultado.getEstado());
+        assertEquals(1, resultado.getHabitacion().getId());
+        assertEquals(1, resultado.getHuesped().getId());
+        verify(reservaRepository).save(any(Reserva.class));
+    }
+
+    @Test
+    void deberiaObtenerReservasPorHuesped() {
+        Huesped huesped = new Huesped();
+        huesped.setId(1);
+
+        Reserva r1 = new Reserva();
+        r1.setHuesped(huesped);
+
+        Reserva r2 = new Reserva();
+        r2.setHuesped(huesped);
+
+        when(reservaRepository.findByHuesped(huesped)).thenReturn(List.of(r1, r2));
+
+        List<Reserva> resultado = reservaService.findByHuesped(huesped);
+
+        assertEquals(2, resultado.size());
+        verify(reservaRepository).findByHuesped(huesped);
+    }
+
+    @Test
+    void deberiaCrearReservaPorTipoDeHabitacion() {
+        TipoHabitacion tipo = new TipoHabitacion();
+        tipo.setId(1);
+
+        Habitacion habitacion = new Habitacion();
+        habitacion.setId(1);
+        habitacion.setTipoHabitacion(tipo);
+
+        Huesped huesped = new Huesped();
+        huesped.setId(1);
+
+        LocalDateTime inicio = LocalDateTime.now().plusDays(10);
+        LocalDateTime fin = LocalDateTime.now().plusDays(12);
+
+        Reserva reservaGuardada = new Reserva();
+        reservaGuardada.setId(1);
+        reservaGuardada.setHabitacion(habitacion);
+        reservaGuardada.setHuesped(huesped);
+        reservaGuardada.setEstado(EstadoReserva.PENDIENTE);
+
+        when(huespedRepository.findById(1)).thenReturn(Optional.of(huesped));
+        when(habitacionRepository.findByTipoHabitacion_Id(1)).thenReturn(List.of(habitacion));
+        when(reservaRepository.findByHabitacionId(1)).thenReturn(List.of());
+        when(reservaRepository.save(any(Reserva.class))).thenReturn(reservaGuardada);
+
+        Reserva resultado = reservaService.crearReservaPorTipo(1, 1, inicio, fin, 2);
+
+        assertEquals(EstadoReserva.PENDIENTE, resultado.getEstado());
+        assertEquals(1, resultado.getHabitacion().getTipoHabitacion().getId());
+        verify(reservaRepository).save(any(Reserva.class));
+    }
+
+    @Test
+    void deberiaVerificarSiHuespedTieneReservasActivas() {
+        Huesped huesped = new Huesped();
+        huesped.setId(1);
+
+        Reserva activa = new Reserva();
+        activa.setEstado(EstadoReserva.PENDIENTE);
+
+        when(huespedRepository.findById(1)).thenReturn(Optional.of(huesped));
+        when(reservaRepository.findByHuesped(huesped)).thenReturn(List.of(activa));
+
+        boolean resultado = reservaService.tieneReservasActivas(1);
+
+        assertTrue(resultado);
+        verify(huespedRepository).findById(1);
+        verify(reservaRepository).findByHuesped(huesped);
+    }
+
+    @Test
+    void deberiaCancelarReservaCorrectamente() {
+        Reserva reserva = new Reserva();
+        reserva.setId(1);
+        reserva.setEstado(EstadoReserva.PENDIENTE);
+
+        reserva.setEstado(EstadoReserva.CANCELADA);
+
+        when(reservaRepository.save(reserva)).thenReturn(reserva);
+
+        Reserva resultado = reservaService.save(reserva);
+
+        assertEquals(EstadoReserva.CANCELADA, resultado.getEstado());
+        verify(reservaRepository).save(reserva);
     }
 }

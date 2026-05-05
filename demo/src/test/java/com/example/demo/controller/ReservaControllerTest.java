@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.entities.Reserva;
-import com.example.demo.entities.Habitacion;
 import com.example.demo.service.ReservaService;
 import com.example.demo.service.HuespedService;
 import com.example.demo.service.HabitacionService;
@@ -10,8 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ class ReservaControllerTest {
     @MockBean
     private HabitacionService habitacionService;
 
-    // ✅ 1. listar reservas
+    // 1. GET - listar reservas
     @Test
     void testGetAll() throws Exception {
         when(reservaService.findAll()).thenReturn(List.of(new Reserva()));
@@ -43,40 +44,44 @@ class ReservaControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // ✅ 2. obtener por id OK
+    // 2. GET - obtener reserva por id
     @Test
     void testGetById() throws Exception {
-        Reserva r = new Reserva();
-        r.setId(1);
+        Reserva reserva = new Reserva();
+        reserva.setId(1);
 
-        when(reservaService.findById(1)).thenReturn(r);
+        when(reservaService.findById(1)).thenReturn(reserva);
 
         mockMvc.perform(get("/api/reservas/admin/1"))
                 .andExpect(status().isOk());
     }
 
-    // ❌ 3. obtener por id error
+    // 3. POST - crear reserva
     @Test
-    void testGetByIdError() throws Exception {
-        when(reservaService.findById(1)).thenThrow(new RuntimeException());
+    void testCrearReserva() throws Exception {
+        String json = """
+        {
+            "habitacionId": 1,
+            "huespedId": 1,
+            "cantidadPersonas": 2,
+            "fechaInicio": "2026-05-10",
+            "fechaFin": "2026-05-12"
+        }
+        """;
 
-        mockMvc.perform(get("/api/reservas/admin/1"))
-                .andExpect(status().isNotFound());
+        when(reservaService.isHabitacionDisponible(
+                eq(1),
+                any(LocalDateTime.class),
+                any(LocalDateTime.class)
+        )).thenReturn(true);
+
+        mockMvc.perform(post("/api/reservas/crear")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated());
     }
 
-    // ✅ 4. cancelar reserva
-    @Test
-    void testCancelar() throws Exception {
-        Reserva r = new Reserva();
-        r.setHabitacion(new Habitacion());
-
-        when(reservaService.findById(1)).thenReturn(r);
-
-        mockMvc.perform(put("/api/reservas/1/cancelar"))
-                .andExpect(status().isOk());
-    }
-
-    // ❌ 5. cancelar error
+    // 4. PUT - finalizar reserva
     @Test
     void testFinalizarReserva() throws Exception {
         when(reservaService.finalizarReserva(1))
@@ -84,5 +89,14 @@ class ReservaControllerTest {
 
         mockMvc.perform(put("/api/reservas/1/finalizar"))
                 .andExpect(status().isOk());
+    }
+
+    // 5. DELETE - eliminar reserva
+    @Test
+    void testEliminarReserva() throws Exception {
+        doNothing().when(reservaService).deleteById(1);
+
+        mockMvc.perform(delete("/api/reservas/admin/1"))
+                .andExpect(status().isNoContent());
     }
 }

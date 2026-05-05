@@ -139,6 +139,64 @@ class TipoHabitacionRepositoryTest {
         assertThat(actualizado.isDisponible()).isFalse();
     }
 
+
+
+@Test //capacidad exacta vs capacidad mayor
+void encontrarMasBaratoParaCapacidad_cuandoCapacidadExacta_deberiaIncluirlo() {
+    TipoHabitacion exacta = new TipoHabitacion();
+    exacta.setNombre("Exacta");
+    exacta.setPrecio(200000);
+    exacta.setCapacidad(4);
+    exacta.setDisponible(true);
+
+    TipoHabitacion mayor = new TipoHabitacion();
+    mayor.setNombre("Mayor");
+    mayor.setPrecio(300000);
+    mayor.setCapacidad(6);
+    mayor.setDisponible(true);
+
+    tipoHabitacionRepository.save(exacta);
+    tipoHabitacionRepository.save(mayor);
+
+    Optional<TipoHabitacion> resultado =
+            tipoHabitacionRepository.encontrarMasBaratoParaCapacidadNative(4);
+
+    assertThat(resultado).isPresent();
+    assertThat(resultado.get().getNombre()).isEqualTo("Exacta");
+}
+
+
+@Test // ninguna habitación cumple capacidad
+void encontrarMasBaratoParaCapacidad_cuandoNoHaySuficienteCapacidad_deberiaRetornarVacio() {
+    TipoHabitacion pequena = new TipoHabitacion();
+    pequena.setNombre("Pequeña");
+    pequena.setPrecio(100000);
+    pequena.setCapacidad(2);
+    pequena.setDisponible(true);
+
+    tipoHabitacionRepository.save(pequena);
+
+    Optional<TipoHabitacion> resultado =
+            tipoHabitacionRepository.encontrarMasBaratoParaCapacidadNative(5);
+
+    assertThat(resultado).isNotPresent();
+}
+
+
+@Test // ID negativo
+void buscarPorIdNegativo_deberiaRetornarVacio() {
+    Optional<TipoHabitacion> resultado = tipoHabitacionRepository.findById(-1);
+
+    assertThat(resultado).isEmpty();
+}
+
+@Test // no existe ninguna habitación en la base de datos
+void listarTodos_cuandoNoHayRegistros_deberiaRetornarListaVacia() {
+    List<TipoHabitacion> lista = tipoHabitacionRepository.findAll();
+
+    assertThat(lista).isEmpty();
+}
+
     // ─────────────────────────────────────────────────────────────────
     //  DELETE — eliminar un tipo de habitación por ID
     // ─────────────────────────────────────────────────────────────────
@@ -156,4 +214,9 @@ class TipoHabitacionRepositoryTest {
         assertThat(resultado).isNotPresent();
         assertThat(tipoHabitacionRepository.findAll()).isEmpty();
     }
+
+   
+
+
+
 }
