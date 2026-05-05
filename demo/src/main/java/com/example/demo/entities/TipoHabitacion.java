@@ -1,9 +1,8 @@
 package com.example.demo.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
-
-import org.antlr.v4.runtime.misc.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,6 +23,7 @@ public class TipoHabitacion {
     
     private String descripcion;
     
+    @Min(0)
     private Integer precio;
 
     @Column(name = "imagen_url", columnDefinition = "TEXT")
@@ -31,6 +31,7 @@ public class TipoHabitacion {
 
 
     
+    @Min(0)
     private Integer capacidad;
 
     private String camas;
