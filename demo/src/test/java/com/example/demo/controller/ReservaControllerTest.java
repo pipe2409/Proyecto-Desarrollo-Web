@@ -77,12 +77,12 @@ class ReservaControllerTest {
     }
 
     // ❌ 5. cancelar error
-   @Test
-void testFinalizarReserva() throws Exception {
-    when(reservaService.finalizarReserva(1))
-            .thenReturn(Map.of("ok", "Reserva finalizada correctamente"));
+    @Test
+    void testFinalizarReserva() throws Exception {
+        when(reservaService.finalizarReserva(1))
+                .thenReturn(Map.of("ok", "Reserva finalizada correctamente"));
 
-    mockMvc.perform(put("/api/reservas/1/finalizar"))
-            .andExpect(status().isOk());
-}
+        mockMvc.perform(put("/api/reservas/1/finalizar"))
+                .andExpect(status().isOk());
+    }
 }
