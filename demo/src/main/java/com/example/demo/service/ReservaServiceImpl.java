@@ -86,6 +86,16 @@ public Reserva crearReserva(Integer habitacionId,
                             LocalDateTime fechaFin,
                             Integer cantidadPersonas) {
 
+    if (fechaFin.isBefore(fechaInicio) || fechaFin.isEqual(fechaInicio)) {
+        throw new RuntimeException("La fecha de fin debe ser posterior a la fecha de inicio");
+    }
+
+    boolean disponible = isHabitacionDisponible(habitacionId, fechaInicio, fechaFin);
+    if (!disponible) {
+        throw new RuntimeException("La habitación no está disponible en esas fechas");
+    }
+
+
     Habitacion habitacion = habitacionRepository.findById(habitacionId)
             .orElseThrow(() -> new EntityNotFoundException("Habitación no encontrada"));
 
