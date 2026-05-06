@@ -216,6 +216,29 @@ void listarTodos_cuandoNoHayRegistros_deberiaRetornarListaVacia() {
         assertThat(tipoHabitacionRepository.findAll()).isEmpty();
     }
 
+        // ─────────────────────────────────────────────────────────────────
+    //  VALIDACIÓN — reglas de negocio
+    // ─────────────────────────────────────────────────────────────────
+
+    @Test
+    void guardarTipoHabitacion_conPrecioNegativo_deberiaLanzarExcepcion() {
+        // Arrange: el setup ya tiene datos válidos, forzamos un error
+        tipoHabitacion.setPrecio(-500);
+
+        // Act & Assert: se usa saveAndFlush para disparar la validación de Bean Validation
+        assertThatThrownBy(() -> tipoHabitacionRepository.saveAndFlush(tipoHabitacion))
+                .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    void guardarTipoHabitacion_conCapacidadNegativa_deberiaLanzarExcepcion() {
+        // Arrange
+        tipoHabitacion.setCapacidad(-1);
+
+        // Act & Assert
+        assertThatThrownBy(() -> tipoHabitacionRepository.saveAndFlush(tipoHabitacion))
+                .isInstanceOf(Exception.class);
+    }
    
 
 
