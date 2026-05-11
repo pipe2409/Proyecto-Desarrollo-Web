@@ -18,13 +18,11 @@ public class CuentaHabitacion {
     @Column(nullable = false)
     private int total;
 
-    // 🔥 EVITA ciclo con Reserva
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "reserva_id")
     private Reserva reserva;
 
-    // 🔥 EVITA ciclo con ItemCuenta
     @JsonIgnore
     @OneToMany(mappedBy = "cuentaHabitacion")
     private List<ItemCuenta> items;

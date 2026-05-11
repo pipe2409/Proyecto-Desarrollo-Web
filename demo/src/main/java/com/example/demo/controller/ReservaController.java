@@ -231,16 +231,21 @@ public ResponseEntity<Map<String, String>> finalizarReserva(@PathVariable Intege
                         .body(Map.of("err", "La fecha de fin debe ser posterior a la fecha de inicio"));
             }
 
-            reservaService.crearReservaPorTipo(
-                    tipoHabitacionId,
-                    huespedId,
-                    inicio,
-                    fin,
-                    cantidadPersonas
-            );
+           Reserva reserva = reservaService.crearReservaPorTipo(
+        tipoHabitacionId,
+        huespedId,
+        inicio,
+        fin,
+        cantidadPersonas
+);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("ok", "Reserva creada correctamente."));
+return ResponseEntity.status(HttpStatus.CREATED)
+        .body(Map.of(
+                "ok", "Reserva creada correctamente.",
+                "reservaId", reserva.getId().toString(),
+                "habitacionId", reserva.getHabitacion().getId().toString(),
+                "habitacionCodigo", reserva.getHabitacion().getCodigo()
+        ));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(Map.of("err", e.getMessage()));

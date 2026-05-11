@@ -32,11 +32,11 @@ public ResponseEntity<List<Habitacion>> getAll(
     List<Habitacion> habitaciones = habitacionService.findByTipoId(tipoId);
     
     // Forzar la carga de tipoHabitacion
-    habitaciones.forEach(h -> {
-        if (h.getTipoHabitacion() != null) {
-            h.getTipoHabitacion().getId(); // Forzar carga
-        }
-    });
+   // habitaciones.forEach(h -> {
+     //   if (h.getTipoHabitacion() != null) {
+       //     h.getTipoHabitacion().getId(); 
+        //}
+    //});
     
     return ResponseEntity.ok(habitaciones);
 }
