@@ -34,9 +34,8 @@ public class ReservaServiceImpl implements ReservaService {
     
     @Override
 public void deleteById(Integer id) {
-    Reserva reserva = findById(id);
-    Habitacion habitacion = reserva.getHabitacion();
-    
+    //Reserva reserva = findById(id);
+    //Habitacion habitacion = reserva.getHabitacion();
     reservaRepository.deleteById(id);
     
     // Actualizar el estado de la habitación después de eliminar la reserva
@@ -238,33 +237,11 @@ public Map<String, String> finalizarReserva(Integer reservaId) {
     }
     
     reserva.setEstado(EstadoReserva.FINALIZADA);
-    save(reserva);
-    
-    // Opcional: Actualizar estado de habitación a DISPONIBLE
-    Habitacion habitacion = reserva.getHabitacion();
-    habitacion.setEstado("DISPONIBLE");
-    // Si tienes habitacionRepository inyectado, úsalo
-    // habitacionRepository.save(habitacion);
-    
-    return Map.of("ok", "Reserva finalizada correctamente");
+    reservaRepository.save(reserva);
+
+    Map<String, String> response = new HashMap<>();
+    response.put("status", "success");
+    response.put("message", "Reserva finalizada correctamente");
+    return response;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
