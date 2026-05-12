@@ -54,14 +54,13 @@ public class Caso2 {
         wait.until(ExpectedConditions.urlToBe(BASE_URL + "/"));
         Thread.sleep(500);
 
+        
         // --- PASO 2: LOGOUT HUÉSPED ---
         WebElement logoutBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
-        By.xpath("//a[normalize-space()='Cerrar sesión']")));
+        By.xpath("//a[contains(text(), 'Cerrar')]")));
 
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", logoutBtn);
-        Thread.sleep(300);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", logoutBtn);
 
-        wait.until(ExpectedConditions.elementToBeClickable(logoutBtn)).click();
         wait.until(ExpectedConditions.urlToBe(BASE_URL + "/"));
         Thread.sleep(500);
 
