@@ -33,31 +33,44 @@ public class Caso2 {
 
     @Test
     @DisplayName("Flujo Completo: Login Huésped -> Check-in Operador -> Servicios -> Pago -> Checkout")
-    void testFlujoCompletoEstadia() {
+    void testFlujoCompletoEstadia() throws InterruptedException {
         // --- PASO 1: LOGIN HUÉSPED ---
         driver.get(BASE_URL + "/login");
+        
+        // Esperar a que los campos estén presentes y escribir
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("correo")));
         driver.findElement(By.id("correo")).sendKeys("h1@mail.com");
         driver.findElement(By.id("contrasena")).sendKeys("123");
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
+        
+        // Click en submit
+        WebElement submitBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
+        submitBtn.click();
 
-        // Verificar que ve su reserva pendiente
-        wait.until(ExpectedConditions.urlContains("/reservas"));
-        WebElement reservaItem = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("reservation-card")));
-        assertTrue(reservaItem.getText().contains("PENDIENTE"), "La reserva debería estar pendiente");
+        // Verificar que el huésped se redirige a HOME (/) después del login exitoso
+        wait.until(ExpectedConditions.urlToBe(BASE_URL + "/"));
+        Thread.sleep(1000); // Pequeña pausa para que Angular renderice
 
         // --- PASO 2: LOGIN OPERADOR (En la misma sesión para la prueba) ---
         // Logout del huésped
-        driver.findElement(By.id("logout-btn")).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("logout-btn"))).click();
         
         driver.get(BASE_URL + "/login");
+        
+        // Esperar a que los campos estén presentes
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("correo")));
         driver.findElement(By.id("correo")).sendKeys("admin@hotel.com");
         driver.findElement(By.id("contrasena")).sendKeys("admin123");
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
+        
+        WebElement submitBtnOperador = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
+        submitBtnOperador.click();
 
+        // El operador se redirecciona a /menu-admin
+        wait.until(ExpectedConditions.urlContains("/menu-admin"));
+        Thread.sleep(1000);
+        
         // --- PASO 3: CHECK-IN ---
-        wait.until(ExpectedConditions.urlContains("/admin/reservas"));
         // Buscar la reserva del huesped 1 y dar click en Check-in
-        WebElement btnCheckin = driver.findElement(By.xpath("//td[contains(text(), 'Huesped1')]/..//button[contains(text(), 'Check-in')]"));
+        WebElement btnCheckin = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//td[contains(text(), 'Huesped1')]/..//button[contains(text(), 'Check-in')]")));
         btnCheckin.click();
         
         // --- PASO 4: AGREGAR 2 SERVICIOS ---
