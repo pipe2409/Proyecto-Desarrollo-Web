@@ -73,9 +73,10 @@ public class Caso2 {
     Thread.sleep(2000);
 
     // --- PASO 1.6: VOLVER A LA PÁGINA PRINCIPAL ---
-driver.get(BASE_URL + "/");
-wait.until(ExpectedConditions.urlToBe(BASE_URL + "/"));
-Thread.sleep(500);
+    driver.get(BASE_URL + "/");
+    wait.until(ExpectedConditions.urlToBe(BASE_URL + "/"));
+    Thread.sleep(500);
+
         // --- PASO 2: LOGOUT HUÉSPED ---
         WebElement logoutBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
         By.xpath("//a[contains(text(), 'Cerrar')]")));
@@ -108,20 +109,29 @@ Thread.sleep(500);
         assertNotNull(serviciosLink, "Debe existir el acceso a Servicios a Cuenta");
 
         // --- PASO 5: NAVEGAR A SERVICIOS ---
-        driver.get(BASE_URL + "/operador/servicios-cuenta");
-        wait.until(ExpectedConditions.urlContains("/operador/servicios-cuenta"));
-        
-        // Verificar que la página de servicios cargó correctamente
-        WebElement searchButton = wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath("//button[normalize-space()='Buscar']")));
-        assertNotNull(searchButton, "Debe existir el botón de búsqueda de habitación");
-        
-        // Verificar que los servicios disponibles se cargaron
-        WebElement serviciosGrid = wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath("//div[contains(@class, 'grid') or contains(text(), 'Desayuno')]")));
-        assertNotNull(serviciosGrid, "Deben existir servicios disponibles en la UI");
+driver.get(BASE_URL + "/operador/servicios-cuenta");
+wait.until(ExpectedConditions.urlContains("/operador/servicios-cuenta"));
 
-        // Test completado exitosamente
-        assertTrue(true, "Flujo completo: Login Huésped -> Logout -> Login Operador -> Acceso a Servicios completado");
-    }
+// Verificar que la página de servicios cargó correctamente
+WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(
+    By.xpath("//input[@placeholder='Número de habitación (ej: 101, 204, 315)']")));
+assertNotNull(searchInput, "Debe existir el campo de búsqueda de habitación");
+
+// Digitar 201 en el buscador
+searchInput.sendKeys("201");
+Thread.sleep(500);
+
+WebElement searchButton = wait.until(ExpectedConditions.elementToBeClickable(
+    By.xpath("//button[normalize-space()='Buscar']")));
+searchButton.click();
+Thread.sleep(1000);
+
+// Verificar que los servicios disponibles se cargaron
+WebElement serviciosGrid = wait.until(ExpectedConditions.presenceOfElementLocated(
+    By.xpath("//div[contains(@class, 'grid') or contains(text(), 'Desayuno')]")));
+assertNotNull(serviciosGrid, "Deben existir servicios disponibles en la UI");
+
+// Test completado exitosamente
+assertTrue(true, "Flujo completo: Login Huésped -> Logout -> Login Operador -> Acceso a Servicios completado");
+}
 }
