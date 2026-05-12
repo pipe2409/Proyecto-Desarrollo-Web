@@ -13,6 +13,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.time.Duration;
 import org.openqa.selenium.JavascriptExecutor;
 import java.util.List;
+import org.openqa.selenium.support.ui.Select;
+
 
 
 
@@ -110,7 +112,31 @@ public class Caso2 {
                 By.xpath("//a[contains(@href, '/operador/servicios-cuenta') or contains(text(), 'Servicios')]")));
         assertNotNull(serviciosLink, "Debe existir el acceso a Servicios a Cuenta");
 
-        // --- PASO 5: NAVEGAR A SERVICIOS ---
+        // --- PASO 6: CONFIRMAR RESERVA 201 ---
+driver.get(BASE_URL + "/reservas/admin");
+wait.until(ExpectedConditions.urlContains("/reservas/admin"));
+Thread.sleep(1000);
+
+// Encontrar la fila que contiene 201 y hacer clic en su botón Editar
+WebElement fila201 = wait.until(ExpectedConditions.presenceOfElementLocated(
+    By.xpath("//div[normalize-space()='201']/ancestor::*[contains(@class,'border') or contains(@class,'row') or contains(@class,'card')][1]//button[normalize-space()='Editar']")));
+
+((JavascriptExecutor) driver).executeScript("arguments[0].click();", fila201);
+Thread.sleep(1000);
+
+// Cambiar estado a CONFIRMADA
+WebElement estadoSelect = wait.until(ExpectedConditions.presenceOfElementLocated(
+    By.xpath("//select[@formcontrolname='estado']")));
+new Select(estadoSelect).selectByValue("CONFIRMADA");
+Thread.sleep(500);
+
+// Clic en Guardar
+WebElement guardarBtn = wait.until(ExpectedConditions.elementToBeClickable(
+    By.xpath("//button[normalize-space()='Guardar']")));
+((JavascriptExecutor) driver).executeScript("arguments[0].click();", guardarBtn);
+Thread.sleep(500);
+
+        // --- PASO 6: NAVEGAR A SERVICIOS ---
 driver.get(BASE_URL + "/operador/servicios-cuenta");
 wait.until(ExpectedConditions.urlContains("/operador/servicios-cuenta"));
 
@@ -145,6 +171,22 @@ Thread.sleep(10000);
 // Agregar el segundo servicio
 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", agregarBtns.get(1));
 Thread.sleep(10000);
+
+// --- PASO 7: Finalizar reserva 201 ---
+driver.get(BASE_URL + "/reservas/admin");
+wait.until(ExpectedConditions.urlContains("/reservas/admin"));
+Thread.sleep(5000);
+
+// Encontrar la fila que contiene 201 y hacer clic en su botón Finalizar
+WebElement finalizar201 = wait.until(ExpectedConditions.presenceOfElementLocated(
+    By.xpath("//div[normalize-space()='201']/ancestor::*[contains(@class,'border') or contains(@class,'row') or contains(@class,'card')][1]//button[normalize-space()='Finalizar']")));
+
+((JavascriptExecutor) driver).executeScript("arguments[0].click();", finalizar201);
+Thread.sleep(5000);
+
+wait.until(ExpectedConditions.alertIsPresent());
+driver.switchTo().alert().accept();
+Thread.sleep(5000);
 
 // Test completado exitosamente
 assertTrue(true, "Flujo completo: Login Huésped -> Logout -> Login Operador -> Acceso a Servicios completado");
