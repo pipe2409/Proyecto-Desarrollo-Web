@@ -49,7 +49,7 @@ public class Caso2 {
         driver.get(BASE_URL + "/login");
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.id("correo")));
-        driver.findElement(By.id("correo")).sendKeys("h1@mail.com");
+        driver.findElement(By.id("correo")).sendKeys("h3@mail.com");
         driver.findElement(By.id("contrasena")).sendKeys("123");
 
         WebElement submitBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
@@ -112,16 +112,16 @@ public class Caso2 {
                 By.xpath("//a[contains(@href, '/operador/servicios-cuenta') or contains(text(), 'Servicios')]")));
         assertNotNull(serviciosLink, "Debe existir el acceso a Servicios a Cuenta");
 
-        // --- PASO 6: CONFIRMAR RESERVA 201 ---
+        // --- PASO 6: CONFIRMAR RESERVA 302 ---
 driver.get(BASE_URL + "/reservas/admin");
 wait.until(ExpectedConditions.urlContains("/reservas/admin"));
 Thread.sleep(1000);
 
-// Encontrar la fila que contiene 201 y hacer clic en su botón Editar
-WebElement fila201 = wait.until(ExpectedConditions.presenceOfElementLocated(
-    By.xpath("//div[normalize-space()='201']/ancestor::*[contains(@class,'border') or contains(@class,'row') or contains(@class,'card')][1]//button[normalize-space()='Editar']")));
+// Encontrar la fila que contiene 302 y hacer clic en su botón Editar
+WebElement fila302 = wait.until(ExpectedConditions.presenceOfElementLocated(
+By.xpath("//td[contains(normalize-space(),'302')]/ancestor::tr[1]//button[normalize-space()='Editar']")));  
 
-((JavascriptExecutor) driver).executeScript("arguments[0].click();", fila201);
+((JavascriptExecutor) driver).executeScript("arguments[0].click();", fila302);
 Thread.sleep(1000);
 
 // Cambiar estado a CONFIRMADA
@@ -145,8 +145,8 @@ WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(
     By.xpath("//input[@placeholder='Número de habitación (ej: 101, 204, 315)']")));
 assertNotNull(searchInput, "Debe existir el campo de búsqueda de habitación");
 
-// Digitar 201 en el buscador
-searchInput.sendKeys("201");
+// Digitar 302   en el buscador
+searchInput.sendKeys("302");
 Thread.sleep(500);
 
 WebElement searchButton = wait.until(ExpectedConditions.elementToBeClickable(
@@ -166,22 +166,40 @@ List<WebElement> agregarBtns = wait.until(ExpectedConditions.presenceOfAllElemen
 
 // Agregar el primer servicio
 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", agregarBtns.get(0));
-Thread.sleep(10000);
+Thread.sleep(1000);
 
 // Agregar el segundo servicio
 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", agregarBtns.get(1));
-Thread.sleep(10000);
+Thread.sleep(1000);
 
-// --- PASO 7: Finalizar reserva 201 ---
+((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0)");
+    Thread.sleep(1000);
+
+WebElement btnPagarTodo = wait.until(
+    ExpectedConditions.elementToBeClickable(
+        By.xpath("//button[normalize-space()='Pagar todo']")
+    )
+);
+
+btnPagarTodo.click();
+
+
+
+Thread.sleep(3000);
+
+// --- PASO 7: Finalizar reserva 302 ---
 driver.get(BASE_URL + "/reservas/admin");
 wait.until(ExpectedConditions.urlContains("/reservas/admin"));
 Thread.sleep(5000);
 
-// Encontrar la fila que contiene 201 y hacer clic en su botón Finalizar
-WebElement finalizar201 = wait.until(ExpectedConditions.presenceOfElementLocated(
-    By.xpath("//div[normalize-space()='201']/ancestor::*[contains(@class,'border') or contains(@class,'row') or contains(@class,'card')][1]//button[normalize-space()='Finalizar']")));
+// Encontrar la fila que contiene 302 y hacer clic en su botón Finalizar
+WebElement finalizar302 = wait.until(
+    ExpectedConditions.elementToBeClickable(
+        By.xpath("//td[contains(normalize-space(),'302')]/ancestor::tr[1]//button[contains(.,'Finalizar')]")
+    )
+);
 
-((JavascriptExecutor) driver).executeScript("arguments[0].click();", finalizar201);
+((JavascriptExecutor) driver).executeScript("arguments[0].click();", finalizar302);
 Thread.sleep(5000);
 
 wait.until(ExpectedConditions.alertIsPresent());
