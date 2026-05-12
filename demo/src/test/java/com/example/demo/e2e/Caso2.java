@@ -55,23 +55,27 @@ public class Caso2 {
         Thread.sleep(500);
 
         // --- PASO 1.5: VER PERFIL Y RESERVAS ---
-// Primero scroll al tope de la página para asegurar que el navbar esté visible
-((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0)");
+    // Primero scroll al tope de la página para asegurar que el navbar esté visible
+    ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0)");
+    Thread.sleep(500);
+
+    // Clic en el nombre de usuario en la barra de navegación
+    WebElement userBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
+        By.xpath("//a[contains(@class, 'nav-link') and contains(text(), 'Huesped')]")));
+    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", userBtn);
+    Thread.sleep(300);
+    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", userBtn);
+
+    Thread.sleep(2000);
+
+    // Scroll hacia abajo para ver las reservas
+    ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.body.scrollHeight)");
+    Thread.sleep(2000);
+
+    // --- PASO 1.6: VOLVER A LA PÁGINA PRINCIPAL ---
+driver.get(BASE_URL + "/");
+wait.until(ExpectedConditions.urlToBe(BASE_URL + "/"));
 Thread.sleep(500);
-
-// Clic en el nombre de usuario en la barra de navegación
-WebElement userBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
-    By.xpath("//a[contains(@class, 'nav-link') and contains(text(), 'Huesped')]")));
-((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", userBtn);
-Thread.sleep(300);
-((JavascriptExecutor) driver).executeScript("arguments[0].click();", userBtn);
-
-Thread.sleep(2000);
-
-// Scroll hacia abajo para ver las reservas
-((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.body.scrollHeight)");
-Thread.sleep(2000);
-
         // --- PASO 2: LOGOUT HUÉSPED ---
         WebElement logoutBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
         By.xpath("//a[contains(text(), 'Cerrar')]")));
