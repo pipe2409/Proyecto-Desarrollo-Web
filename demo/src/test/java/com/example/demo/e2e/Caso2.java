@@ -12,6 +12,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.test.annotation.DirtiesContext;
 import java.time.Duration;
 import org.openqa.selenium.JavascriptExecutor;
+import java.util.List;
+
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -130,6 +132,19 @@ Thread.sleep(1000);
 WebElement serviciosGrid = wait.until(ExpectedConditions.presenceOfElementLocated(
     By.xpath("//div[contains(@class, 'grid') or contains(text(), 'Desayuno')]")));
 assertNotNull(serviciosGrid, "Deben existir servicios disponibles en la UI");
+
+// --- AGREGAR DOS SERVICIOS ---
+// Obtener todos los botones "Agregar" disponibles
+List<WebElement> agregarBtns = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+    By.xpath("//button[normalize-space()='Agregar']")));
+
+// Agregar el primer servicio
+((JavascriptExecutor) driver).executeScript("arguments[0].click();", agregarBtns.get(0));
+Thread.sleep(10000);
+
+// Agregar el segundo servicio
+((JavascriptExecutor) driver).executeScript("arguments[0].click();", agregarBtns.get(1));
+Thread.sleep(10000);
 
 // Test completado exitosamente
 assertTrue(true, "Flujo completo: Login Huésped -> Logout -> Login Operador -> Acceso a Servicios completado");
