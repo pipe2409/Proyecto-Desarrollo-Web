@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
+@ActiveProfiles("unitTest")
 public class ConsultasCustomTest {
 
     @Autowired private HabitacionRepository habitacionRepository;

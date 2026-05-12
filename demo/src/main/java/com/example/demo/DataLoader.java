@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!test")
+@Profile("!unitTest")
 public class DataLoader implements CommandLineRunner {
 
 

@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
-@ActiveProfiles("test")
+@ActiveProfiles("unitTest")
 class TipoHabitacionRepositoryTest {
 
     @Autowired
