@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entities.Operador;
 import com.example.demo.repository.OperadorRepository;
+import com.example.demo.repository.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,10 +16,12 @@ public class OperadorServiceImpl implements OperadorService {
 
     private final OperadorRepository operadorRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
-    public OperadorServiceImpl(OperadorRepository operadorRepository, PasswordEncoder passwordEncoder) {
+    public OperadorServiceImpl(OperadorRepository operadorRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.operadorRepository = operadorRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -35,6 +38,14 @@ public class OperadorServiceImpl implements OperadorService {
 
     @Override
     public Operador save(Operador operador) {
+        if (operador.getUser() != null) {
+            // Encriptar contraseña
+            operador.getUser().setPassword(passwordEncoder.encode(operador.getUser().getPassword()));
+            
+            // Asignar rol
+            roleRepository.findByName("ROLE_OPERADOR")
+                    .ifPresent(role -> operador.getUser().getRoles().add(role));
+        }
         return operadorRepository.save(operador);
     }
 

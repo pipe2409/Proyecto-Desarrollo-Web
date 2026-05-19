@@ -42,9 +42,11 @@ public class ConsultasCustomTest {
         Huesped huesped = new Huesped();
         huesped.setNombre("Juan");
         huesped.setApellido("Perez");
-        huesped.setCorreo("juan@gmail.com");
+        UserEntity user = new UserEntity();
+        user.setUsername("juan@gmail.com");
+        user.setPassword("123");
+        huesped.setUser(user);
         huesped.setCedula("12345678");
-        huesped.setContrasena("123");
         huesped.setTelefono("3000000000");
         huesped.setDireccion("Calle Falsa 123");
         huesped.setNacionalidad("Colombia");
@@ -88,7 +90,7 @@ public class ConsultasCustomTest {
 
         // Assert
         assertThat(gmailUsers).hasSize(1);
-        assertThat(gmailUsers.get(0).getCorreo()).contains("gmail.com");
+        assertThat(gmailUsers.get(0).getUser().getUsername()).contains("gmail.com");
     }
 
     @Test

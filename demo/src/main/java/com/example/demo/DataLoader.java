@@ -7,6 +7,7 @@ import com.example.demo.entities.Operador;
 import com.example.demo.entities.Reserva;
 import com.example.demo.entities.Servicio;
 import com.example.demo.entities.TipoHabitacion;
+import com.example.demo.entities.Role;
 import com.example.demo.entities.UserEntity;
 import com.example.demo.repository.CuentaHabitacionRepository;
 import com.example.demo.repository.HabitacionRepository;
@@ -16,6 +17,7 @@ import com.example.demo.repository.ServicioRepository;
 import com.example.demo.repository.TipoHabitacionRepository;
 import com.example.demo.repository.OperadorRepository;
 import com.example.demo.repository.ReservaRepository;
+import com.example.demo.repository.RoleRepository;
 import com.example.demo.entities.CuentaHabitacion;
 import com.example.demo.entities.EstadoReserva;
 import java.time.LocalDateTime;
@@ -204,6 +206,13 @@ private void cargarOperadores() {
         UserEntity user = new UserEntity();
         user.setUsername(d[0]);
         user.setPassword(passwordEncoder.encode(d[1]));
+        
+        // Asignar rol de Operador. Si es el primero, también hacerlo Admin.
+        roleRepository.findByName("ROLE_OPERADOR").ifPresent(r -> user.getRoles().add(r));
+        if (d[0].startsWith("admin")) {
+            roleRepository.findByName("ROLE_ADMIN").ifPresent(r -> user.getRoles().add(r));
+        }
+        
         op.setUser(user);
         
         operadorRepository.save(op);
@@ -354,6 +363,9 @@ private void cargarItemsCuenta(CuentaHabitacion cuenta, List<Servicio> servicios
             UserEntity user = new UserEntity();
             user.setUsername("h" + i + "@mail.com");
             user.setPassword(passwordEncoder.encode("123"));
+            
+            roleRepository.findByName("ROLE_CLIENTE").ifPresent(r -> user.getRoles().add(r));
+            
             h.setUser(user);
 
             h.setCedula("10000000" + i);

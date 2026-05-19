@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entities.Huesped;
 import com.example.demo.repository.HuespedRepository;
+import com.example.demo.repository.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -16,10 +17,12 @@ public class HuespedServiceImpl implements HuespedService {
 
     private final HuespedRepository huespedRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
-    public HuespedServiceImpl(HuespedRepository huespedRepository, PasswordEncoder passwordEncoder) {
+    public HuespedServiceImpl(HuespedRepository huespedRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.huespedRepository = huespedRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -67,6 +70,10 @@ public class HuespedServiceImpl implements HuespedService {
 
         // Encriptar contraseña antes de guardar
         huesped.getUser().setPassword(passwordEncoder.encode(huesped.getUser().getPassword()));
+
+        // Asignar rol predeterminado
+        roleRepository.findByName("ROLE_CLIENTE")
+                .ifPresent(role -> huesped.getUser().getRoles().add(role));
 
         if (huesped.getCedula() == null || huesped.getCedula().isBlank()) {
             throw new RuntimeException("La cédula es obligatoria.");
