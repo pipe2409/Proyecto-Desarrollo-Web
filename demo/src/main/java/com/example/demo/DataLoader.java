@@ -418,8 +418,7 @@ private void cargarReservas() {
 
     Object[][] datos = {
         // fechaInicio (año,mes,dia,hora,min), fechaFin, personas, estado, huesped idx, habitacion idx
-        {2025, 6,  1, 14, 0,   2025, 6,  5, 12, 0,   1, "CONFIRMADA",  0,  0},
-        {2025, 6, 10, 14, 0,   2025, 6, 15, 12, 0,   2, "PENDIENTE",   1, 10},
+        {2026, 5, 10, 14, 0,   2026, 5, 15, 12, 0,   1, "CONFIRMADA",  0,  0},   // ← Activa hoy (12 mayo)
         {2025, 7,  1, 14, 0,   2025, 7,  4, 12, 0,   3, "PENDIENTE",   2, 20},
         {2025, 5,  1, 14, 0,   2025, 5,  4, 12, 0,   2, "CANCELADA",   3, 30},
         {2025, 4, 20, 14, 0,   2025, 4, 25, 12, 0,   4, "CONFIRMADA",  4, 40},

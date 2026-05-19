@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,12 @@ class ReservaServiceIntegrationTest {
     @Autowired
     private TipoHabitacionRepository tipoHabitacionRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     private Habitacion habitacionDisponible;
     private Huesped huesped;
     private LocalDateTime fechaInicio;
@@ -62,12 +69,20 @@ class ReservaServiceIntegrationTest {
         huesped = huespedRepository.findAll().stream()
                 .findFirst()
                 .orElseGet(() -> {
-                    Huesped nuevo = new Huesped();
-                    nuevo.setNombre("Test");
-                    nuevo.setApellido("User");
-                    nuevo.setCorreo("test@test.com");
-                    nuevo.setContrasena("123");
-                    return huespedRepository.save(nuevo);
+                    Huesped huesped = new Huesped();
+                        huesped.setNombre("Nombre Prueba");
+                        huesped.setApellido("Apellido Prueba");
+                        
+                    UserEntity user = new UserEntity();
+                        user.setUsername("h3@mail.com"); // Lo que antes era setCorreo
+                        user.setPassword(passwordEncoder.encode("123")); // Encriptada para ser real
+                        
+                    // Asignar rol para que el usuario sea válido en el sistema
+                    roleRepository.findByName("ROLE_CLIENTE").ifPresent(r -> user.getRoles().add(r));
+                    
+                        huesped.setUser(user);
+                 huesped.setCedula("12345678");
+                 return huespedRepository.save(huesped);
                 });
 
         // Fechas de prueba
