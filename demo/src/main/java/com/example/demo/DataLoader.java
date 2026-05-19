@@ -33,17 +33,16 @@ import org.springframework.stereotype.Component;
 @Profile("!unitTest")
 public class DataLoader implements CommandLineRunner {
 
-
     @Autowired
-    private  TipoHabitacionRepository tipoHabitacionRepository;
+    private TipoHabitacionRepository tipoHabitacionRepository;
     @Autowired
-    private  HabitacionRepository habitacionRepository;
+    private HabitacionRepository habitacionRepository;
     @Autowired
-    private  ServicioRepository servicioRepository;
+    private ServicioRepository servicioRepository;
     @Autowired
-    private  HuespedRepository huespedRepository;
+    private HuespedRepository huespedRepository;
     @Autowired
-    private  ReservaRepository reservaRepository;
+    private ReservaRepository reservaRepository;
     @Autowired
     private ItemCuentaRepository itemCuentaRepository;
     @Autowired
@@ -52,12 +51,14 @@ public class DataLoader implements CommandLineRunner {
     private OperadorRepository operadorRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-   
+    @Autowired
+    private RoleRepository roleRepository;
 
 
 
     @Override
 public void run(String... args) {
+    cargarRoles();
     cargarDatosIniciales();
     //sincronizarEstadosHabitaciones();  
 }
@@ -76,6 +77,14 @@ public void run(String... args) {
     System.out.println("✓ Estados de habitaciones sincronizados");
 }*/        
 
+     private void cargarRoles() {
+        if (roleRepository.count() == 0) {
+            roleRepository.save(new Role(null, "ROLE_CLIENTE"));
+            roleRepository.save(new Role(null, "ROLE_OPERADOR"));
+            roleRepository.save(new Role(null, "ROLE_ADMIN"));
+            System.out.println("✓ Roles base cargados correctamente");
+        }
+    }
     private void cargarDatosIniciales() {
         TipoHabitacion simple = null;
         TipoHabitacion doble = null;
