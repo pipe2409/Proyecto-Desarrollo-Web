@@ -26,16 +26,12 @@ public class Huesped {
     @Column(nullable = false, length = 100)
     private String apellido;
 
-    @Column(nullable = false, unique = true, length = 150)
-    private String correo;
-
-    // 👇 CAMBIO CLAVE AQUÍ
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(nullable = false, length = 255)
-    private String contrasena;
-
     @Column(nullable = false, unique = true, length = 20)
     private String cedula;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private UserEntity user;
 
     @Column(length = 20)
     private String telefono;

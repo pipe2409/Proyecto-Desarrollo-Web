@@ -13,11 +13,7 @@ public class Operador {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    
-
-    @Column(nullable = false, unique = true, length = 150)
-    private String correo;
-
-    @Column(nullable = false, length = 255)
-    private String contrasena;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private UserEntity user;
 }

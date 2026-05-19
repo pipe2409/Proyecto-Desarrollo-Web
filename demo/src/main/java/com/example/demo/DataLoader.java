@@ -7,6 +7,7 @@ import com.example.demo.entities.Operador;
 import com.example.demo.entities.Reserva;
 import com.example.demo.entities.Servicio;
 import com.example.demo.entities.TipoHabitacion;
+import com.example.demo.entities.UserEntity;
 import com.example.demo.repository.CuentaHabitacionRepository;
 import com.example.demo.repository.HabitacionRepository;
 import com.example.demo.repository.HuespedRepository;
@@ -23,6 +24,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,6 +48,8 @@ public class DataLoader implements CommandLineRunner {
     private CuentaHabitacionRepository cuentaHabitacionRepository;
     @Autowired
     private OperadorRepository operadorRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
    
 
 
@@ -197,8 +201,11 @@ private void cargarOperadores() {
 
     for (String[] d : datos) {
         Operador op = new Operador();
-        op.setCorreo(d[0]);
-        op.setContrasena(d[1]);
+        UserEntity user = new UserEntity();
+        user.setUsername(d[0]);
+        user.setPassword(passwordEncoder.encode(d[1]));
+        op.setUser(user);
+        
         operadorRepository.save(op);
     }
 }
@@ -343,8 +350,12 @@ private void cargarItemsCuenta(CuentaHabitacion cuenta, List<Servicio> servicios
             Huesped h = new Huesped();
             h.setNombre("Huesped" + i);
             h.setApellido("Apellido" + i);
-            h.setCorreo("h" + i + "@mail.com");
-            h.setContrasena("123");
+            
+            UserEntity user = new UserEntity();
+            user.setUsername("h" + i + "@mail.com");
+            user.setPassword(passwordEncoder.encode("123"));
+            h.setUser(user);
+
             h.setCedula("10000000" + i);
             h.setTelefono("300000000" + i);
             h.setDireccion("Calle " + i + " # 10-" + i);

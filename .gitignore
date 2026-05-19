@@ -36,3 +36,7 @@ build/
 *.mv.db
 *.trace.db
 /demo/data/
+
+*.db
+*.mv.db
+*.trace.db

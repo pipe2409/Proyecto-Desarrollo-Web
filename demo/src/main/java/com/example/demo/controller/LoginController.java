@@ -36,7 +36,7 @@ public class LoginController {
             response.put("id", h.getId());
             response.put("nombre", h.getNombre());
             response.put("apellido", h.getApellido());
-            response.put("correo", h.getCorreo());
+            response.put("correo", h.getUser() != null ? h.getUser().getUsername() : null);
             response.put("rol", "CLIENTE");
             response.put("tipo", "HUESPED");
             return ResponseEntity.ok(response);
@@ -47,7 +47,7 @@ public class LoginController {
         if (op != null) {
             Map<String, Object> response = new HashMap<>();
             response.put("id", op.getId());
-            response.put("correo", op.getCorreo());
+            response.put("correo", op.getUser() != null ? op.getUser().getUsername() : null);
             response.put("rol", "OPERADOR");
             response.put("tipo", "OPERADOR");
             // Para operador, enviar nombre y apellido vacíos o el correo como nombre

@@ -5,7 +5,7 @@ import com.example.demo.repository.HuespedRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +14,13 @@ import java.util.List;
 @Transactional
 public class HuespedServiceImpl implements HuespedService {
 
-    @Autowired
-    private HuespedRepository huespedRepository;
+    private final HuespedRepository huespedRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public HuespedServiceImpl(HuespedRepository huespedRepository, PasswordEncoder passwordEncoder) {
+        this.huespedRepository = huespedRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public List<Huesped> findAll() {
@@ -31,12 +36,15 @@ public class HuespedServiceImpl implements HuespedService {
 
     @Override
     public Huesped findByCorreo(String correo) {
-        return huespedRepository.findByCorreo(correo).orElse(null);
+        // Asumiendo que actualizaste el repositorio para buscar por el username del UserEntity
+        return huespedRepository.findByUser_Username(correo).orElse(null);
     }
 
     @Override
     public Huesped login(String correo, String contrasena) {
-        return huespedRepository.findByCorreoAndContrasena(correo, contrasena).orElse(null);
+        return huespedRepository.findByUser_Username(correo)
+                .filter(h -> h.getUser() != null && passwordEncoder.matches(contrasena, h.getUser().getPassword()))
+                .orElse(null);
     }
 
     @Override
@@ -49,19 +57,22 @@ public class HuespedServiceImpl implements HuespedService {
             throw new RuntimeException("El apellido es obligatorio.");
         }
 
-        if (huesped.getCorreo() == null || huesped.getCorreo().isBlank()) {
+        if (huesped.getUser() == null || huesped.getUser().getUsername() == null || huesped.getUser().getUsername().isBlank()) {
             throw new RuntimeException("El correo es obligatorio.");
         }
 
-        if (huesped.getContrasena() == null || huesped.getContrasena().isBlank()) {
+        if (huesped.getUser() == null || huesped.getUser().getPassword() == null || huesped.getUser().getPassword().isBlank()) {
             throw new RuntimeException("La contraseña es obligatoria.");
         }
+
+        // Encriptar contraseña antes de guardar
+        huesped.getUser().setPassword(passwordEncoder.encode(huesped.getUser().getPassword()));
 
         if (huesped.getCedula() == null || huesped.getCedula().isBlank()) {
             throw new RuntimeException("La cédula es obligatoria.");
         }
 
-        Huesped existenteCorreo = huespedRepository.findByCorreo(huesped.getCorreo()).orElse(null);
+        Huesped existenteCorreo = huespedRepository.findByUser_Username(huesped.getUser().getUsername()).orElse(null);
         if (existenteCorreo != null) {
             throw new RuntimeException("Ya existe un usuario con ese correo.");
         }
@@ -103,7 +114,7 @@ public class HuespedServiceImpl implements HuespedService {
             throw new RuntimeException("La cédula es obligatoria.");
         }
 
-        Huesped existenteCorreo = huespedRepository.findByCorreo(correo).orElse(null);
+        Huesped existenteCorreo = huespedRepository.findByUser_Username(correo).orElse(null);
         if (existenteCorreo != null && !existenteCorreo.getId().equals(id)) {
             throw new RuntimeException("Ya existe un usuario con ese correo.");
         }
@@ -115,7 +126,7 @@ public class HuespedServiceImpl implements HuespedService {
 
         huesped.setNombre(nombre);
         huesped.setApellido(apellido);
-        huesped.setCorreo(correo);
+        if (huesped.getUser() != null) huesped.getUser().setUsername(correo);
         huesped.setCedula(cedula);
         huesped.setTelefono(telefono);
         huesped.setDireccion(direccion);
@@ -139,7 +150,7 @@ public class HuespedServiceImpl implements HuespedService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "No existe el huésped"));
 
-        if (!huesped.getContrasena().equals(actual)) {
+        if (huesped.getUser() == null || !passwordEncoder.matches(actual, huesped.getUser().getPassword())) {
             throw new RuntimeException("La contraseña actual es incorrecta.");
         }
 
@@ -147,7 +158,7 @@ public class HuespedServiceImpl implements HuespedService {
             throw new RuntimeException("La nueva contraseña y la confirmación no coinciden.");
         }
 
-        huesped.setContrasena(nueva);
+        huesped.getUser().setPassword(passwordEncoder.encode(nueva));
 
         huespedRepository.save(huesped);
     }

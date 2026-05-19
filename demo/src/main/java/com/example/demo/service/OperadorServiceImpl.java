@@ -4,6 +4,7 @@ import com.example.demo.entities.Operador;
 import com.example.demo.repository.OperadorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +14,11 @@ import java.util.List;
 public class OperadorServiceImpl implements OperadorService {
 
     private final OperadorRepository operadorRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public OperadorServiceImpl(OperadorRepository operadorRepository) {
+    public OperadorServiceImpl(OperadorRepository operadorRepository, PasswordEncoder passwordEncoder) {
         this.operadorRepository = operadorRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -41,11 +44,11 @@ public class OperadorServiceImpl implements OperadorService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "No existe el operador con id=" + id));
 
-        existente.setCorreo(operador.getCorreo());
+        if (operador.getUser() != null) existente.getUser().setUsername(operador.getUser().getUsername());
 
-        // Solo actualiza la contraseña si viene un valor nuevo
-        if (operador.getContrasena() != null && !operador.getContrasena().isBlank()) {
-            existente.setContrasena(operador.getContrasena());
+        // Solo actualiza la contraseña si viene un valor nuevo y lo encripta
+        if (operador.getUser() != null && operador.getUser().getPassword() != null && !operador.getUser().getPassword().isBlank()) {
+            existente.getUser().setPassword(passwordEncoder.encode(operador.getUser().getPassword()));
         }
 
         return operadorRepository.save(existente);
@@ -58,8 +61,8 @@ public class OperadorServiceImpl implements OperadorService {
 
     @Override
     public Operador login(String correo, String contrasena) {
-        return operadorRepository.findByCorreo(correo)
-                .filter(op -> op.getContrasena().equals(contrasena))
+        return operadorRepository.findByUser_Username(correo)
+                .filter(op -> op.getUser() != null && passwordEncoder.matches(contrasena, op.getUser().getPassword()))
                 .orElse(null);
     }
 }
