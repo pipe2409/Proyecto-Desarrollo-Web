@@ -2,32 +2,22 @@ package com.example.demo.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
 @Data
-@NoArgsConstructor
+@Table(name = "users") // Asumiendo un nombre de tabla
 public class UserEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(unique = true, nullable = false)
-    private String username;
-
-    @Column(nullable = false)
+    private Integer id;
+    private String username; // Este será el email
     private String password;
+    private String nombre;
+    private String apellido;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-}   
+}
