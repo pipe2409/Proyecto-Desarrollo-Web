@@ -38,42 +38,47 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll()
-                .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-                .authorizeHttpRequests(auth -> auth
+public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
+    http
+        .csrf(csrf -> csrf.disable())
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
 
-    // PUBLICOS
-    .requestMatchers("/api/auth/**").permitAll()
-    .requestMatchers("/h2-console/**").permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/operadores/admin/**")).hasAuthority("ROLE_ADMIN")
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reservas/admin/**")).hasAuthority("ROLE_ADMIN")
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/estadisticas/**")).hasAuthority("ROLE_ADMIN")
 
-    // ADMIN
-    .requestMatchers("/api/operadores/admin/**").hasAuthority("ROLE_ADMIN")
-    .requestMatchers("/api/reservas/admin/**").hasAuthority("ROLE_ADMIN")
-    .requestMatchers("/api/estadisticas/**").hasAuthority("ROLE_ADMIN")
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cuentas/**"))
+                .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")
 
-    // OPERADOR Y ADMIN
-    .requestMatchers("/api/cuentas/**")
-        .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/huespedes/admin/**"))
+                .hasAuthority("ROLE_ADMIN")
 
-    // CLIENTE / HUESPED
-    .requestMatchers("/api/huespedes/**")
-        .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN")
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/huespedes/**"))
+                .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN")
 
-    // TODOS AUTENTICADOS
-    .anyRequest().authenticated()
-)
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .headers(headers -> headers.frameOptions(frame -> frame.disable()));
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reservas/**"))
+                .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN", "ROLE_OPERADOR")
 
-        return http.build();
-    }
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/habitaciones/**"))
+                .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN", "ROLE_OPERADOR")
+
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/tipos-habitacion/**"))
+                .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN", "ROLE_OPERADOR")
+
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/servicios/**"))
+                .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN", "ROLE_OPERADOR")
+
+            .anyRequest().authenticated()
+        )
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        .headers(headers -> headers.frameOptions(frame -> frame.disable()));
+
+    return http.build();
+}
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

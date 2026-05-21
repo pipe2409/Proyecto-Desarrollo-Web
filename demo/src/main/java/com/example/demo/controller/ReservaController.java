@@ -218,6 +218,10 @@ public ResponseEntity<Map<String, String>> finalizarReserva(@PathVariable Intege
         }
     }
 
+
+    
+
+
     // Huésped: crear reserva por tipo de habitación
     @PostMapping("/crear-por-tipo")
     public ResponseEntity<Map<String, String>> crearPorTipo(@RequestBody Map<String, Object> body) {
