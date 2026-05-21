@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.entities.CuentaHabitacion;
 import com.example.demo.entities.ItemCuenta;
 import com.example.demo.entities.Reserva;
+import com.example.demo.entities.FacturaMapper;
+import com.example.demo.dtos.FacturaResumenDTO;
 import com.example.demo.service.CuentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +22,19 @@ public class CuentaHabitacionController {
     @Autowired
     private CuentaService cuentaService;
 
+    @Autowired
+    private FacturaMapper facturaMapper;
+
     // Buscar reserva activa por número de habitación
-    @GetMapping("/reserva-por-habitacion/{numeroHabitacion}")
-    public ResponseEntity<?> getReservaPorHabitacion(@PathVariable String numeroHabitacion) {
+    @GetMapping("/resumen-factura/{numeroHabitacion}")
+    public ResponseEntity<?> getResumenFactura(@PathVariable String numeroHabitacion) {
         try {
             Reserva reserva = cuentaService.findReservaActivaByHabitacionCodigo(numeroHabitacion);
-            CuentaHabitacion cuenta = cuentaService.getOrCreateCuentaByReserva(reserva);
+            // Aseguramos que la cuenta exista para cargar items
+            cuentaService.getOrCreateCuentaByReserva(reserva);
             
-            Map<String, Object> response = new HashMap<>();
-            response.put("reserva", reserva);
-            response.put("cuenta", cuenta);
-            response.put("huesped", reserva.getHuesped());
-            response.put("habitacion", reserva.getHabitacion());
-            
-            return ResponseEntity.ok(response);
+            FacturaResumenDTO resumen = facturaMapper.toFacturaDto(reserva);
+            return ResponseEntity.ok(resumen);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/estadisticas/**")
                     .hasAnyAuthority("OPERADOR", "ADMIN")
 
-                // TODO LO DEMÁS REQUIERE JWT
+                
                 .anyRequest().authenticated()
             )
 
