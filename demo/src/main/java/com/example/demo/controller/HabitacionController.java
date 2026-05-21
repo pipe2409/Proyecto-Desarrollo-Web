@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.entities.Habitacion;
+import com.example.demo.entities.HabitacionMapper;
 import com.example.demo.entities.TipoHabitacion;
+import com.example.demo.dtos.HabitacionDetalleDTO;
 import com.example.demo.service.HabitacionService;
 import com.example.demo.service.TipoHabitacionService;
 
@@ -25,20 +27,15 @@ public class HabitacionController {
     @Autowired
     private TipoHabitacionService tipoHabitacionService;
 
+    @Autowired
+    private HabitacionMapper habitacionMapper;
+
     // Listar todas (con filtro opcional por tipoId)
     @GetMapping
-public ResponseEntity<List<Habitacion>> getAll(
+public ResponseEntity<List<HabitacionDetalleDTO>> getAll(
         @RequestParam(value = "tipoId", required = false) Integer tipoId) {
     List<Habitacion> habitaciones = habitacionService.findByTipoId(tipoId);
-    
-    // Forzar la carga de tipoHabitacion
-   // habitaciones.forEach(h -> {
-     //   if (h.getTipoHabitacion() != null) {
-       //     h.getTipoHabitacion().getId(); 
-        //}
-    //});
-    
-    return ResponseEntity.ok(habitaciones);
+    return ResponseEntity.ok(habitacionMapper.toDtoList(habitaciones));
 }
 
     // Obtener una por id
