@@ -15,6 +15,7 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200")
 public class RegistrarseController {
 
+
     @Autowired
     private HuespedService huespedService;
 
