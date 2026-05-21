@@ -45,7 +45,28 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-                .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+
+    // PUBLICOS
+    .requestMatchers("/api/auth/**").permitAll()
+    .requestMatchers("/h2-console/**").permitAll()
+
+    // ADMIN
+    .requestMatchers("/api/operadores/admin/**").hasAuthority("ROLE_ADMIN")
+    .requestMatchers("/api/reservas/admin/**").hasAuthority("ROLE_ADMIN")
+    .requestMatchers("/api/estadisticas/**").hasAuthority("ROLE_ADMIN")
+
+    // OPERADOR Y ADMIN
+    .requestMatchers("/api/cuentas/**")
+        .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")
+
+    // CLIENTE / HUESPED
+    .requestMatchers("/api/huespedes/**")
+        .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN")
+
+    // TODOS AUTENTICADOS
+    .anyRequest().authenticated()
+)
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
