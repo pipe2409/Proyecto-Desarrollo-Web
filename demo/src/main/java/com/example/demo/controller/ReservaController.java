@@ -4,6 +4,8 @@ import com.example.demo.entities.EstadoReserva;
 import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.Huesped;
 import com.example.demo.entities.Reserva;
+import com.example.demo.entities.ReservaMapper;
+import com.example.demo.dtos.ReservaDetalleDTO;
 import com.example.demo.service.HabitacionService;
 import com.example.demo.service.HuespedService;
 import com.example.demo.service.ReservaService;
@@ -40,6 +42,9 @@ public class ReservaController {
 
     @Autowired
     private HabitacionService habitacionService;
+
+    @Autowired
+    private ReservaMapper reservaMapper;
 
     // Admin: listar todas
     @GetMapping("/admin")
@@ -152,10 +157,10 @@ public ResponseEntity<Map<String, String>> finalizarReserva(@PathVariable Intege
 
     // Huésped: ver sus reservas
     @GetMapping("/mis-reservas/{huespedId}")
-    public ResponseEntity<List<Reserva>> misReservas(@PathVariable Integer huespedId) {
+    public ResponseEntity<List<ReservaDetalleDTO>> misReservas(@PathVariable Integer huespedId) {
         try {
             Huesped huesped = huespedService.findById(huespedId);
-            return ResponseEntity.ok(reservaService.findByHuesped(huesped));
+            return ResponseEntity.ok(reservaMapper.toDtoList(reservaService.findByHuesped(huesped)));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
@@ -163,10 +168,10 @@ public ResponseEntity<Map<String, String>> finalizarReserva(@PathVariable Intege
 
     // Endpoint alterno que Angular está usando
     @GetMapping("/huesped/{huespedId}")
-    public ResponseEntity<List<Reserva>> listarPorHuesped(@PathVariable Integer huespedId) {
+    public ResponseEntity<List<ReservaDetalleDTO>> listarPorHuesped(@PathVariable Integer huespedId) {
         try {
             Huesped huesped = huespedService.findById(huespedId);
-            return ResponseEntity.ok(reservaService.findByHuesped(huesped));
+            return ResponseEntity.ok(reservaMapper.toDtoList(reservaService.findByHuesped(huesped)));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
