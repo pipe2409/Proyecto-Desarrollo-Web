@@ -16,6 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 import java.util.List;
 
 @Configuration
@@ -45,6 +46,11 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticat
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+
+            // LECTURA PUBLICA DE LA LANDING (sin login)
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/servicios/**")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/tipos-habitacion/**")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/habitaciones/**")).permitAll()
 
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/operadores/admin/**")).hasAuthority("ROLE_ADMIN")
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reservas/admin/**")).hasAuthority("ROLE_ADMIN")
