@@ -11,6 +11,7 @@ public interface HabitacionMapper {
 
     HabitacionMapper GET_MAPPER = Mappers.getMapper(HabitacionMapper.class);
 
+    @Mapping(source = "tipoHabitacion.id", target = "tipoHabitacionId")
     @Mapping(source = "tipoHabitacion.nombre", target = "tipoNombre")
     @Mapping(source = "tipoHabitacion.descripcion", target = "descripcion")
     @Mapping(source = "tipoHabitacion.precio", target = "precio")

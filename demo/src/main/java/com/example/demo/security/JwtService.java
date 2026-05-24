@@ -24,9 +24,13 @@ public class JwtService {
     }
 
     public String generarToken(String username, String rol) {
+        return generarToken(username, List.of(rol));
+    }
+
+    public String generarToken(String username, List<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("roles", List.of(rol))
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(getSigningKey())

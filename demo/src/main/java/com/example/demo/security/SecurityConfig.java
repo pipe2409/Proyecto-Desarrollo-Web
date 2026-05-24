@@ -52,9 +52,15 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticat
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/tipos-habitacion/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/habitaciones/**")).permitAll()
 
+            // Operadores admin: solo ADMIN puede ver/crear/editar operadores
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/operadores/admin/**")).hasAuthority("ROLE_ADMIN")
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reservas/admin/**")).hasAuthority("ROLE_ADMIN")
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/estadisticas/**")).hasAuthority("ROLE_ADMIN")
+
+            // Reservas admin: tanto ADMIN como OPERADOR necesitan listar/gestionar reservas
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reservas/admin/**"))
+                .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")
+            // Las estadisticas del dashboard tambien las usa el OPERADOR en /menu-admin
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/estadisticas/**"))
+                .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")
 
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cuentas/**"))
                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")

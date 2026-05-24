@@ -18,8 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -57,13 +59,40 @@ public class AuthController {
         UserEntity userEntity = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        String rol = userEntity.getRoles().stream().findFirst().map(r -> r.getName()).orElse("ROLE_CLIENTE");
-        
-        String token = jwtService.generarToken(userEntity.getUsername(), rol);
+        // TODOS los roles del usuario (el admin tiene ROLE_ADMIN + ROLE_OPERADOR)
+        List<String> roles = userEntity.getRoles().stream()
+                .map(r -> r.getName())
+                .collect(Collectors.toList());
+
+        // Rol "principal" para la redireccion del front (prioridad ADMIN > OPERADOR > CLIENTE)
+        String rolPrincipal;
+        if (roles.contains("ROLE_ADMIN")) {
+            rolPrincipal = "ROLE_ADMIN";
+        } else if (roles.contains("ROLE_OPERADOR")) {
+            rolPrincipal = "ROLE_OPERADOR";
+        } else {
+            rolPrincipal = "ROLE_CLIENTE";
+        }
+
+        // El token JWT lleva TODOS los roles, asi el admin puede acceder
+        // tanto a endpoints de ADMIN como de OPERADOR.
+        String token = jwtService.generarToken(userEntity.getUsername(), roles);
 
         UserResponseDTO response = userMapper.toDto(userEntity);
         response.setToken(token);
-        response.setRol(rol);
+        // El front compara con "ADMIN"/"OPERADOR"/"CLIENTE" (sin prefijo).
+        response.setRol(rolPrincipal.replace("ROLE_", ""));
+
+        // Si es CLIENTE, devolver el ID y datos del Huesped (no del UserEntity)
+        // porque "Mi perfil" del front llama a /api/huespedes/{id} y necesita el id correcto.
+        if ("ROLE_CLIENTE".equals(rolPrincipal)) {
+            Huesped huesped = huespedService.findByCorreo(userEntity.getUsername());
+            if (huesped != null) {
+                response.setId(huesped.getId());
+                response.setNombre(huesped.getNombre());
+                response.setApellido(huesped.getApellido());
+            }
+        }
 
         return ResponseEntity.ok(response);
     }
@@ -88,7 +117,7 @@ public class AuthController {
         UserEntity user = userRepository.findByUsername(principal.getName()).orElseThrow();
         UserResponseDTO response = userMapper.toDto(user);
         String rol = user.getRoles().stream().findFirst().map(r -> r.getName()).orElse("ROLE_CLIENTE");
-        response.setRol(rol);
+        response.setRol(rol.replace("ROLE_", ""));
         return ResponseEntity.ok(response);
     }
 }
