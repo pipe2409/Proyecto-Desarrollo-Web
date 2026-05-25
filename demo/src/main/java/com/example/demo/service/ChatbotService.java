@@ -66,7 +66,7 @@ public class ChatbotService {
 
             body.put("generationConfig", Map.of(
                 "temperature", 0.7,
-                "maxOutputTokens", 400
+                "maxOutputTokens", 1024
             ));
 
             HttpHeaders headers = new HttpHeaders();
@@ -136,11 +136,27 @@ public class ChatbotService {
             log.warn("Gemini respondio sin candidates: {}", respuesta);
             return "No pude generar una respuesta. Intenta reformular la pregunta.";
         }
-        Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
-        if (content == null) return "Sin contenido en la respuesta.";
+        Map<String, Object> candidate = candidates.get(0);
+        Object finishReason = candidate.get("finishReason");
+        if (finishReason != null && !"STOP".equals(finishReason)) {
+            log.warn("Gemini finishReason no-STOP: {} (respuesta puede estar incompleta)", finishReason);
+        }
+        Map<String, Object> content = (Map<String, Object>) candidate.get("content");
+        if (content == null) {
+            log.warn("Gemini sin content. finishReason={}, candidate={}", finishReason, candidate);
+            return "No pude generar una respuesta. Intenta reformular la pregunta.";
+        }
         List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
         if (parts == null || parts.isEmpty()) return "Sin parts.";
-        Object text = parts.get(0).get("text");
-        return text == null ? "" : text.toString();
+        StringBuilder texto = new StringBuilder();
+        for (Map<String, Object> part : parts) {
+            Object t = part.get("text");
+            if (t != null) texto.append(t);
+        }
+        String resultado = texto.toString();
+        if ("MAX_TOKENS".equals(finishReason)) {
+            resultado += " [...]";
+        }
+        return resultado;
     }
 }

@@ -4,9 +4,12 @@ import com.example.demo.entities.Huesped;
 import com.example.demo.service.HuespedService;
 import com.example.demo.service.ReservaService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,8 @@ import java.util.Map;
 )
 public class HuespedesController {
 
+    private static final Logger log = LoggerFactory.getLogger(HuespedesController.class);
+
     @Autowired
     private HuespedService huespedService;
 
@@ -34,18 +39,21 @@ public class HuespedesController {
     private ReservaService reservaService;
 
     private String getUsernameAutenticado() {
-        return SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth == null ? null : auth.getName();
     }
 
     private boolean esDuenioDelRecurso(Huesped huesped) {
         String username = getUsernameAutenticado();
+        String dbUsername = (huesped != null && huesped.getUser() != null)
+                ? huesped.getUser().getUsername() : null;
 
-        return huesped != null &&
-                huesped.getUser() != null &&
-                huesped.getUser().getUsername().equals(username);
+        boolean ok = huesped != null && dbUsername != null && dbUsername.equals(username);
+        if (!ok) {
+            log.warn("esDuenioDelRecurso FALSE: jwt.username='{}', db.username='{}', huespedId={}",
+                    username, dbUsername, huesped != null ? huesped.getId() : null);
+        }
+        return ok;
     }
 
     @GetMapping("/admin")
