@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
 import com.example.demo.repository.UserRepository;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +34,19 @@ public class SecurityConfig {
         return new JwtAuthenticationFilter(jwtService, userRepository);
     }
 
+    // Evita la auto-registracion del JwtAuthenticationFilter como servlet filter.
+    // Spring Boot auto-registra TODOS los @Bean de tipo Filter como servlet filters,
+    // lo que hace que corra ANTES de la cadena de Spring Security: setea la auth
+    // pero luego SecurityContextHolderFilter la borra (porque la sesion es STATELESS),
+    // y como OncePerRequestFilter ya marco el request, el filtro DENTRO de la cadena
+    // (addFilterBefore) se salta. Resultado: 403 en todo endpoint autenticado.
+    @Bean
+    public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilterRegistration(JwtAuthenticationFilter filter) {
+        FilterRegistrationBean<JwtAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -51,6 +65,20 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticat
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/servicios/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/tipos-habitacion/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/habitaciones/**")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/testimonios/**")).permitAll()
+
+            // Crear testimonio: requiere estar logueado (cualquier rol)
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/testimonios/**"))
+                .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN", "ROLE_OPERADOR")
+
+            // Pagos Stripe:
+            //  - /confirmar es PUBLICO porque viene del redirect de Stripe y el back
+            //    ya verifica con Stripe que el pago realmente se completo.
+            //  - /checkout requiere estar logueado.
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/pagos/reserva/confirmar")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/pagos/servicios/confirmar")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/pagos/**"))
+                .hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN", "ROLE_OPERADOR")
 
             // Operadores admin: solo ADMIN puede ver/crear/editar operadores
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/operadores/admin/**")).hasAuthority("ROLE_ADMIN")

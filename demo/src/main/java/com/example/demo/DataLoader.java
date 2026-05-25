@@ -215,15 +215,17 @@ private void cargarOperadores() {
         UserEntity user = new UserEntity();
         user.setUsername(d[0]);
         user.setPassword(passwordEncoder.encode(d[1]));
-        
+        // Los usuarios precargados se asumen verificados (no necesitan email)
+        user.setVerificado(true);
+
         // Asignar rol de Operador. Si es el primero, también hacerlo Admin.
         roleRepository.findByName("ROLE_OPERADOR").ifPresent(r -> user.getRoles().add(r));
         if (d[0].startsWith("admin")) {
             roleRepository.findByName("ROLE_ADMIN").ifPresent(r -> user.getRoles().add(r));
         }
-        
+
         op.setUser(user);
-        
+
         operadorRepository.save(op);
     }
 }
@@ -372,7 +374,9 @@ private void cargarItemsCuenta(CuentaHabitacion cuenta, List<Servicio> servicios
             UserEntity user = new UserEntity();
             user.setUsername("h" + i + "@mail.com");
             user.setPassword(passwordEncoder.encode("123"));
-            
+            // Huespedes precargados se asumen verificados
+            user.setVerificado(true);
+
             roleRepository.findByName("ROLE_CLIENTE").ifPresent(r -> user.getRoles().add(r));
             
             h.setUser(user);

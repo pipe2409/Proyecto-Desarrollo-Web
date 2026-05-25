@@ -40,3 +40,7 @@ build/
 *.db
 *.mv.db
 *.trace.db
+
+# Script local con credenciales reales (Gmail App Password, Stripe Secret Key)
+# Usa run-dev.example.ps1 como plantilla.
+/demo/run-dev.ps1

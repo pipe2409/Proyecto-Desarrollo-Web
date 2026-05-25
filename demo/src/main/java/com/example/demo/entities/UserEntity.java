@@ -20,4 +20,12 @@ public class UserEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    // Si la cuenta confirmó el correo de verificación
+    @Column(nullable = false)
+    private boolean verificado = false;
+
+    // Token unico que se manda por email para verificar la cuenta
+    @Column(length = 100)
+    private String tokenVerificacion;
 }

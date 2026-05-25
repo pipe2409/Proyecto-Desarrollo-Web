@@ -1,11 +1,16 @@
 package com.example.demo.controller;
 
+import com.example.demo.entities.CuentaHabitacion;
 import com.example.demo.entities.EstadoReserva;
 import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.Huesped;
+import com.example.demo.entities.ItemCuenta;
 import com.example.demo.entities.Reserva;
 import com.example.demo.entities.ReservaMapper;
+import com.example.demo.dtos.FacturaResumenDTO;
+import com.example.demo.dtos.ItemFacturaDTO;
 import com.example.demo.dtos.ReservaDetalleDTO;
+import com.example.demo.repository.ItemCuentaRepository;
 import com.example.demo.service.HabitacionService;
 import com.example.demo.service.HuespedService;
 import com.example.demo.service.ReservaService;
@@ -17,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +52,12 @@ public class ReservaController {
 
     @Autowired
     private ReservaMapper reservaMapper;
+
+    @Autowired
+    private ItemCuentaRepository itemCuentaRepository;
+
+    @Autowired
+    private com.example.demo.service.CuentaService cuentaService;
 
     // Admin: listar todas
     @GetMapping("/admin")
@@ -112,6 +125,25 @@ public class ReservaController {
         }
     }
 
+    // Admin/Operador: marcar manualmente la habitacion como pagada (ej. pago en efectivo).
+    // Tambien sirve para regularizar reservas creadas antes de existir el campo.
+    @PutMapping("/admin/{id}/habitacion-pagada")
+    public ResponseEntity<?> marcarHabitacionPagada(@PathVariable Integer id, @RequestBody Map<String, Boolean> body) {
+        try {
+            Reserva reserva = reservaService.findById(id);
+            boolean pagada = body == null || body.get("pagada") == null ? true : body.get("pagada");
+            reserva.setHabitacionPagada(pagada);
+            reservaService.save(reserva);
+            return ResponseEntity.ok(Map.of(
+                "ok", "Habitacion " + (pagada ? "marcada como pagada" : "marcada como pendiente"),
+                "reservaId", reserva.getId().toString(),
+                "habitacionPagada", String.valueOf(pagada)
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("err", e.getMessage()));
+        }
+    }
+
     // Admin: eliminar reserva
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
@@ -154,6 +186,91 @@ public ResponseEntity<Map<String, String>> finalizarReserva(@PathVariable Intege
                 .body(Map.of("err", e.getMessage()));
     }
 }
+
+    // Factura completa de la reserva (habitacion + servicios)
+    // La usa el operador antes de finalizar para ver cuanto debe el huesped.
+    @GetMapping("/{id}/factura")
+    public ResponseEntity<?> getFactura(@PathVariable Integer id) {
+        try {
+            Reserva reserva = reservaService.findById(id);
+
+            FacturaResumenDTO factura = new FacturaResumenDTO();
+            factura.setReservaId(reserva.getId());
+            factura.setEstadoReserva(reserva.getEstado().name());
+
+            // Huesped
+            if (reserva.getHuesped() != null) {
+                factura.setHuespedNombre(
+                    (reserva.getHuesped().getNombre() == null ? "" : reserva.getHuesped().getNombre())
+                    + " " +
+                    (reserva.getHuesped().getApellido() == null ? "" : reserva.getHuesped().getApellido())
+                );
+            }
+
+            // Habitacion + costo (noches x precio del tipo)
+            Habitacion hab = reserva.getHabitacion();
+            int precioNoche = 0;
+            if (hab != null) {
+                factura.setHabitacionCodigo(hab.getCodigo());
+                if (hab.getTipoHabitacion() != null && hab.getTipoHabitacion().getPrecio() != null) {
+                    precioNoche = hab.getTipoHabitacion().getPrecio();
+                }
+            }
+            factura.setPrecioNoche(precioNoche);
+
+            // Noches: diferencia en dias entre fechaInicio y fechaFin
+            int noches = 0;
+            if (reserva.getFechaInicio() != null && reserva.getFechaFin() != null) {
+                long diff = ChronoUnit.DAYS.between(
+                    reserva.getFechaInicio().toLocalDate(),
+                    reserva.getFechaFin().toLocalDate()
+                );
+                noches = (int) Math.max(diff, 1); // minimo 1 noche
+            }
+            factura.setNoches(noches);
+
+            factura.setFechaInicio(reserva.getFechaInicio() == null ? "" : reserva.getFechaInicio().toLocalDate().toString());
+            factura.setFechaFin(reserva.getFechaFin() == null ? "" : reserva.getFechaFin().toLocalDate().toString());
+
+            int subtotalHabitacion = noches * precioNoche;
+            factura.setSubtotalHabitacion(subtotalHabitacion);
+            factura.setHabitacionPagada(reserva.isHabitacionPagada());
+
+            // Items de servicios (si hay cuenta de habitacion)
+            List<ItemFacturaDTO> itemsDto = new ArrayList<>();
+            int subtotalServicios = 0;
+            // Si la reserva todavia no tiene cuenta, la creamos (asi el operador puede pagarla luego)
+            CuentaHabitacion cuenta = cuentaService.getOrCreateCuentaByReserva(reserva);
+            if (cuenta != null) {
+                factura.setCuentaId(cuenta.getId());
+                List<ItemCuenta> items = itemCuentaRepository.findByCuentaHabitacionId(cuenta.getId());
+                for (ItemCuenta i : items) {
+                    ItemFacturaDTO d = new ItemFacturaDTO();
+                    d.setServicioNombre(i.getServicio() != null ? i.getServicio().getNombre() : "Servicio");
+                    d.setCantidad(i.getCantidad());
+                    int precio = i.getServicio() != null ? i.getServicio().getPrecio() : 0;
+                    d.setPrecioUnitario(precio);
+                    d.setSubtotal(i.getSubtotal());
+                    itemsDto.add(d);
+                    subtotalServicios += i.getSubtotal();
+                }
+            }
+            factura.setItemsServicios(itemsDto);
+            factura.setSubtotalServicios(subtotalServicios);
+
+            // Total general (incluye habitacion + servicios, para info)
+            factura.setTotalGeneral(subtotalHabitacion + subtotalServicios);
+
+            // Deuda PENDIENTE: lo que el huesped todavia debe.
+            // Si la habitacion ya fue pagada al reservar (via Stripe), solo se cobran los servicios.
+            int deuda = subtotalServicios + (reserva.isHabitacionPagada() ? 0 : subtotalHabitacion);
+            factura.setDeudaPendiente(deuda);
+
+            return ResponseEntity.ok(factura);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("err", e.getMessage()));
+        }
+    }
 
     // Huésped: ver sus reservas
     @GetMapping("/mis-reservas/{huespedId}")

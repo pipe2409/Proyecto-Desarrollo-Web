@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    @SuppressWarnings("unused")
     private final UserRepository userRepository;
 
     public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
@@ -26,24 +27,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        
+
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ") && jwtService.tokenValido(authHeader.substring(7))) {
             String token = authHeader.substring(7);
-            
-            if (jwtService.tokenValido(token)) {
-                String username = jwtService.obtenerUsername(token);
-                List<String> roles = jwtService.obtenerRoles(token);
+            String username = jwtService.obtenerUsername(token);
+            List<String> roles = jwtService.obtenerRoles(token);
+
+            if (roles != null) {
                 List<SimpleGrantedAuthority> authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
-                
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        username, 
-                        null, 
-                        authorities
-                );
+                        username, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

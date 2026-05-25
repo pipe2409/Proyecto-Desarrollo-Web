@@ -25,16 +25,36 @@ public class CuentaHabitacionController {
     @Autowired
     private FacturaMapper facturaMapper;
 
-    // Buscar reserva activa por número de habitación
+    // Buscar reserva activa por número de habitación (vista resumen-factura, formato DTO)
     @GetMapping("/resumen-factura/{numeroHabitacion}")
     public ResponseEntity<?> getResumenFactura(@PathVariable String numeroHabitacion) {
         try {
             Reserva reserva = cuentaService.findReservaActivaByHabitacionCodigo(numeroHabitacion);
             // Aseguramos que la cuenta exista para cargar items
             cuentaService.getOrCreateCuentaByReserva(reserva);
-            
+
             FacturaResumenDTO resumen = facturaMapper.toFacturaDto(reserva);
             return ResponseEntity.ok(resumen);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // Buscar reserva activa por numero de habitacion (formato {reserva, cuenta, huesped, habitacion}).
+    // Lo usa el front del operador en /operador/servicios-cuenta.
+    @GetMapping("/reserva-por-habitacion/{numeroHabitacion}")
+    public ResponseEntity<?> getReservaPorHabitacion(@PathVariable String numeroHabitacion) {
+        try {
+            Reserva reserva = cuentaService.findReservaActivaByHabitacionCodigo(numeroHabitacion);
+            CuentaHabitacion cuenta = cuentaService.getOrCreateCuentaByReserva(reserva);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("reserva", reserva);
+            response.put("cuenta", cuenta);
+            response.put("huesped", reserva.getHuesped());
+            response.put("habitacion", reserva.getHabitacion());
+
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

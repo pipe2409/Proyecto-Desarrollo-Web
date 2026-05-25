@@ -46,6 +46,13 @@ public class Reserva {
 
     @OneToOne(mappedBy = "reserva")
     private CuentaHabitacion cuentaHabitacion;
+
+    // True si el huesped ya pago la habitacion al reservar (via Stripe).
+    // columnDefinition asegura que H2 cree la columna con DEFAULT false al hacer
+    // ALTER TABLE (sino las filas existentes tendrian NULL y el ALTER falla por
+    // la restriccion NOT NULL, dejando la columna sin crear).
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean habitacionPagada = false;
     //@PreUpdate
     //@PrePersist
     //@PreRemove

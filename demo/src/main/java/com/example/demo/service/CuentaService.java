@@ -35,17 +35,47 @@ public class CuentaService {
     @Autowired
     private HabitacionRepository habitacionRepository;
 
-    // Buscar reserva activa por número de habitación
+    // Buscar reserva activa por número de habitación.
+    // Prioridad:
+    //   1. Reserva CONFIRMADA/PENDIENTE cuyo rango incluye HOY (huesped hospedado actualmente).
+    //   2. Si no hay, la mas proxima futura.
+    //   3. Si tampoco hay, la mas reciente CONFIRMADA/PENDIENTE.
     public Reserva findReservaActivaByHabitacionCodigo(String codigoHabitacion) {
         var habitacion = habitacionRepository.findAll().stream()
             .filter(h -> h.getCodigo().equals(codigoHabitacion))
             .findFirst()
             .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
-        
-        return reservaRepository.findAll().stream()
-            .filter(r -> r.getHabitacion().getId().equals(habitacion.getId()))
-            .filter(r -> r.getEstado() == EstadoReserva.CONFIRMADA || r.getEstado() == EstadoReserva.PENDIENTE)
+
+        java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
+
+        List<Reserva> candidatas = reservaRepository.findAll().stream()
+            .filter(r -> r.getHabitacion() != null
+                      && r.getHabitacion().getId().equals(habitacion.getId()))
+            .filter(r -> r.getEstado() == EstadoReserva.CONFIRMADA
+                      || r.getEstado() == EstadoReserva.PENDIENTE)
+            .collect(java.util.stream.Collectors.toList());
+
+        if (candidatas.isEmpty()) {
+            throw new RuntimeException("No hay reserva activa para esta habitación");
+        }
+
+        // 1. Buscar la que cubre HOY (huesped hospedado actualmente)
+        Reserva vigente = candidatas.stream()
+            .filter(r -> !ahora.isBefore(r.getFechaInicio()) && !ahora.isAfter(r.getFechaFin()))
             .findFirst()
+            .orElse(null);
+        if (vigente != null) return vigente;
+
+        // 2. Si no hay actual, la mas proxima FUTURA
+        Reserva proxima = candidatas.stream()
+            .filter(r -> r.getFechaInicio().isAfter(ahora))
+            .min(java.util.Comparator.comparing(Reserva::getFechaInicio))
+            .orElse(null);
+        if (proxima != null) return proxima;
+
+        // 3. Fallback: la mas reciente (ultimo ID)
+        return candidatas.stream()
+            .max(java.util.Comparator.comparing(Reserva::getId))
             .orElseThrow(() -> new RuntimeException("No hay reserva activa para esta habitación"));
     }
 
