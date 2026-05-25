@@ -7,6 +7,7 @@ import com.example.demo.repository.HuespedRepository;
 import com.example.demo.repository.ReservaRepository;
 import com.example.demo.repository.ItemCuentaRepository;
 import com.example.demo.repository.ServicioRepository;
+import com.example.demo.repository.TestimonioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -35,6 +36,9 @@ public class EstadisticaService {
     @Autowired
     private ServicioRepository servicioRepository;
 
+    @Autowired
+    private TestimonioRepository testimonioRepository;
+
     public Map<String, Object> obtenerEstadisticas() {
         Map<String, Object> stats = new HashMap<>();
         
@@ -51,15 +55,38 @@ public class EstadisticaService {
         // 4. Servicios
         long totalServicios = servicioRepository.count();
         
-        // 5. Ingresos del mes
+        // 5. Ingresos del mes = habitaciones pagadas via Stripe del mes + servicios consumidos del mes.
+        // Nota: cuando un cliente paga servicios via Stripe los ItemCuenta se borran (ver
+        // CuentaService.pagarCuenta), por lo que la suma de items aqui refleja servicios
+        // todavia pendientes + los que no fueron pagados con Stripe. Para un calculo
+        // contable estricto deberiamos persistir un historico de pagos.
         int añoActual = LocalDate.now().getYear();
         int mesActual = LocalDate.now().getMonthValue();
-        Double ingresosMes = itemCuentaRepository.sumSubtotalByMes(añoActual, mesActual);
-        if (ingresosMes == null) ingresosMes = 0.0;
+        Double ingresosServicios = itemCuentaRepository.sumSubtotalByMes(añoActual, mesActual);
+        if (ingresosServicios == null) ingresosServicios = 0.0;
+
+        long ingresosHabitaciones = 0;
+        for (Reserva r : reservaRepository.findHabitacionesPagadasDelMes(añoActual, mesActual)) {
+            if (r.getHabitacion() == null || r.getHabitacion().getTipoHabitacion() == null) continue;
+            long noches = Math.max(1,
+                java.time.temporal.ChronoUnit.DAYS.between(r.getFechaInicio().toLocalDate(), r.getFechaFin().toLocalDate()));
+            ingresosHabitaciones += noches * r.getHabitacion().getTipoHabitacion().getPrecio();
+        }
+        double ingresosMes = ingresosServicios + ingresosHabitaciones;
+
+        // Calificacion promedio del hotel a partir de los testimonios.
+        Double calificacion = testimonioRepository.findPromedioEstrellas();
+        if (calificacion == null) calificacion = 0.0;
+        // Redondeo a 1 decimal (4.83 -> 4.8)
+        calificacion = Math.round(calificacion * 10.0) / 10.0;
         
-        // 6. Próximas llegadas (próximos 3 días)
-        LocalDateTime inicio = LocalDateTime.now();
-        LocalDateTime fin = LocalDateTime.now().plusDays(3);
+        // 6. Proximas llegadas: desde las 00:00 de HOY hasta el final del dia +3.
+        // Antes usabamos LocalDateTime.now() como inicio, lo que ocultaba reservas
+        // con check-in mas temprano del mismo dia (ej. 25/05 00:00 a las 14:00 ya no
+        // aparecia). Tomamos el dia completo para que el operador vea todas las
+        // llegadas del dia.
+        LocalDateTime inicio = LocalDate.now().atStartOfDay();
+        LocalDateTime fin = LocalDate.now().plusDays(3).atTime(23, 59, 59);
         List<Reserva> reservasProximas = reservaRepository.findByEstadoInAndFechaInicioBetweenOrderByFechaInicioAsc(
             List.of(EstadoReserva.CONFIRMADA, EstadoReserva.PENDIENTE), inicio, fin);
         
@@ -89,6 +116,8 @@ public class EstadisticaService {
         stats.put("serviciosActivos", totalServicios);
         stats.put("totalServicios", totalServicios);
         stats.put("ingresosMes", ingresosMes);
+        stats.put("calificacion", calificacion);
+        stats.put("totalTestimonios", testimonioRepository.count());
         stats.put("proximasLlegadas", proximasLlegadas);
         
         return stats;

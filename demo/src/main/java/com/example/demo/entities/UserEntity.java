@@ -2,6 +2,7 @@ package com.example.demo.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,4 +29,13 @@ public class UserEntity {
     // Token unico que se manda por email para verificar la cuenta
     @Column(length = 100)
     private String tokenVerificacion;
+
+    // Token unico para recuperar la contraseña (se manda por email).
+    // Nullable: solo se setea cuando el usuario solicita la recuperacion.
+    @Column(length = 100)
+    private String tokenRecuperacion;
+
+    // Cuando expira el token de recuperacion. Si esta vencido, el endpoint
+    // de restablecer rechaza la peticion.
+    private LocalDateTime tokenRecuperacionExpira;
 }

@@ -44,3 +44,8 @@ build/
 # Script local con credenciales reales (Gmail App Password, Stripe Secret Key)
 # Usa run-dev.example.ps1 como plantilla.
 /demo/run-dev.ps1
+
+# Dumps de crash de la JVM y logs locales
+/demo/hs_err_pid*.log
+/demo/back-debug.log*
+/demo/back-startup.log

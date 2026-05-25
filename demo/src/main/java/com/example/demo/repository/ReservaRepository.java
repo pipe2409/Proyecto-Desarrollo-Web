@@ -28,4 +28,14 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
     long countByEstadoIn(List<EstadoReserva> estados);
     
     List<Reserva> findByEstadoInAndFechaInicioBetweenOrderByFechaInicioAsc(List<EstadoReserva> estados, LocalDateTime inicio, LocalDateTime fin);
+
+    // Reservas pagadas via Stripe (habitacion) cuya fecha de inicio cae en el mes indicado.
+    // Devolvemos la lista y calculamos el monto en Java (noches * precioTipo) para evitar
+    // funciones SQL no portables como DATEDIFF.
+    @Query("SELECT r FROM Reserva r " +
+           "WHERE r.habitacionPagada = true " +
+           "AND r.estado IN (com.example.demo.entities.EstadoReserva.CONFIRMADA, com.example.demo.entities.EstadoReserva.FINALIZADA) " +
+           "AND FUNCTION('YEAR', r.fechaInicio) = :anio " +
+           "AND FUNCTION('MONTH', r.fechaInicio) = :mes")
+    List<Reserva> findHabitacionesPagadasDelMes(@Param("anio") int anio, @Param("mes") int mes);
 }

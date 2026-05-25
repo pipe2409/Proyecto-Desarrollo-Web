@@ -138,6 +138,63 @@ public class AuthController {
         }
     }
 
+    // El cliente pide recuperar contraseña enviando su correo.
+    // Por seguridad respondemos OK aunque el correo NO exista (asi no se puede
+    // enumerar cuentas registradas). Si existe, generamos token, lo guardamos
+    // con expiracion de 1 hora y mandamos el correo.
+    @PostMapping("/recuperar")
+    public ResponseEntity<Map<String, String>> recuperar(@RequestBody Map<String, String> body) {
+        String correo = body == null ? null : body.get("correo");
+        if (correo == null || correo.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("err", "Correo requerido"));
+        }
+        Optional<UserEntity> opt = userRepository.findByUsername(correo);
+        if (opt.isPresent()) {
+            UserEntity user = opt.get();
+            String token = UUID.randomUUID().toString();
+            user.setTokenRecuperacion(token);
+            user.setTokenRecuperacionExpira(java.time.LocalDateTime.now().plusHours(1));
+            userRepository.save(user);
+            emailService.enviarCorreoRecuperacion(user.getUsername(), user.getNombre(), token);
+        }
+        return ResponseEntity.ok(Map.of(
+            "ok", "Si el correo está registrado, te enviamos un enlace para restablecer la contraseña."
+        ));
+    }
+
+    // El link del correo lleva al front, que pide nueva contraseña y la envia
+    // aqui junto con el token. Validamos token + expiracion, encriptamos la nueva
+    // contraseña, y limpiamos el token (un solo uso).
+    @PostMapping("/restablecer")
+    public ResponseEntity<Map<String, String>> restablecer(@RequestBody Map<String, String> body) {
+        String token = body == null ? null : body.get("token");
+        String nuevaPassword = body == null ? null : body.get("nuevaPassword");
+        if (token == null || token.isBlank() || nuevaPassword == null || nuevaPassword.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("err", "Token y nueva contraseña son requeridos"));
+        }
+        if (nuevaPassword.length() < 4) {
+            return ResponseEntity.badRequest().body(Map.of("err", "La contraseña debe tener al menos 4 caracteres"));
+        }
+        Optional<UserEntity> opt = userRepository.findByTokenRecuperacion(token);
+        if (opt.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("err", "Token inválido o ya usado"));
+        }
+        UserEntity user = opt.get();
+        if (user.getTokenRecuperacionExpira() == null
+                || user.getTokenRecuperacionExpira().isBefore(java.time.LocalDateTime.now())) {
+            // Token expirado: lo limpiamos para evitar reuso.
+            user.setTokenRecuperacion(null);
+            user.setTokenRecuperacionExpira(null);
+            userRepository.save(user);
+            return ResponseEntity.badRequest().body(Map.of("err", "El enlace expiró. Solicita uno nuevo."));
+        }
+        user.setPassword(passwordEncoder.encode(nuevaPassword));
+        user.setTokenRecuperacion(null);
+        user.setTokenRecuperacionExpira(null);
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of("ok", "Contraseña actualizada. Ya puedes iniciar sesión."));
+    }
+
     // Endpoint que invoca el link del correo. Marca verificado=true y borra el token.
     @GetMapping("/verificar")
     public ResponseEntity<Map<String, String>> verificar(@RequestParam("token") String token) {
