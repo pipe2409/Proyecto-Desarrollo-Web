@@ -35,7 +35,7 @@ public class ConsultasCustomTest {
         Habitacion h1 = new Habitacion();
         h1.setCodigo("101");
         h1.setPiso(1);
-        h1.setEstado("DISPONIBLE");
+        h1.setEstado(com.example.demo.entities.EstadoHabitacion.DISPONIBLE);
         h1.setTipoHabitacion(economico);
         habitacionRepository.save(h1);
 
@@ -56,7 +56,7 @@ public class ConsultasCustomTest {
         s1.setNombre("Desayuno");
         s1.setDescripcion("Desayuno Buffet");
         s1.setPrecio(10);
-        s1.setPrecioTipo("Por persona");
+        s1.setPrecioTipo(com.example.demo.entities.PrecioTipo.POR_PERSONA);
         s1.setHorario("07:00 - 10:00");
         s1.setCapacidad(50);
         s1.setImagenUrl("https://example.com/desayuno.jpg");
@@ -66,7 +66,7 @@ public class ConsultasCustomTest {
     @Test
     void test1_findHabitacionesPorEstadoYPiso_JPQL() {
         // Act
-        List<Habitacion> resultado = habitacionRepository.findByEstadoYPiso("DISPONIBLE", 1);
+        List<Habitacion> resultado = habitacionRepository.findByEstadoYPiso(com.example.demo.entities.EstadoHabitacion.DISPONIBLE, 1);
 
         // Assert
         assertThat(resultado).isNotEmpty();

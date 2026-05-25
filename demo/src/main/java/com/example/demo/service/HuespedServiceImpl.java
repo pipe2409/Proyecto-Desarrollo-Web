@@ -1,11 +1,16 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Huesped;
+import com.example.demo.entities.Reserva;
+import com.example.demo.repository.CuentaHabitacionRepository;
 import com.example.demo.repository.HuespedRepository;
+import com.example.demo.repository.ItemCuentaRepository;
+import com.example.demo.repository.ReservaRepository;
 import com.example.demo.repository.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +23,15 @@ public class HuespedServiceImpl implements HuespedService {
     private final HuespedRepository huespedRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+
+    @Autowired
+    private ReservaRepository reservaRepository;
+
+    @Autowired
+    private CuentaHabitacionRepository cuentaHabitacionRepository;
+
+    @Autowired
+    private ItemCuentaRepository itemCuentaRepository;
 
     public HuespedServiceImpl(HuespedRepository huespedRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.huespedRepository = huespedRepository;
@@ -145,6 +159,25 @@ public class HuespedServiceImpl implements HuespedService {
     @Override
     public void deleteById(Integer id) {
         huespedRepository.deleteById(id);
+    }
+
+    @Override
+    public void eliminarCuentaCompleta(Integer id) {
+        Huesped huesped = findById(id);
+
+        // Limpia en orden: items -> cuentas -> reservas -> huesped (cascade
+        // CascadeType.ALL desde Huesped a UserEntity tambien borra el user).
+        List<Reserva> reservas = reservaRepository.findByHuesped(huesped);
+        for (Reserva r : reservas) {
+            if (r.getCuentaHabitacion() != null) {
+                Integer cuentaId = r.getCuentaHabitacion().getId();
+                itemCuentaRepository.findByCuentaHabitacionId(cuentaId)
+                        .forEach(itemCuentaRepository::delete);
+                cuentaHabitacionRepository.delete(r.getCuentaHabitacion());
+            }
+        }
+        reservaRepository.deleteAll(reservas);
+        huespedRepository.delete(huesped);
     }
 
     @Override

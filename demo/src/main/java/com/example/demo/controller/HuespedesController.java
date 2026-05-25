@@ -160,7 +160,9 @@ public class HuespedesController {
                     .body(Map.of("err", "No puedes eliminar tu cuenta porque tienes reservas activas o pendientes."));
         }
 
-        huespedService.deleteById(id);
+        // Limpia reservas viejas (FINALIZADA/CANCELADA) + cuentas + items
+        // antes de borrar al huesped, sino la FK reserva.huesped_id revienta.
+        huespedService.eliminarCuentaCompleta(id);
 
         return ResponseEntity.ok(Map.of("ok", "Cuenta eliminada correctamente."));
     }

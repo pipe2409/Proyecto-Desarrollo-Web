@@ -23,8 +23,9 @@ public class Habitacion {
     @Column(nullable = false)
     private int piso;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String estado;
+    private EstadoHabitacion estado;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tipo_habitacion_id", nullable = false)

@@ -1,11 +1,12 @@
 package com.example.demo.service;
 
+import com.example.demo.entities.EstadoHabitacion;
 import com.example.demo.entities.Reserva;
 import com.example.demo.entities.EstadoReserva;
 import com.example.demo.repository.HabitacionRepository;
+import com.example.demo.repository.HistorialPagoRepository;
 import com.example.demo.repository.HuespedRepository;
 import com.example.demo.repository.ReservaRepository;
-import com.example.demo.repository.ItemCuentaRepository;
 import com.example.demo.repository.ServicioRepository;
 import com.example.demo.repository.TestimonioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,22 +30,22 @@ public class EstadisticaService {
     
     @Autowired
     private ReservaRepository reservaRepository;
-    
-    @Autowired
-    private ItemCuentaRepository itemCuentaRepository;
-    
+
     @Autowired
     private ServicioRepository servicioRepository;
 
     @Autowired
     private TestimonioRepository testimonioRepository;
 
+    @Autowired
+    private HistorialPagoRepository historialPagoRepository;
+
     public Map<String, Object> obtenerEstadisticas() {
         Map<String, Object> stats = new HashMap<>();
         
         // 1. Habitaciones
         long totalHabitaciones = habitacionRepository.count();
-        long habitacionesOcupadas = habitacionRepository.countByEstadoIn(List.of("OCUPADA", "RESERVADA"));
+        long habitacionesOcupadas = habitacionRepository.countByEstadoIn(List.of(EstadoHabitacion.OCUPADA, EstadoHabitacion.RESERVADA));
         
         // 2. Reservas
         long reservasActivas = reservaRepository.countByEstadoIn(List.of(EstadoReserva.CONFIRMADA, EstadoReserva.PENDIENTE));
@@ -55,24 +56,15 @@ public class EstadisticaService {
         // 4. Servicios
         long totalServicios = servicioRepository.count();
         
-        // 5. Ingresos del mes = habitaciones pagadas via Stripe del mes + servicios consumidos del mes.
-        // Nota: cuando un cliente paga servicios via Stripe los ItemCuenta se borran (ver
-        // CuentaService.pagarCuenta), por lo que la suma de items aqui refleja servicios
-        // todavia pendientes + los que no fueron pagados con Stripe. Para un calculo
-        // contable estricto deberiamos persistir un historico de pagos.
+        // 5. Ingresos del mes = suma del HistorialPago (Stripe) en el mes actual.
+        // Antes calculabamos esto de forma aproximada combinando ItemCuenta + reservas
+        // marcadas como habitacionPagada, pero los ItemCuenta se borraban al cobrar.
+        // Ahora cada confirmacion de Stripe inserta una fila en historial_pago, asi
+        // el dashboard tiene un total contable real e inmutable.
         int añoActual = LocalDate.now().getYear();
         int mesActual = LocalDate.now().getMonthValue();
-        Double ingresosServicios = itemCuentaRepository.sumSubtotalByMes(añoActual, mesActual);
-        if (ingresosServicios == null) ingresosServicios = 0.0;
-
-        long ingresosHabitaciones = 0;
-        for (Reserva r : reservaRepository.findHabitacionesPagadasDelMes(añoActual, mesActual)) {
-            if (r.getHabitacion() == null || r.getHabitacion().getTipoHabitacion() == null) continue;
-            long noches = Math.max(1,
-                java.time.temporal.ChronoUnit.DAYS.between(r.getFechaInicio().toLocalDate(), r.getFechaFin().toLocalDate()));
-            ingresosHabitaciones += noches * r.getHabitacion().getTipoHabitacion().getPrecio();
-        }
-        double ingresosMes = ingresosServicios + ingresosHabitaciones;
+        Long ingresosMesLong = historialPagoRepository.sumIngresosByMes(añoActual, mesActual);
+        double ingresosMes = ingresosMesLong == null ? 0.0 : ingresosMesLong;
 
         // Calificacion promedio del hotel a partir de los testimonios.
         Double calificacion = testimonioRepository.findPromedioEstrellas();

@@ -2,9 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.entities.CuentaHabitacion;
 import com.example.demo.entities.EstadoReserva;
+import com.example.demo.entities.HistorialPago;
 import com.example.demo.entities.Reserva;
 import com.example.demo.entities.TipoHabitacion;
+import com.example.demo.entities.TipoPago;
 import com.example.demo.repository.CuentaHabitacionRepository;
+import com.example.demo.repository.HistorialPagoRepository;
 import com.example.demo.repository.ReservaRepository;
 import com.example.demo.service.CuentaService;
 import com.example.demo.service.ReservaService;
@@ -69,6 +72,9 @@ public class PagoController {
 
     @Autowired
     private ReservaRepository reservaRepository;
+
+    @Autowired
+    private HistorialPagoRepository historialPagoRepository;
 
     @PostConstruct
     public void init() {
@@ -179,6 +185,16 @@ public class PagoController {
             reserva.setHabitacionPagada(true);
             reservaRepository.save(reserva);
 
+            // Registrar el pago en el historial (Stripe amount viene en centavos).
+            long amount = session.getAmountTotal() == null ? 0L : session.getAmountTotal();
+            HistorialPago pago = new HistorialPago();
+            pago.setTipo(TipoPago.HABITACION);
+            pago.setMonto((int) (amount / 100));
+            pago.setReserva(reserva);
+            pago.setFechaPago(LocalDateTime.now());
+            pago.setSessionIdStripe(sessionId);
+            historialPagoRepository.save(pago);
+
             return ResponseEntity.ok(Map.of(
                 "ok", "Pago confirmado y reserva creada.",
                 "reservaId", reserva.getId().toString(),
@@ -263,7 +279,20 @@ public class PagoController {
                 ));
             }
             Integer cuentaId = Integer.valueOf(session.getMetadata().get("cuentaId"));
+            CuentaHabitacion cuentaParaHistorial = cuentaRepository.findById(cuentaId).orElse(null);
             int totalPagado = cuentaService.pagarCuenta(cuentaId);
+
+            // Historial: aunque CuentaService borra los items al cobrar, aqui dejamos
+            // la traza del monto y la reserva asociada para que el dashboard pueda
+            // sumar ingresos reales en lugar de aproximaciones.
+            HistorialPago pago = new HistorialPago();
+            pago.setTipo(TipoPago.SERVICIOS);
+            pago.setMonto(totalPagado);
+            if (cuentaParaHistorial != null) pago.setReserva(cuentaParaHistorial.getReserva());
+            pago.setFechaPago(LocalDateTime.now());
+            pago.setSessionIdStripe(sessionId);
+            historialPagoRepository.save(pago);
+
             return ResponseEntity.ok(Map.of(
                 "ok", "Pago confirmado. Servicios cobrados.",
                 "totalPagado", String.valueOf(totalPagado)

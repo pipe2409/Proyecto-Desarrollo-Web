@@ -54,13 +54,13 @@ class ReservaServiceIntegrationTest {
         // Preparar datos de prueba
         // Buscar o crear una habitación disponible
         habitacionDisponible = habitacionRepository.findAll().stream()
-                .filter(h -> "DISPONIBLE".equals(h.getEstado()))
+                .filter(h -> com.example.demo.entities.EstadoHabitacion.DISPONIBLE.equals(h.getEstado()))
                 .findFirst()
                 .orElseGet(() -> {
                     Habitacion nueva = new Habitacion();
                     nueva.setCodigo("TEST01");
                     nueva.setPiso(1);
-                    nueva.setEstado("DISPONIBLE");
+                    nueva.setEstado(com.example.demo.entities.EstadoHabitacion.DISPONIBLE);
                     nueva.setTipoHabitacion(tipoHabitacionRepository.findAll().get(0));
                     return habitacionRepository.save(nueva);
                 });

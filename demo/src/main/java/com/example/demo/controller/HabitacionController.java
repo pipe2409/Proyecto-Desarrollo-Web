@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entities.EstadoHabitacion;
 import com.example.demo.entities.Habitacion;
 import com.example.demo.entities.HabitacionMapper;
 import com.example.demo.entities.TipoHabitacion;
@@ -56,11 +57,11 @@ public ResponseEntity<List<HabitacionDetalleDTO>> getAll(
             TipoHabitacion tipo = tipoHabitacionService.findById(tipoHabitacionId);
 
             Habitacion habitacion = new Habitacion();
-           habitacion.setCodigo((String) body.get("codigo"));     
-        habitacion.setPiso((Integer) body.get("piso"));           
-        habitacion.setEstado((String) body.get("estado"));
-        habitacion.setTipoHabitacion(tipo);
-        habitacion.setNotas((String) body.get("notas")); 
+            habitacion.setCodigo((String) body.get("codigo"));
+            habitacion.setPiso((Integer) body.get("piso"));
+            habitacion.setEstado(parseEstado(body.get("estado")));
+            habitacion.setTipoHabitacion(tipo);
+            habitacion.setNotas((String) body.get("notas"));
            
 
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -79,8 +80,8 @@ public ResponseEntity<List<HabitacionDetalleDTO>> getAll(
             Habitacion habitacion = habitacionService.findById(id);
              habitacion.setCodigo((String) body.get("codigo"));       
         habitacion.setPiso((Integer) body.get("piso"));           
-        habitacion.setEstado((String) body.get("estado"));
-        habitacion.setNotas((String) body.get("notas")); 
+        habitacion.setEstado(parseEstado(body.get("estado")));
+        habitacion.setNotas((String) body.get("notas"));
 
             habitacionService.update(id, habitacion, tipoHabitacionId);
             return ResponseEntity.ok(habitacion);
@@ -97,6 +98,17 @@ public ResponseEntity<List<HabitacionDetalleDTO>> getAll(
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // Convierte el valor que llega del body (String desde JSON) a la enum.
+    // Si llega null o un valor invalido, default = DISPONIBLE en lugar de fallar.
+    private EstadoHabitacion parseEstado(Object raw) {
+        if (raw == null) return EstadoHabitacion.DISPONIBLE;
+        try {
+            return EstadoHabitacion.valueOf(raw.toString().trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return EstadoHabitacion.DISPONIBLE;
         }
     }
 }

@@ -334,9 +334,9 @@ private void cargarItemsCuenta(CuentaHabitacion cuenta, List<Servicio> servicios
             h.setPiso(piso);
 
             if (i % 13 == 0) {
-                h.setEstado("MANTENIMIENTO");
+                h.setEstado(com.example.demo.entities.EstadoHabitacion.MANTENIMIENTO);
             } else {
-                h.setEstado("DISPONIBLE");
+                h.setEstado(com.example.demo.entities.EstadoHabitacion.DISPONIBLE);
             }
 
             if (i <= 10) {
@@ -420,7 +420,7 @@ private void cargarItemsCuenta(CuentaHabitacion cuenta, List<Servicio> servicios
         s.setPrecio((int) d[2]);
         s.setImagenUrl((String) d[3]);
         s.setCapacidad((int) d[4]);
-        s.setPrecioTipo((String) d[5]);
+        s.setPrecioTipo(com.example.demo.entities.PrecioTipo.fromString((String) d[5]));
         s.setHorario((String) d[6]);
         servicioRepository.save(s);
     }

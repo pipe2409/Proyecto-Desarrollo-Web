@@ -28,5 +28,13 @@ public interface HuespedService {
 
     void deleteById(Integer id);
 
+    /**
+     * Borra el huesped junto con TODAS sus reservas viejas (FINALIZADAS,
+     * CANCELADAS), sus cuentas y los items asociados. El controller ya valida
+     * que no haya reservas PENDIENTES/CONFIRMADAS antes de llamar a esto, asi
+     * que aqui es seguro eliminar todo lo demas.
+     */
+    void eliminarCuentaCompleta(Integer id);
+
     void cambiarContrasena(Integer id, String actual, String nueva, String confirmar);
 }
