@@ -61,6 +61,9 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticat
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
 
+            // Chatbot publico (vive en la landing, no requiere login)
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/chatbot/**")).permitAll()
+
             // LECTURA PUBLICA DE LA LANDING (sin login)
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/servicios/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/tipos-habitacion/**")).permitAll()
@@ -88,6 +91,10 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticat
                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")
             // Las estadisticas del dashboard tambien las usa el OPERADOR en /menu-admin
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/estadisticas/**"))
+                .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")
+
+            // Reportes Excel descargables: solo admin/operador
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reportes/**"))
                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_OPERADOR")
 
             .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cuentas/**"))
